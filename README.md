@@ -10,3 +10,4 @@ More specifically, the following tasks are expected from the group:
 3. Extracting useful information from task 1 to store them in the database designed in step 2;
 4. Design machine learning algorithms to understand the bidding strategies of each market participants in one or more markets;
 5. Impliment a web-based supporting plantform;
+Provaprova
