@@ -38,3 +38,6 @@ logger.warning('warn message')
 logger.error('error message')
 logger.critical('critical message')
 ```
+
+## 
+(c) 2019, Gian Pio Domiziani, Luca Gioacchini, Francesco Guaiana, Bruno Valente
