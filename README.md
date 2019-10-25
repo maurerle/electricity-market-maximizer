@@ -10,4 +10,31 @@ More specifically, the following tasks are expected from the group:
 3. Extracting useful information from task 1 to store them in the database designed in step 2;
 4. Design machine learning algorithms to understand the bidding strategies of each market participants in one or more markets;
 5. Impliment a web-based supporting plantform;
-6. Ciao 
+
+## Technical Details
+
+## Setup
+Open a terminal in the project folder and run
+```
+# sudo pip3 install -r requirements.txt
+```
+
+### Logs
+The log messages are displayed in the console thanks to the logging module. Five levels are used (the WARNING, ERROR and CRITICAL level are also saved in the ``` src/logging.conf ``` file.
+#### Usage
+At the top of each file use:
+```
+import logging
+import logging.config
+
+logging.config.fileConfig('src/logging.conf')
+logger = logging.getLogger(__name__)
+```
+To display a new log message use:
+```
+logger.debug('debug message')
+logger.info('info message')
+logger.warning('warn message')
+logger.error('error message')
+logger.critical('critical message')
+```
