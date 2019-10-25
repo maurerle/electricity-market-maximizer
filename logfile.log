@@ -1,0 +1,3 @@
+2019-10-25 17:59:24,343 - __main__ - WARNING - warn message
+2019-10-25 17:59:24,343 - __main__ - ERROR - error message
+2019-10-25 17:59:24,343 - __main__ - CRITICAL - critical message
