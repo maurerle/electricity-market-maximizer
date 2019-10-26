@@ -18,6 +18,11 @@ Open a terminal in the project folder and run
 ```
 # sudo pip3 install -r requirements.txt
 ```
+## Install geckodrivers for Selenium
+Download the latest geckodrivers from ```https://github.com/mozilla/geckodriver/releases``` and copy the file in ```/usr/local/bin```.
+
+## Paths
+Change the download path in ```src/common/config.py```
 
 ### Logs
 The log messages are displayed in the console thanks to the logging module. Five levels are used (the WARNING, ERROR and CRITICAL level are also saved in the ``` src/logging.conf ``` file.
