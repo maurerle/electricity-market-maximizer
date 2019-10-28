@@ -1,8 +1,12 @@
+import os
 import time
 import requests as req
 from common.config import *
+import common.config as conf
+from zipfile import ZipFile
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+
 
 class GMESpider():
 	def __init__(self, log):
@@ -37,7 +41,7 @@ class GMESpider():
 	
 		
 	def getData(self, gme, start, end):
-		self.log.info("Retrieving data from {} to {}".format(start, end))
+		self.log.info("Retrieving data:\n\t{}\n\t{} - {}".format(gme['fname'], start, end))
 		self.driver.get(gme['url'])
 		# Set the starting and endig date.
 		# The GME has the one-month restriction
@@ -68,6 +72,29 @@ class GMESpider():
 	
 	def checkDownload(self, fname):
 		if os.path.isfile(DOWNLOAD+'/'+fname):
-			self.log.info("{} file downloaded".format(fname))
+			self.log.info("Zip file downloaded".format(fname))
+			self.unZip(fname)
 		else:
 			self.log.warning("{} download failed".format(fname))
+	
+	
+	def unZip(self, fname):
+		with ZipFile(DOWNLOAD+'/'+fname, 'r') as zip:  
+			# extracting all the files 
+			self.log.info("Extracting data...") 
+			zip.extractall(DOWNLOAD) 
+			self.log.info("Data extracted") 
+		os.remove(DOWNLOAD+'/'+fname)
+				
+		self.updateHistory(zip.namelist())
+	
+	
+	def updateHistory(self, flist):
+		for xml in flist:
+			conf.HISTORY.append(xml)
+		"""
+		print(self.processor.running)
+		if not self.processor.running:
+			self.processor.process()
+		print(self.processor.running)
+		"""

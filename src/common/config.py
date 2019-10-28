@@ -1,10 +1,13 @@
 import os
+
+# ======================================
+# SPIDERS
+# ======================================
+
 # Hide the Firefox window when automating with selenium
 os.environ['MOZ_HEADLESS'] = '1'
 
-# ======================================
-# GME urls for spiders
-# ======================================
+# GME urls
 DOWNLOAD = '/home/luca/Codes/smartgrids/downloads'
 RESTRICTION = 'https://www.mercatoelettrico.org/It/Download/DownloadDati.aspx'
 GME = [
@@ -46,3 +49,5 @@ GME = [
 	}
 ]
 
+# Dynamic file history
+HISTORY=[]
