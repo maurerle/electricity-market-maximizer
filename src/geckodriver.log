@@ -1569,3 +1569,208 @@ JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx
 JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_LimitiTransito, line 33: ReferenceError: $ is not defined
 
 (firefox:6417): GLib-GObject-CRITICAL **: 10:46:30.972: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+1572264894217	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "-marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofileSLVAyM"
+*** You are running in headless mode.
+1572264894536	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: mozillaAddons
+1572264894537	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: telemetry
+1572264894537	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: resource://pdf.js/
+1572264894537	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: about:reader*
+1572264896033	Marionette	INFO	Listening on port 44849
+1572264896126	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.mercatoelettrico.org/It/Tools/Accessodati.aspx?ReturnUrl=%2fIt%2fDownload%2fDownloadDati.aspx, line 33: ReferenceError: $ is not defined
+JavaScript error: https://www.mercatoelettrico.org/It/Download/DownloadDati.aspx?val=MGP_Prezzi, line 33: ReferenceError: $ is not defined
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_PrezziConvenzionali, line 33: ReferenceError: $ is not defined
+
+(firefox:14708): GLib-GObject-CRITICAL **: 13:14:57.796: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_LimitiTransito, line 33: ReferenceError: $ is not defined
+
+(firefox:14708): GLib-GObject-CRITICAL **: 13:15:03.279: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_StimeFabbisogno, line 33: ReferenceError: $ is not defined
+
+(firefox:14708): GLib-GObject-CRITICAL **: 13:15:08.690: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_Prezzi, line 33: ReferenceError: $ is not defined
+
+(firefox:14708): GLib-GObject-CRITICAL **: 13:15:14.143: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_OfferteIntegrativeGrtn, line 33: ReferenceError: $ is not defined
+
+(firefox:14708): GLib-GObject-CRITICAL **: 13:15:19.578: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+1572275411488	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "-marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofileFr2BOo"
+1572275411820	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: mozillaAddons
+1572275411820	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: telemetry
+1572275411821	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: resource://pdf.js/
+1572275411821	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: about:reader*
+1572275413336	Marionette	INFO	Listening on port 35277
+1572275413394	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.mercatoelettrico.org/It/Tools/Accessodati.aspx?ReturnUrl=%2fIt%2fDownload%2fDownloadDati.aspx, line 33: ReferenceError: $ is not defined
+JavaScript error: https://www.mercatoelettrico.org/It/Download/DownloadDati.aspx?val=MGP_Prezzi, line 33: ReferenceError: $ is not defined
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_PrezziConvenzionali, line 33: ReferenceError: $ is not defined
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_LimitiTransito, line 33: ReferenceError: $ is not defined
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_StimeFabbisogno, line 33: ReferenceError: $ is not defined
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_Prezzi, line 33: ReferenceError: $ is not defined
+1572284150753	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "-marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofileU9hNKB"
+*** You are running in headless mode.
+1572284151032	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: mozillaAddons
+1572284151032	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: telemetry
+1572284151033	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: resource://pdf.js/
+1572284151033	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: about:reader*
+1572284152468	Marionette	INFO	Listening on port 37877
+1572284152564	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.mercatoelettrico.org/It/Tools/Accessodati.aspx?ReturnUrl=%2fIt%2fDownload%2fDownloadDati.aspx, line 33: ReferenceError: $ is not defined
+JavaScript error: https://www.mercatoelettrico.org/It/Download/DownloadDati.aspx?val=MGP_Prezzi, line 33: ReferenceError: $ is not defined
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_PrezziConvenzionali, line 33: ReferenceError: $ is not defined
+
+(firefox:18994): GLib-GObject-CRITICAL **: 18:35:54.151: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_LimitiTransito, line 33: ReferenceError: $ is not defined
+
+(firefox:18994): GLib-GObject-CRITICAL **: 18:35:59.604: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_StimeFabbisogno, line 33: ReferenceError: $ is not defined
+
+(firefox:18994): GLib-GObject-CRITICAL **: 18:36:05.073: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_Prezzi, line 33: ReferenceError: $ is not defined
+
+(firefox:18994): GLib-GObject-CRITICAL **: 18:36:10.518: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_OfferteIntegrativeGrtn, line 33: ReferenceError: $ is not defined
+
+(firefox:18994): GLib-GObject-CRITICAL **: 18:36:15.969: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_Fabbisogno, line 33: ReferenceError: $ is not defined
+
+(firefox:18994): GLib-GObject-CRITICAL **: 18:36:21.393: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_Transiti, line 33: ReferenceError: $ is not defined
+
+(firefox:18994): GLib-GObject-CRITICAL **: 18:36:26.827: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_Liquidita, line 33: ReferenceError: $ is not defined
+
+(firefox:18994): GLib-GObject-CRITICAL **: 18:36:32.269: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_Quantita, line 33: ReferenceError: $ is not defined
+
+(firefox:18994): GLib-GObject-CRITICAL **: 18:36:37.788: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI1_LimitiTransito, line 33: ReferenceError: $ is not defined
+
+(firefox:18994): GLib-GObject-CRITICAL **: 18:36:43.219: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI1_Prezzi, line 33: ReferenceError: $ is not defined
+
+(firefox:18994): GLib-GObject-CRITICAL **: 18:36:48.663: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI1_Quantita, line 33: ReferenceError: $ is not defined
+
+(firefox:18994): GLib-GObject-CRITICAL **: 18:36:54.077: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+1572284723472	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "-marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofileiJ1FEQ"
+*** You are running in headless mode.
+1572284723758	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: mozillaAddons
+1572284723758	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: telemetry
+1572284723758	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: resource://pdf.js/
+1572284723758	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: about:reader*
+1572284725178	Marionette	INFO	Listening on port 40021
+1572284725281	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: https://www.mercatoelettrico.org/It/Tools/Accessodati.aspx?ReturnUrl=%2fIt%2fDownload%2fDownloadDati.aspx, line 33: ReferenceError: $ is not defined
+JavaScript error: https://www.mercatoelettrico.org/It/Download/DownloadDati.aspx?val=MGP_Prezzi, line 33: ReferenceError: $ is not defined
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_PrezziConvenzionali, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:45:27.000: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_LimitiTransito, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:45:32.499: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_StimeFabbisogno, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:45:37.929: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_Prezzi, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:45:43.387: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_OfferteIntegrativeGrtn, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:45:48.809: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_Fabbisogno, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:45:54.266: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_Transiti, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:45:59.789: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_Liquidita, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:46:05.207: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_Quantita, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:46:10.685: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI1_LimitiTransito, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:46:16.127: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI1_Prezzi, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:46:21.620: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI1_PrezziConvenzionali, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:46:27.009: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI1_Quantita, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:46:32.478: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI2_LimitiTransito, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:46:37.952: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI2_Prezzi, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:46:43.426: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI2_PrezziConvenzionali, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:46:48.882: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI2_Quantita, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:46:54.345: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI3_LimitiTransito, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:46:59.806: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI3_Prezzi, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:47:05.233: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI3_PrezziConvenzionali, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:47:10.702: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI3_Quantita, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:47:16.186: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI4_LimitiTransito, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:47:21.593: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI4_Prezzi, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:47:27.046: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI4_PrezziConvenzionali, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:47:32.499: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI4_Quantita, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:47:37.965: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI5_LimitiTransito, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:47:43.436: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI5_Prezzi, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:47:48.929: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI5_PrezziConvenzionali, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:47:54.423: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI5_Quantita, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:47:59.868: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI6_LimitiTransito, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:48:05.343: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI6_Prezzi, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:48:10.779: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI6_PrezziConvenzionali, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:48:16.193: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI6_Quantita, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:48:21.690: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI7_LimitiTransito, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:48:27.142: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI7_Prezzi, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:48:32.627: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI7_PrezziConvenzionali, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:48:38.059: g_object_get: assertion 'G_IS_OBJECT (object)' failed
+JavaScript error: https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI7_Quantita, line 33: ReferenceError: $ is not defined
+
+(firefox:19316): GLib-GObject-CRITICAL **: 18:48:43.571: g_object_get: assertion 'G_IS_OBJECT (object)' failed
