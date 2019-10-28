@@ -50,7 +50,7 @@ GME = [
 ]
 
 # GME data interval
-INTER_DATA_GME = 86400
+INTER_DATA_GME = 86400 #24h
 
 # Dynamic file history
 HISTORY=[]
