@@ -23,7 +23,6 @@ class ProcessorTh(threading.Thread):
 				# Clean folder
 				os.remove(DOWNLOAD+'/'+fname)
 			else:
-				#print ("Here")
 				if self.running:
 					self.running = False
 					self.log.info("Processing done")	

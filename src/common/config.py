@@ -40,14 +40,17 @@ GME = [
 		'url':'https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_Transiti'
 	},
 	{
-		'fname':'MGP_Liquitidtà',
-		'url':'https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_Liquitidtà'
+		'fname':'MGP_Liquidita',
+		'url':'https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_Liquidita'
 	},
 	{
-		'fname':'MGP_Quantità',
-		'url':'https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_Quantità'
+		'fname':'MGP_Quantita',
+		'url':'https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_Quantita'
 	}
 ]
+
+# GME data interval
+INTER_DATA_GME = 86400
 
 # Dynamic file history
 HISTORY=[]

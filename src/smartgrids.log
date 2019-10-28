@@ -4,3 +4,7 @@
 [gme.py, line 73, in checkDownload()] [WARNING] MGP_LimitiTransito2019101520191015.zip download failed
 [gme.py, line 73, in checkDownload()] [WARNING] MGP_PrezziConvenzionali2019101520191025.zip download failed
 [gme.py, line 73, in checkDownload()] [WARNING] MGP_LimitiTransito2019101520191025.zip download failed
+[gme.py, line 78, in checkDownload()] [WARNING] MGP_Liquitidtà2019102820191028.zip download failed
+[gme.py, line 78, in checkDownload()] [WARNING] MGP_Liquitidtà2019102720191027.zip download failed
+[gme.py, line 78, in checkDownload()] [WARNING] MGP_Liquitidtà2019102720191027.zip download failed
+[gme.py, line 78, in checkDownload()] [WARNING] MGP_Liquitidta2019102720191027.zip download failed

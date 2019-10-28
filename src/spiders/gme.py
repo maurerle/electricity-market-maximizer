@@ -92,9 +92,4 @@ class GMESpider():
 	def updateHistory(self, flist):
 		for xml in flist:
 			conf.HISTORY.append(xml)
-		"""
-		print(self.processor.running)
-		if not self.processor.running:
-			self.processor.process()
-		print(self.processor.running)
-		"""
+
