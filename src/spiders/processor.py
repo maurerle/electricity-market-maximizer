@@ -38,7 +38,8 @@ class ProcessorTh(threading.Thread):
 
         client = pymongo.MongoClient(
             "mongodb+srv://new-user:politomerda@cluster0-awyti.mongodb.net/test?retryWrites=true&w=majority")
-        collection = client['InterProj']['MGP_PrezziConvenzionali']
+
+        collection = client['InterProj'][fname[8:-4]]
 
         with open(DOWNLOAD + '/' + fname, 'r') as file:
             data = file.read()
