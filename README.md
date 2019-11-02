@@ -44,5 +44,24 @@ logger.error('error message')
 logger.critical('critical message')
 ```
 
+## Access to MongoDB
+* With ```pymongo```, use the following code to connect to the database:
+```
+from pymongo import MongoClient
+
+client = MongoClient(
+         "mongodb+srv://new-user:politomerda@cluster0-awyti.mongodb.net/test?retryWrites=true&w=majority"
+         )
+
+collection = client['InterProj']['<collection_name>']
+```
+where ```<collection_name>``` is the type of market you are interested in (e.g. 'MGPFabbisogno', 'MI1LimitiTransito', etc.).
+
+Use ```pymongo``` functions to retrieve documents.
+
+* Using Robo3T, create a new connection; copy and paste the connection string 
+(```mongodb+srv://new-user:politomerda@cluster0-awyti.mongodb.net/test?retryWrites=true&w=majority```) in the text box
+ 'Import connection details from MongoDB SRV connection string'; click on the 'From SRV' button and
+ finally 'Save' the connection.
 ## 
 (c) 2019, Gian Pio Domiziani, Luca Gioacchini, Francesco Guaiana, Bruno Valente
