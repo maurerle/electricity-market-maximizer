@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from spiders.gme import *
 from common.config import *
 from spiders.processor import *
-
+"""Last data 01/02/2017"""
 
 class GmeTh(threading.Thread):
 	def __init__(self, log):
@@ -22,7 +22,6 @@ class GmeTh(threading.Thread):
 		while True:
 			for item in GME:
 				spider.getData(item, date, date)
-			
 			self.log.info("Spider waiting...")
 			time.sleep(INTER_DATA_GME)
 	
