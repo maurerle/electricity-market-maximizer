@@ -11,6 +11,8 @@ from selenium.webdriver.common.keys import Keys
 sys.dont_write_bytecode = True
 
 class GMESpider():
+	"""
+	"""
 	def __init__(self, log):
 		# Set the firefox profile preferences
 		profile = webdriver.FirefoxProfile()

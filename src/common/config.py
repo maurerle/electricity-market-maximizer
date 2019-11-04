@@ -10,7 +10,7 @@ os.environ['MOZ_HEADLESS'] = '1'
 # GME urls
 DOWNLOAD = '/home/luca/Codes/smartgrids/downloads'
 RESTRICTION = 'https://www.mercatoelettrico.org/It/Download/DownloadDati.aspx'
-CREATE_DB = True
+FULL_HISTORY = True
 GME = [
 	{
 		'fname':'MGP_PrezziConvenzionali',
