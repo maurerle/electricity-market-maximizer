@@ -10,6 +10,7 @@ os.environ['MOZ_HEADLESS'] = '1'
 # GME urls
 DOWNLOAD = '/home/luca/Codes/smartgrids/downloads'
 RESTRICTION = 'https://www.mercatoelettrico.org/It/Download/DownloadDati.aspx'
+CREATE_DB = True
 GME = [
 	{
 		'fname':'MGP_PrezziConvenzionali',
@@ -158,6 +159,22 @@ GME = [
 	{
 		'fname':'MI7_Quantita',
 		'url':'https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI7_Quantita'
+	},
+	{
+		'fname':'MSD_ServiziDispacciamento',
+		'url':'https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MSD_ServiziDispacciamento'
+	},
+	{
+		'fname':'MB_PTotali',
+		'url':'https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MB_PTotali'
+	},
+	{
+		'fname':'MB_PRiservaSecondaria',
+		'url':'https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MB_PRiservaSecondaria'
+	},
+	{
+		'fname':'MB_PAltriServizi',
+		'url':'https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MB_PAltriServizi'
 	}	
 ]
 

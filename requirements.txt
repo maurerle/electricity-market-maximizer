@@ -1,1 +1,3 @@
 selenium
+pymongo[srv]
+python-dateutil
