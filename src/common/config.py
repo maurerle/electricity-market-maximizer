@@ -5,7 +5,7 @@ import os
 # ======================================
 
 # Hide the Firefox window when automating with selenium
-#os.environ['MOZ_HEADLESS'] = '1'
+os.environ['MOZ_HEADLESS'] = '1'
 
 # GME urls
 DOWNLOAD = '/home/luca/Codes/smartgrids/downloads'

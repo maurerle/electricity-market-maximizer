@@ -1,3 +1,4 @@
+import sys
 import os
 import time
 import requests as req
@@ -7,6 +8,7 @@ from zipfile import ZipFile
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
+sys.dont_write_bytecode = True
 
 class GMESpider():
 	def __init__(self, log):
@@ -21,7 +23,7 @@ class GMESpider():
 		profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/html")
 		
 		# Class init
-		self.driver = webdriver.Firefox(profile)
+		self.driver = webdriver.Firefox(profile, log_path='../logs/geckodrivers.log')
 		self.log = log
 		
 		self.passRestrictions()

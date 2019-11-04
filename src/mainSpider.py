@@ -1,3 +1,4 @@
+import sys
 import logging
 import logging.config
 import threading
@@ -5,6 +6,9 @@ from datetime import datetime, timedelta
 from spiders.gme import *
 from common.config import *
 from spiders.processor import *
+
+sys.dont_write_bytecode = True
+
 """Last data 01/02/2017"""
 
 class GmeTh(threading.Thread):
