@@ -5,7 +5,7 @@ import os
 # ======================================
 
 # Hide the Firefox window when automating with selenium
-#os.environ['MOZ_HEADLESS'] = '1'
+os.environ['MOZ_HEADLESS'] = '1'
 
 # GME urls
 DOWNLOAD = '/home/luca/Codes/smartgrids/downloads'
@@ -166,3 +166,11 @@ INTER_DATA_GME = 86400 #24h
 
 # Dynamic file history
 HISTORY=[]
+
+
+# ======================================
+# DATABASE
+# ======================================
+
+# To be changed with Polito cluster credentials
+MONGO_STRING = "mongodb+srv://new-user:politomerda@cluster0-awyti.mongodb.net/test?retryWrites=true&w=majority"

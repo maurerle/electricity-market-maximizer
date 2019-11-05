@@ -2,9 +2,10 @@ import sys
 import threading
 from common.config import *
 import common.config as conf
+from database.xmlprocessors import  *
 import time
-import pymongo
-import xmltodict
+from pymongo import MongoClient
+
 
 sys.dont_write_bytecode = True
 
@@ -18,17 +19,8 @@ class ProcessorTh(threading.Thread):
         self.start()
 
     def databaseInit(self):
-        # To be changed with Polito cluster credentials
-
-        self.client = pymongo.MongoClient(
-            "mongodb+srv://new-user:politomerda@cluster0-awyti.mongodb.net/test?retryWrites=true&w=majority"
-            )
-        self.db = client['InterProj']
-        self.collectionMGP = self.db['MGP']
-        self.collectionMI = self.db['MI']
-        self.collectionMSD = self.db['MSD']
-
-
+        self.client = MongoClient(MONGO_STRING)
+        self.db = self.client['InterProj']
 
     def run(self):
         self.log.info("Processor Running")
@@ -49,13 +41,22 @@ class ProcessorTh(threading.Thread):
 
     def toDatabase(self, fname):
 
-        collection = client['InterProj'][fname[8:12]]
+        print("Processing {}".format(fname))
 
-        with open(DOWNLOAD + '/' + fname, 'r') as file:
-            data = file.read()
-            dict = xmltodict.parse(data)["NewDataSet"]
-            del dict["xs:schema"]
-            # jsonString = json.dumps(dict, indent=4)
-            collection.insert_one(dict)
+        if fname[8:11] == 'MGP':
+            collection = self.db['MGP']
+        elif fname[8:10] == 'MI':
+            collection = self.db['MI']
+        elif fname[8:11] == 'MSD':
+            collection = self.db['MSD']
+        
+        if fname[11:-4] == 'LimitiTransito' or fname[11:-4] == 'Transiti':
+            data = process_transit_file(fname)
+        else:
+            data = process_file(fname)
 
-        print("[TODO] Processing {}".format(fname))
+        for item in data.values():
+            collection.update_one({'Data':item['Data'], 'Ora':item['Ora']}, 
+                                  {"$set": item}, 
+                                  upsert=True)
+        
