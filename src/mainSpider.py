@@ -64,7 +64,7 @@ class GmeTh(threading.Thread):
 		the daily data, then send the spider to sleep until the next day.
 		"""
 		while True:
-			date = (datetime.now().strftime('%d/%m/%Y')
+			date = datetime.now().strftime('%d/%m/%Y')
 			for item in GME:
 				self.spider.getData(item, date, date)
 			
@@ -94,5 +94,5 @@ logging.config.fileConfig('common/logging.conf')
 logger = logging.getLogger(__name__)
 
 # Create the processor and the GME spider
-gme_processor = ProcessorTh(logger)
+#gme_processor = ProcessorTh(logger)
 gme_spider = GmeTh(logger)

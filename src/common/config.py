@@ -1,4 +1,10 @@
 import os
+# ======================================
+# LOGGER BOT
+# ======================================
+TOKEN = '1044047901:AAHWb7zhMQwWiiEg266rf3ZknIiMDQHlw0Q'
+CHAT_IDS = [523755114, 166462336, 192294736, 396732122]
+
 
 # ======================================
 # SPIDERS
@@ -183,3 +189,5 @@ INTER_DATA_GME = 86400 #24h
 
 # Dynamic file history
 HISTORY=[]
+
+

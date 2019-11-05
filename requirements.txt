@@ -1,3 +1,4 @@
 selenium
 pymongo[srv]
 python-dateutil
+telepot
