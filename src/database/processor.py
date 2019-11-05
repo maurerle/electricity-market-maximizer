@@ -1,11 +1,12 @@
+import sys
 import threading
 from common.config import *
 import common.config as conf
 import time
 import pymongo
-import json
 import xmltodict
 
+sys.dont_write_bytecode = True
 
 class ProcessorTh(threading.Thread):
     def __init__(self, log):
@@ -13,7 +14,21 @@ class ProcessorTh(threading.Thread):
         self.name = 'processor'
         self.log = log
         self.running = False
+        self.databaseInit()
         self.start()
+
+    def databaseInit(self):
+        # To be changed with Polito cluster credentials
+
+        self.client = pymongo.MongoClient(
+            "mongodb+srv://new-user:politomerda@cluster0-awyti.mongodb.net/test?retryWrites=true&w=majority"
+            )
+        self.db = client['InterProj']
+        self.collectionMGP = self.db['MGP']
+        self.collectionMI = self.db['MI']
+        self.collectionMSD = self.db['MSD']
+
+
 
     def run(self):
         self.log.info("Processor Running")
@@ -34,12 +49,7 @@ class ProcessorTh(threading.Thread):
 
     def toDatabase(self, fname):
 
-        # To be changed with Polito cluster credentials
-
-        client = pymongo.MongoClient(
-            "mongodb+srv://new-user:politomerda@cluster0-awyti.mongodb.net/test?retryWrites=true&w=majority")
-
-        collection = client['InterProj'][fname[8:-4]]
+        collection = client['InterProj'][fname[8:12]]
 
         with open(DOWNLOAD + '/' + fname, 'r') as file:
             data = file.read()
