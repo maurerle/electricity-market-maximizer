@@ -174,3 +174,5 @@ HISTORY=[]
 
 # To be changed with Polito cluster credentials
 MONGO_STRING = "mongodb+srv://new-user:politomerda@cluster0-awyti.mongodb.net/test?retryWrites=true&w=majority"
+
+DB_NAME = "InterProj"

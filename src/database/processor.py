@@ -20,7 +20,7 @@ class ProcessorTh(threading.Thread):
 
     def databaseInit(self):
         self.client = MongoClient(MONGO_STRING)
-        self.db = self.client['InterProj']
+        self.db = self.client[DB_NAME]
 
     def run(self):
         self.log.info("Processor Running")
