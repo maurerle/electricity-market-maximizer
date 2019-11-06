@@ -1,6 +1,6 @@
 import sys
 import telepot
-from common.config import *
+from src.common.config import *
 
 sys.dont_write_bytecode = True
 

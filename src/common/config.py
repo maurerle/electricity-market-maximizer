@@ -14,9 +14,8 @@ CHAT_IDS = [523755114, 166462336, 192294736, 396732122]
 os.environ['MOZ_HEADLESS'] = '1'
 
 # GME urls
-DOWNLOAD = '/home/luca/Codes/smartgrids/downloads'
+DOWNLOAD = os.getcwd()+'/downloads'
 RESTRICTION = 'https://www.mercatoelettrico.org/It/Download/DownloadDati.aspx'
-FULL_HISTORY = True
 GME = [
 	{
 		'fname':'MGP_PrezziConvenzionali',
@@ -183,9 +182,6 @@ GME = [
 		'url':'https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MB_PAltriServizi'
 	}	
 ]
-
-# GME data interval
-INTER_DATA_GME = 86400 #24h
 
 # Dynamic file history
 HISTORY=[]

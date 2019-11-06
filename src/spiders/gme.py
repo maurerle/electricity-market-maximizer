@@ -2,9 +2,9 @@ import sys
 import os
 import time
 import requests as req
-from common.config import *
-import common.config as conf
-from loggerbot.bot import bot
+from src.common.config import *
+import src.common.config as conf
+from src.loggerbot.bot import bot
 from zipfile import ZipFile
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -48,7 +48,7 @@ class GMESpider():
 		profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/html")
 		
 		# Class init
-		self.driver = webdriver.Firefox(profile, log_path='../logs/geckodrivers.log')
+		self.driver = webdriver.Firefox(profile, log_path='logs/geckodrivers.log')
 		self.driver.set_page_load_timeout(15)
 		self.log = log
 
