@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 import sys, os
-
+import re
 
 # Connection to the MongoDB Server
 mongoClient = MongoClient ('mongodb+srv://new-user:politomerda@cluster0-awyti.mongodb.net/test?retryWrites=true&w=majority')
@@ -51,17 +51,29 @@ def exec_menu(choice):
  
 def date_hour_menu(market):
     print("  --------------- Market: "+ market +" ---------------\n")
-    date = input("  Insert date (yyyymmdd) >>  ")
-    hour = input("  Insert hour (hh) >>  ")
+    while True:
+        date = input("  Insert date (yyyymmdd) >>  ")
+        if re.match(r'^[0-9]{8}$', date):
+            break
+        print('  Invalid date, please enter again!')
+
+    while True:
+        hour = input("  Insert hour (hh) >>  ")
+        if re.match(r'^(0[1-9]|1[0-9]|2[0-4])$', hour):
+            break
+        print('  Invalid hour, please enter a value from 01 to 24!')
 
     collection = db[market]
     col = collection.find_one({"Data": date, 'Ora': hour})
 
-    print("\n  ------------------ Output ------------------\n")
-    for keys in col.keys(): 
-        print ("  ", keys.ljust(50,'_'), col[keys])
+    if col == None:
+        print("\n  No data found for " + date + " at " + hour)
+    else:
+        print("\n  ------------------ Output ------------------\n")
+        for keys in col.keys(): 
+            print ("  ", keys.ljust(50,'_'), col[keys])
 
-    print("\n  Number of fields: ", len(col))
+        print("\n  Number of fields: ", len(col))
 
     print("\n\t [9] Back")
     print("\t [0] Quit")
