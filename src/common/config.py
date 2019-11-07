@@ -16,7 +16,7 @@ os.environ['MOZ_HEADLESS'] = '1'
 # GME urls
 DOWNLOAD = os.getcwd()+'/downloads'
 RESTRICTION = 'https://www.mercatoelettrico.org/It/Download/DownloadDati.aspx'
-GME = [
+GME_NEXT = [
 	{
 		'fname':'MGP_PrezziConvenzionali',
 		'url':'https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MGP_PrezziConvenzionali'
@@ -84,7 +84,9 @@ GME = [
 	{
 		'fname':'MI2_Quantita',
 		'url':'https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI2_Quantita'
-	},
+	}
+]
+GME = [
 	{
 		'fname':'MI3_LimitiTransito',
 		'url':'https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MI3_LimitiTransito'

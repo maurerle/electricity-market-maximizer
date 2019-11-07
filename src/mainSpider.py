@@ -20,8 +20,12 @@ def getDay():
 	bot('INFO', 'GME', 'getDaily started.')
 	spider = GMESpider(logger)
 	date = datetime.now().strftime('%d/%m/%Y')
+	date_nxt = (datetime.now() + relativedelta(days=+1)).strftime('%d/%m/%Y')
 	for item in GME:
 		spider.getData(item, date, date)
+	for item in GME_NEXT:
+		spider.getData(item, date_nxt, date_nxt)
+	spider.driver.quit()
 	bot('INFO', 'GME', 'getDaily ended.')
 
 def getHistory():
