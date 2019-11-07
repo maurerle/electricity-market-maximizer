@@ -1,4 +1,0 @@
-[main.py, line 15, in temp_log()] [CRITICAL] critical message
-[main.py, line 13, in temp_log()] [WARNING] warn message
-[main.py, line 14, in temp_log()] [ERROR] error message
-[main.py, line 15, in temp_log()] [CRITICAL] critical message
