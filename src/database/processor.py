@@ -11,6 +11,25 @@ from pymongo import MongoClient
 sys.dont_write_bytecode = True
 
 class FileProcessor(threading.Thread):
+    """A thread class used to process .xml files and send data to the database.
+	
+	Attributes
+	----------
+		target : str
+			the type of files to process ('history' or 'daily')
+		log : logging.logger
+			logger instance to display and save logs
+        db : pymongo.database.Database
+            the database to use
+	
+	Methods
+	-------
+		databaseInit()
+        run()
+		toDatabase(fname)
+
+	"""
+
     def __init__(self, log, target):
         threading.Thread.__init__(self)
         self.target = target
@@ -19,12 +38,31 @@ class FileProcessor(threading.Thread):
         self.start()
 
     def databaseInit(self):
-        client = MongoClient(MONGO_STRING)
-        db = client[DB_NAME]
+        """Initialize the connection to the database.
+
+        Returns
+		-------
+		    db : pymongo.database.Database
+			    the database to use
+
+        """
+
+        try:
+            self.log.info("Attempting to connect to the database...")
+            client = MongoClient(MONGO_STRING)
+            db = client[DB_NAME]
+        except Exception as e:
+            self.log.error("Exception while connecting to the db: " + str(e))
         
         return db
 
     def run(self):
+        """Method called when the thread start.
+        It runs until the files in the download folder have all been
+        processed and sent to the database.
+
+        """
+
         self.log.info("Processor Running")
         file_cnt = 0
         if self.target == 'history':
@@ -32,7 +70,7 @@ class FileProcessor(threading.Thread):
         elif self.target == 'daily':
             LIMIT = D_FILES
 
-        while file_cnt<LIMIT:
+        while file_cnt < LIMIT:
             # File history managing
             flist = os.listdir(DOWNLOAD)
             flist = list(set(flist) - set([x for x in flist if 'zip' in x or 'void' in x]))
@@ -48,6 +86,15 @@ class FileProcessor(threading.Thread):
             time.sleep(.1)
 
     def toDatabase(self, fname):
+        """Process and send the data to the database.
+
+		Parameters
+		----------
+			fname : str
+				file name of the .xml to process
+
+		"""
+
         self.log.info(f"Processing {fname}")
 
         if fname[8:11] == 'MGP':
