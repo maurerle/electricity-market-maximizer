@@ -1,4 +1,6 @@
 import os
+from datetime import datetime
+
 # ======================================
 # LOGGER BOT
 # ======================================
@@ -186,14 +188,14 @@ GME = [
 ]
 
 # Dynamic file history
-HISTORY=[]
-
-
+#START =  datetime(2017, 2, 1)
+START =  datetime(2019, 9, 1)
+D_FILES = len(GME) + len(GME_NEXT)
+H_FILES = ((datetime.now() - START).days +1)* len(GME_NEXT) + ((datetime.now() - START).days )* len(GME) - 2
 # ======================================
 # DATABASE
 # ======================================
 
 # To be changed with Polito cluster credentials
 MONGO_STRING = "mongodb+srv://new-user:politomerda@cluster0-awyti.mongodb.net/test?retryWrites=true&w=majority"
-
 DB_NAME = "InterProj"

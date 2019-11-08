@@ -1,53 +1,60 @@
 import sys
 import threading
-from common.config import *
-import common.config as conf
-from database.xmlprocessors import  *
+import logging
+import logging.config
+from src.common.config import *
+from src.database.xmlprocessors import  *
 import time
 from pymongo import MongoClient
 
 
 sys.dont_write_bytecode = True
 
-class ProcessorTh(threading.Thread):
-    def __init__(self, log):
+class FileProcessor(threading.Thread):
+    def __init__(self, log, target):
         threading.Thread.__init__(self)
-        self.name = 'processor'
+        self.target = target
         self.log = log
-        self.running = False
-        self.databaseInit()
+        self.db = self.databaseInit()
         self.start()
 
     def databaseInit(self):
-        self.client = MongoClient(MONGO_STRING)
-        self.db = self.client[DB_NAME]
+        client = MongoClient(MONGO_STRING)
+        db = client[DB_NAME]
+        
+        return db
 
     def run(self):
         self.log.info("Processor Running")
-        while True:
-            if len(conf.HISTORY) != 0:
-                self.running = True
-                # File history managing
-                fname = conf.HISTORY.pop(0)
+        file_cnt = 0
+        if self.target == 'history':
+            LIMIT = H_FILES
+        elif self.target == 'daily':
+            LIMIT = D_FILES
+
+        while file_cnt<LIMIT:
+            # File history managing
+            flist = os.listdir(DOWNLOAD)
+            flist = list(set(flist) - set([x for x in flist if 'zip' in x or 'void' in x]))
+            try:
+                fname = flist[0]
                 # Processing
                 self.toDatabase(fname)
                 # Clean folder
                 os.remove(DOWNLOAD + '/' + fname)
-            else:
-                if self.running:
-                    self.running = False
-                    self.log.info("Processing done")
+                file_cnt += 1
+            except:
+                time.sleep(2)
             time.sleep(.1)
 
     def toDatabase(self, fname):
-
-        print("Processing {}".format(fname))
+        self.log.info(f"Processing {fname}")
 
         if fname[8:11] == 'MGP':
             collection = self.db['MGP']
         elif fname[8:10] == 'MI':
             collection = self.db['MI']
-        elif fname[8:11] == 'MSD':
+        elif fname[8:11] == 'MSD' or fname[8:11] == 'MBP':
             collection = self.db['MSD']
         
         if fname[11:-4] == 'LimitiTransito' or fname[11:-4] == 'Transiti':
@@ -59,4 +66,3 @@ class ProcessorTh(threading.Thread):
             collection.update_one({'Data':item['Data'], 'Ora':item['Ora']}, 
                                   {"$set": item}, 
                                   upsert=True)
-        

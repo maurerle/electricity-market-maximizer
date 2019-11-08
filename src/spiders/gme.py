@@ -3,7 +3,6 @@ import os
 import time
 import requests as req
 from src.common.config import *
-import src.common.config as conf
 from src.loggerbot.bot import bot
 from zipfile import ZipFile
 from selenium import webdriver
@@ -51,7 +50,6 @@ class GMESpider():
 		self.driver = webdriver.Firefox(profile, log_path='logs/geckodrivers.log')
 		self.driver.set_page_load_timeout(15)
 		self.log = log
-
 		self.passRestrictions()
 	
 		
@@ -232,19 +230,3 @@ class GMESpider():
 					pass
 
 				time.sleep(5)
-
-		self.updateHistory(zip.namelist())
-	
-	
-	def updateHistory(self, flist):
-		"""Update the HISTORY list in the config. file for the database
-		processor.
-
-		Parameters
-		----------
-			flist: list
-				list of the files contained in the .zip one.
-			
-		"""
-		for xml in flist:
-			conf.HISTORY.append(xml)
