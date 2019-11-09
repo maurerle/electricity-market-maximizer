@@ -56,7 +56,14 @@ def valid_hour(s):
 
 db = databaseInit()
 
-parser = argparse.ArgumentParser(description='Database client')
+example_text = '''example:
+
+    python clientarg.py -m MGP -d 20191107 -hr 11
+    python clientarg.py -m MSD -rm
+    python clientarg.py -rm'''
+parser = argparse.ArgumentParser(description='Database client', 
+                                 epilog=example_text,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
 args = parse_args(parser)
 
 market = args.market

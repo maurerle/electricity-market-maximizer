@@ -1,14 +1,6 @@
 from pymongo import MongoClient
 import sys, os
 import re
-import argparse
-
-parser = argparse.ArgumentParser()
-parser.add_argument("-m", "--market", action="store", dest="market", help="The market")
-parser.add_argument("-d", "--date", action="store", dest="date", help="Root CA file path")
-parser.add_argument("-hr", "--hour", action="store", dest="hour", help="Certificate file path")
-parser.add_argument("-rm", "--remove", action="store_true", dest="useWebsocket", default=False,
-                    help="Use MQTT over WebSocket")
 
 
 def databaseInit():
