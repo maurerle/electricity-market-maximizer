@@ -63,5 +63,5 @@ Use ```pymongo``` functions to retrieve documents.
 (```mongodb+srv://new-user:politomerda@cluster0-awyti.mongodb.net/test?retryWrites=true&w=majority```) in the text box
  'Import connection details from MongoDB SRV connection string'; click on the 'From SRV' button and
  finally 'Save' the connection.
-## 
+### 
 (c) 2019, Gian Pio Domiziani, Luca Gioacchini, Francesco Guaiana, Bruno Valente
