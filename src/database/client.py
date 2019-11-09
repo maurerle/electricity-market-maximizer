@@ -1,21 +1,35 @@
 from pymongo import MongoClient
 import sys, os
 import re
+import argparse
 
-# Connection to the MongoDB Server
-mongoClient = MongoClient ('mongodb+srv://new-user:politomerda@cluster0-awyti.mongodb.net/test?retryWrites=true&w=majority')
-# Connection to the database
-db = mongoClient['InterProj']
+parser = argparse.ArgumentParser()
+parser.add_argument("-m", "--market", action="store", dest="market", help="The market")
+parser.add_argument("-d", "--date", action="store", dest="date", help="Root CA file path")
+parser.add_argument("-hr", "--hour", action="store", dest="hour", help="Certificate file path")
+parser.add_argument("-rm", "--remove", action="store_true", dest="useWebsocket", default=False,
+                    help="Use MQTT over WebSocket")
 
-# Menu definition
-menu_actions = {
-    '1': 'MGP',
-    '2': 'MI',
-    '3': 'MSD',
-}
- 
-# Main menu
-def main_menu():
+
+def databaseInit():
+    """Initialize the connection to the database.
+
+    Returns
+    -------
+        db : pymongo.database.Database
+            the database to use
+
+    """
+
+    try:
+        client = MongoClient('mongodb+srv://new-user:politomerda@cluster0-awyti.mongodb.net/test?retryWrites=true&w=majority')
+        db = client['InterProj']
+    except Exception as e:
+        print("Exception while connecting to the db: " + str(e))
+    
+    return db
+
+def main_menu(db):
     os.system('cls' if os.name == 'nt' else 'clear')
     
     header = "\
@@ -33,62 +47,68 @@ def main_menu():
     print('\t [3] MSD (Mercato per il Servizio di Dispacciamento)')
     print("\n\t [0] Quit")
     choice = input(" >>  ")
-    exec_menu(choice)
- 
-# Execute menu
-def exec_menu(choice):
+    exec_menu(choice, db)
+
+def exec_menu(choice, db):
     os.system('cls' if os.name == 'nt' else 'clear')
+    
+    menu_actions = {'1': 'MGP', '2': 'MI', '3': 'MSD'}
+
     ch = choice.lower()
+
     if ch == '9': 
-        back()
+        # Go back to main menu
+        main_menu(db)
     if ch == '0':
-        exit()
+        # Quit the program
+        sys.exit()
+
     try:
-        date_hour_menu(menu_actions[ch])
+        date_hour_menu(menu_actions[ch], db)
     except KeyError:
         print("Invalid selection, please try again.\n")
-        main_menu()
+        main_menu(db)
  
-def date_hour_menu(market):
+def date_hour_menu(market, db):
     print("  --------------- Market: "+ market +" ---------------\n")
+
+    # Continue asking for a date until the format is not accepted
     while True:
         date = input("  Insert date (yyyymmdd) >>  ")
         if re.match(r'^[0-9]{8}$', date):
             break
         print('  Invalid date, please enter again!')
 
+    # Continue asking for an hour until the format is not accepted
     while True:
         hour = input("  Insert hour (hh) >>  ")
         if re.match(r'^(0[1-9]|1[0-9]|2[0-4])$', hour):
             break
         print('  Invalid hour, please enter a value from 01 to 24!')
 
-    collection = db[market]
-    col = collection.find_one({"Data": date, 'Ora': hour})
-
-    if col == None:
-        print("\n  No data found for " + date + " at " + hour)
-    else:
-        print("\n  ------------------ Output ------------------\n")
-        for keys in col.keys(): 
-            print ("  ", keys.ljust(50,'_'), col[keys])
-
-        print("\n  Number of fields: ", len(col))
+    getDocument(db, market, date, hour)
 
     print("\n\t [9] Back")
     print("\t [0] Quit")
     choice = input(" >>  ")
-    exec_menu(choice)
-    
-# Back to main menu
-def back():
-    main_menu()
- 
-# Exit program
-def exit():
-    sys.exit()
+    exec_menu(choice, db)
+
+def getDocument(db, market, date, hour):
+    collection = db[market]
+    doc = collection.find_one({"Data": date, 'Ora': hour})
+
+    if doc == None:
+        print("\n  No data found for " + date + " at " + hour)
+    else:
+        print("\n  ------------------ Output ------------------\n")
+        for keys in doc.keys(): 
+            print ("  ", keys.ljust(50,'_'), doc[keys])
+
+        print("\n  Number of fields: ", len(doc))
 
 
 if __name__ == "__main__":
+    # Connect to database
+    db = databaseInit()
     # Launch main menu
-    main_menu()
+    main_menu(db)
