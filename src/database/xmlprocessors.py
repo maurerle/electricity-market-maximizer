@@ -3,6 +3,20 @@ import xmltodict
 
 
 def process_file(fname):
+	"""Function to process every .xml file except XXXTransiti.xml and XXXLimitiTransito.xml,
+	for which the function process_transit_file() is used.
+
+	Parameters
+	----------
+	fname : str
+		name of the .xml file
+
+	Returns
+	-------
+	m_dict : dict
+		dictionary with the reformatted data
+	"""
+
 	with open(DOWNLOAD + '/' + fname, 'r') as file:
 	    data = file.read()
 
@@ -33,9 +47,19 @@ def process_file(fname):
 
 
 def process_transit_file(fname):
+	"""Function to process XXXTransiti.xml and XXXLimitiTransito.xml files (XXX = {MGP, MI1, MI2, ...})
+	
+	Parameters
+	----------
+	fname : str
+		name of the .xml file
+	
+	Returns
+	-------
+	m_dict : dict
+		dictionary with the reformatted data
 	"""
-	To process XXXTransiti.xml and XXXLimitiTransito.xml files (XXX = {MGP, MI1, MI2, ...})
-	"""
+
 	with open(DOWNLOAD + '/' + fname, 'r') as file:
 	    data = file.read()
 
@@ -65,6 +89,19 @@ def process_transit_file(fname):
 	return m_dict
 
 def suffix(i):
+	"""Generate a suffix for fields which have the same name in more than one file.
+	
+	Parameters
+	----------
+	i : str
+		input string to generate the suffix
+
+	Returns
+	-------
+	str
+		the proper suffix
+	"""
+
 	switcher = {'Fabbisogno':'_Fabbisogno',
 	            'Prezzi':'_Prezzo', 
 	            'PrezziConvenzionali':'_PrezzoConv',
