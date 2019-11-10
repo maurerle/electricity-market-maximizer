@@ -81,7 +81,7 @@ class FileProcessor(threading.Thread):
             try:
                 fname = flist[0]
                 # Processing
-                self.toDatabase(fname)
+                self.toDatabase(fname) #!!! Leaveme here!! Processa un file per volta
                 # Clean folder
                 os.remove(DOWNLOAD + '/' + fname)
                 file_cnt += 1
