@@ -8,9 +8,8 @@ def databaseInit():
 
     Returns
     -------
-        db : pymongo.database.Database
-            the database to use
-
+    db : pymongo.database.Database
+        the database to use
     """
 
     try:
@@ -22,6 +21,14 @@ def databaseInit():
     return db
 
 def main_menu(db):
+    """Main menu. The user can choose a market or quit the program
+    
+    Parameters
+    ----------
+    db : pymongo.database.Database
+        the database to use
+    """
+
     os.system('cls' if os.name == 'nt' else 'clear')
     
     header = "\
@@ -42,6 +49,16 @@ def main_menu(db):
     exec_menu(choice, db)
 
 def exec_menu(choice, db):
+    """Run the proper function according to the user's choice.
+    
+    Parameters
+    ----------
+    choice : str
+        user's choice
+    db : pymongo.database.Database
+        the database to use
+    """
+
     os.system('cls' if os.name == 'nt' else 'clear')
     
     menu_actions = {'1': 'MGP', '2': 'MI', '3': 'MSD'}
@@ -56,12 +73,22 @@ def exec_menu(choice, db):
         sys.exit()
 
     try:
-        date_hour_menu(menu_actions[ch], db)
+        date_hour_menu(db, menu_actions[ch])
     except KeyError:
         print("Invalid selection, please try again.\n")
         main_menu(db)
  
-def date_hour_menu(market, db):
+def date_hour_menu(db, market):
+    """The user is asked to insert the date and hour for the desired output
+    
+    Parameters
+    ----------
+    db : pymongo.database.Database
+        the database to use
+    market : str
+        market chosen by the user
+    """
+
     print("  --------------- Market: "+ market +" ---------------\n")
 
     # Continue asking for a date until the format is not accepted
@@ -86,6 +113,20 @@ def date_hour_menu(market, db):
     exec_menu(choice, db)
 
 def getDocument(db, market, date, hour):
+    """Retrive the document from the database and print it.
+    
+    Parameters
+    ----------
+    db : the database to use
+        the database to use
+    market : str
+        market chosen by the user
+    date : str
+        date chosen by the user
+    hour : str
+        hour chosen by the user
+    """
+
     collection = db[market]
     doc = collection.find_one({"Data": date, 'Ora': hour})
 

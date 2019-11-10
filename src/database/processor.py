@@ -13,21 +13,27 @@ sys.dont_write_bytecode = True
 class FileProcessor(threading.Thread):
     """A thread class used to process .xml files and send data to the database.
 	
+    Parameters
+    ----------
+    log : logging.logger
+        logger instance to display and save logs
+    target : str
+        the type of files to process ('history' or 'daily')
+
 	Attributes
 	----------
-		target : str
-			the type of files to process ('history' or 'daily')
-		log : logging.logger
-			logger instance to display and save logs
-        db : pymongo.database.Database
-            the database to use
+    target : str
+        the type of files to process ('history' or 'daily')
+    log : logging.logger
+        logger instance to display and save logs
+    db : pymongo.database.Database
+        the database to use
 	
 	Methods
 	-------
-		databaseInit()
-        run()
-		toDatabase(fname)
-
+    databaseInit()
+    run()
+    toDatabase(fname)
 	"""
 
     def __init__(self, log, target):
@@ -42,9 +48,8 @@ class FileProcessor(threading.Thread):
 
         Returns
 		-------
-		    db : pymongo.database.Database
-			    the database to use
-
+        db : pymongo.database.Database
+            the database to use
         """
 
         try:
@@ -60,7 +65,6 @@ class FileProcessor(threading.Thread):
         """Method called when the thread start.
         It runs until the files in the download folder have all been
         processed and sent to the database.
-
         """
 
         self.log.info("Processor Running")
@@ -90,9 +94,8 @@ class FileProcessor(threading.Thread):
 
 		Parameters
 		----------
-			fname : str
-				file name of the .xml to process
-
+        fname : str
+            name of the .xml file to process
 		"""
 
         self.log.info(f"Processing {fname}")
