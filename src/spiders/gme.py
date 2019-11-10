@@ -15,14 +15,14 @@ class GMESpider():
 
 	Parameters
 	----------
-		log: logging.logger
+		log : logging.logger
 			logger instalnce to display and save logs
 	
 	Attributes
 	----------
-		driver: selenium.webdriver.firefox.webdriver.WebDriver
+		driver : selenium.webdriver.firefox.webdriver.WebDriver
 			selenium instance creating a Firefox web driver
-		log: logging.logger
+		log : logging.logger
 			logger instalnce to display and save logs
 	
 	Methods
@@ -33,7 +33,6 @@ class GMESpider():
 		checkDownload(fname)
 		unzip(fname)
 		updateHistory(flist)
-
 	"""
 	def __init__(self, log):
 		# Set the firefox profile preferences
@@ -57,7 +56,6 @@ class GMESpider():
 		"""At the beginning of each session the GME website requires the flag and the submission
 		of the Terms and Conditions agreement. Selenium emulate the user's click and passes this
 		restrictions.
-
 		"""
 		connected = False
 		restarted = False
@@ -97,11 +95,11 @@ class GMESpider():
 
 		Parameters
 		----------
-			gme: dict
+			gme : dict
 				GME url to retrieve data and name of the downloaded file without extension
-			start: str
+			start : str
 				starting date data are refearred to
-			end: str
+			end : str
 				ending date data are refearred to
 
 		"""
@@ -146,19 +144,18 @@ class GMESpider():
 
 		Parameters
 		----------
-			fname: str
+			fname : str
 				file name without extension retrieved by the dict. 
 				in the config. file
-			start: str
+			start : str
 				starting date data are refearred to
-			end: str
+			end : str
 				ending date data are refearred to
 
 		Returns
 		-------
-			fname: str
+			str
 				zipped file name
-
 		"""
 		dds,mms,yys = start.split("/")
 		dde,mme,yye = end.split("/")
@@ -174,13 +171,13 @@ class GMESpider():
 
 		Parameters
 		----------
-			fname: str
+			fname : str
+				name of the downloaded file
 
 		Returns
 		-------
 			bool
 				True if the file has been downloaded, False otherwise
-
 		"""
 		if os.path.isfile(DOWNLOAD+'/'+fname):
 			self.log.info("Zip file downloaded".format(fname))
@@ -204,9 +201,8 @@ class GMESpider():
 
 		Parameters
 		----------
-			fname:str
+			fname : str
 				.zip file name
-
 		"""
 		unzipped = False
 		while not unzipped:
