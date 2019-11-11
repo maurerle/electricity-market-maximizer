@@ -184,6 +184,10 @@ GME = [
 	{
 		'fname':'MB_PAltriServizi',
 		'url':'https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MB_PAltriServizi'
+	},
+	{
+		'fname':'OfferteFree_Pubbliche',
+		'url':'https://www.mercatoelettrico.org/it/Download/DownloadDati.aspx?val=OfferteFree_Pubbliche'
 	}	
 ]
 
