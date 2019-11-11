@@ -13,7 +13,7 @@ CHAT_IDS = [523755114, 166462336, 192294736, 396732122]
 # ======================================
 
 # Hide the Firefox window when automating with selenium
-os.environ['MOZ_HEADLESS'] = '1'
+#os.environ['MOZ_HEADLESS'] = '1'
 
 # GME urls
 DOWNLOAD = os.getcwd()+'/downloads'
