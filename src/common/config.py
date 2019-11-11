@@ -186,6 +186,16 @@ GME = [
 		'url':'https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MB_PAltriServizi'
 	}
 ]
+TERNA = [
+	{
+		'fname':'ActualLoad',
+		'url':"https://www.terna.it/it/sistema-elettrico/transparency-report/actual-generation"
+	},
+	{
+		'fname':'',
+		'url':''
+	}
+]
 
 # Dynamic file history
 START =  datetime(2017, 2, 1)

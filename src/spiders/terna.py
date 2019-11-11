@@ -50,7 +50,6 @@ class TernaSpider():
         terna_owned = False
         while not terna_owned:
             try:       
-                
                 # Click on graph
                 graph = self.driver.find_element_by_css_selector("visual-container-modern.visual-container-component:nth-child(28) > transform:nth-child(1)")
                 self.driver.execute_script('arguments[0].click();', graph)
