@@ -186,6 +186,10 @@ GME = [
 		'url':'https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MB_PAltriServizi'
 	}	
 ]
+GME_WEEK = {
+	'fname':'OfferteFree_Pubbliche',
+	'url':'https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=OfferteFree_Pubbliche'
+}
 
 # Dynamic file history
 START =  datetime(2017, 2, 1)
