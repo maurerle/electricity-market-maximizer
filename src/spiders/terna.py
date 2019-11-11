@@ -29,6 +29,8 @@ class TernaSpider():
         	"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     	)
 
+        self.driver = webdriver.Firefox(profile, log_path='../../logs/geckodrivers.log')
+
         self.driver = webdriver.Firefox(profile)
         self.driver.set_page_load_timeout(15)
         self.action = ActionChains(self.driver)
@@ -78,8 +80,8 @@ class TernaSpider():
                 print('Try Again')
                 time.sleep(1)       
         
-if __name__ == '__main__':
-    spider = TernaSpider()
-    spider.getData()
-    URL = "https://www.terna.it/it/sistema-elettrico/transparency-report/actual-generation"
-    spider.driver.quit
+
+URL = "https://www.terna.it/it/sistema-elettrico/transparency-report/actual-generation"
+
+spider = TernaSpider()
+spider.getData(URL)
