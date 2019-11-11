@@ -18,6 +18,7 @@ os.environ['MOZ_HEADLESS'] = '1'
 # GME urls
 DOWNLOAD = os.getcwd()+'/downloads'
 RESTRICTION = 'https://www.mercatoelettrico.org/It/Download/DownloadDati.aspx'
+
 GME_NEXT = [
 	{
 		'fname':'MGP_PrezziConvenzionali',
@@ -186,14 +187,15 @@ GME = [
 		'url':'https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=MB_PAltriServizi'
 	}	
 ]
+
 GME_WEEK = {
 	'fname':'OfferteFree_Pubbliche',
-	'url':'https://www.mercatoelettrico.org/It/download/DownloadDati.aspx?val=OfferteFree_Pubbliche'
+	'url':'https://www.mercatoelettrico.org/it/Download/DownloadDati.aspx?val=OfferteFree_Pubbliche'
 }
 
 # Dynamic file history
 START =  datetime(2017, 2, 1)
-D_FILES = len(GME) + len(GME_NEXT)
+D_FILES = len(GME) + len(GME_NEXT) + len(GME_WEEK)
 H_FILES = ((datetime.now() - START).days +1)* len(GME_NEXT) + ((datetime.now() - START).days )* len(GME) - 2
 # ======================================
 # DATABASE

@@ -23,11 +23,14 @@ def getDay():
 
 	date = datetime.now().strftime('%d/%m/%Y')
 	date_nxt = (datetime.now() + relativedelta(days=+1)).strftime('%d/%m/%Y')
+	date_week = (datetime.now() + relativedelta(days=-8)).strftime('%d/%m/%Y')
 	
 	for item in GME:
 		spider.getData(item, date, date)
 	for item in GME_NEXT:
 		spider.getData(item, date_nxt, date_nxt)
+	spider.getData(GME_WEEK, date_week)
+
 	spider.driver.quit()
 	bot('INFO', 'GME', 'getDaily ended.')
 
