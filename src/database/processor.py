@@ -3,7 +3,8 @@ import threading
 import logging
 import logging.config
 from src.common.config import *
-from src.database.xmlprocessors import  *
+from src.loggerbot.bot import bot
+from src.database.xmlprocessors import *
 import time
 from pymongo import MongoClient
 
@@ -56,10 +57,13 @@ class FileProcessor(threading.Thread):
             self.log.info("Attempting to connect to the database...")
             client = MongoClient(MONGO_STRING)
             db = client[DB_NAME]
+            self.log.info("Connected to the database.")
+            return db
         except Exception as e:
             self.log.error("Exception while connecting to the db: " + str(e))
+            # Bot Notification
+            bot('ERROR', 'GME_MongoClient', 'Connection failed.')
         
-        return db
 
     def run(self):
         """Method called when the thread start.
@@ -67,7 +71,7 @@ class FileProcessor(threading.Thread):
         processed and sent to the database.
         """
 
-        self.log.info("Processor Running")
+        self.log.info("GME Processor Running")
         file_cnt = 0
         if self.target == 'history':
             LIMIT = H_FILES
@@ -88,6 +92,7 @@ class FileProcessor(threading.Thread):
             except:
                 time.sleep(2)
             time.sleep(.1)
+        self.log.info("GME Processing Done")
 
     def toDatabase(self, fname):
         """Process and send the data to the database.
@@ -113,6 +118,11 @@ class FileProcessor(threading.Thread):
             data = process_file(fname)
 
         for item in data.values():
-            collection.update_one({'Data':item['Data'], 'Ora':item['Ora']}, 
-                                  {"$set": item}, 
-                                  upsert=True)
+            try:
+                collection.update_one({'Data':item['Data'], 'Ora':item['Ora']}, 
+                                    {"$set": item}, 
+                                    upsert=True)
+            except Exception as e:
+                self.log.error("Exception while updating the db: " + str(e))
+                # Bot Notification
+                bot('ERROR', 'GME_MongoClient', 'Update failed.')
