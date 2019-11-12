@@ -40,7 +40,7 @@ def getHistory():
 	"""
 	bot('INFO', 'GME', 'getHistory started.')
 	spider = GMESpider(logger)
-	FileProcessor(logger, 'history')
+	#FileProcessor(logger, 'history')
 
 	start = START
 	limit = datetime.now()
@@ -80,4 +80,11 @@ def getHistory():
 				datetime.now().strftime('%d/%m/%Y')
 		)
 	
+	# Get the public offers referred to one week before the current
+	start = START
+	limit = datetime.now() + relativedelta(days=-7)
+	while start.strftime('%dd/%mm/%YY') != limit.strftime('%dd/%mm/%YY'):
+		spider.getData(GME_WEEK, start.strftime('%d/%m/%Y'))
+		start += relativedelta(days=+1)
+
 	bot('INFO', 'GME', 'getHistory ended.')

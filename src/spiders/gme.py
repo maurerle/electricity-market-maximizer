@@ -233,10 +233,18 @@ class GMESpider():
 			
 				os.remove(DOWNLOAD+'/'+fname)
 				unzipped = True
+				
+				
+				# Remove the MPEG files
+				for files in os.listdir(DOWNLOAD):
+					if 'MPEG' in files: 
+						os.remove(DOWNLOAD+'/'+files)
 
+				# If the zip contains zipped files extract them
 				if containzip:
 					for item in zlist:
-						self.unZip(item)
+						if 'MPEG' not in item:
+							self.unZip(item)
 			
 			except:	
 				self.log.error(f"{fname} not found. Trying again...")
