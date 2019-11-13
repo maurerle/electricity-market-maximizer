@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+import pathlib
 
 # ======================================
 # LOGGER BOT
@@ -16,7 +17,9 @@ CHAT_IDS = [523755114, 166462336, 192294736, 396732122]
 #os.environ['MOZ_HEADLESS'] = '1'
 
 # GME urls
-DOWNLOAD = os.getcwd()+'/downloads'
+DOWNLOAD = pathlib.Path.cwd() / 'downloads'
+#DOWNLOAD = 'C:/Users/franc/Desktop/ICT/Primo Semestre II/Interdisciplinary projects/repo/smartgrids/downloads'
+#DOWNLOAD = os.getcwd()+'/downloads'
 RESTRICTION = 'https://www.mercatoelettrico.org/It/Download/DownloadDati.aspx'
 GME_NEXT = [
 	{
