@@ -71,8 +71,6 @@ class TernaSpider():
                 self.driver.execute_script('arguments[0].click();', btn)
                 terna_owned = True
 
-
-
             except NoSuchElementException:
                 print('Try Again')
                 time.sleep(1)
@@ -150,8 +148,11 @@ class TernaSpider():
             	"visual-container-modern.visual-container-component:nth-child(14) > transform:nth-child(1)"
         	    )))
                 category = self.driver.find_element_by_css_selector("visual-container-modern.visual-container-component:nth-child(14) > transform:nth-child(1)")
-                self.action.move_to_element(category).perform()
+                #self.action.move_to_element(category).perform()
                 category.click()
+                self.selectYear()
+                self.goBack(15)
+                self.selectMonth()
                 #self.action.move_to_element(category).perform()
                 # # click on menu item Scheduled Foreign Exchange
                 # print('clicking on first subcategory...')
@@ -190,7 +191,33 @@ class TernaSpider():
                 print('Try Again')
                 time.sleep(1)
 
+    def selectYear(self):
+        year = "2016"
+        wait(self.driver, 1).until(ec.element_to_be_clickable((
+            By.XPATH, 
+            f"//*[text()={year}]"
+        )))
+        #ybar = driver.find_element_by_class_name("slicerItemsContainer")
+        #ylist = driver.find_elements_by_class_name("individualItemContainer")
+        item = self.driver.find_element_by_xpath(f"//*[text()={year}]")
+        item.click()
 
+    def goBack(self, nit):
+        print('Going back')
+        for i in range(nit):
+            item = self.driver.find_element_by_xpath('./..') 
+            print(item.get_attribute('innerHTML'))
+
+    def selectMonth(self):
+        print("here")
+        month = 'Jan'
+        wait(self.driver, 2).until(ec.element_to_be_clickable((
+            By.CSS_SELECTOR, 
+            "visual-container-modern.visual-container-component:nth-child(16) > transform:nth-child(1) > div:nth-child(1) > div:nth-child(3) > visual-modern:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1)"
+        )))
+        item = self.driver.find_element_by_css_selector("visual-container-modern.visual-container-component:nth-child(16) > transform:nth-child(1) > div:nth-child(1) > div:nth-child(3) > visual-modern:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1)")
+        #item = driver.find_element_by_class_name("slicer-dropdown-menu").click()
+        print(item.get_attribute('innerHTML'))      
 #passare in config
 load = [
             { #Total Load
