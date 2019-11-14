@@ -119,7 +119,16 @@ class TernaSpider():
 
         self.driver.get(url)
         self.driver.switch_to.frame(self.driver.find_element_by_id(frm))
-
+        try:
+            wait(self.driver, 1).until(ec.frame_to_be_available_and_switch_to_it((
+                By.XPATH,
+                '/html/body/div/iframe'
+            )))
+            print("trying")
+        except TimeoutException:
+            time.sleep(1)
+            print("again")
+        
         try:
             wait(self.driver, 1).until(ec.frame_to_be_available_and_switch_to_it((
                 By.XPATH,
@@ -132,16 +141,18 @@ class TernaSpider():
 
         historyowned = False
 
-        while not historyowned:
-
+        while not historyowned: 
             try:
                 # click on menu item Transmission
                 print('clicking on transmission...')
-                category = self.driver.find_element_by_css_selector(
-                    "visual-container-modern.visual-container-component:nth-child(14) > transform:nth-child(1)")
-                self.driver.execute_script('arguments[0].click();', category)
+                wait(self.driver, 1).until(ec.element_to_be_clickable((
+            	By.CSS_SELECTOR, 
+            	"visual-container-modern.visual-container-component:nth-child(14) > transform:nth-child(1)"
+        	    )))
+                category = self.driver.find_element_by_css_selector("visual-container-modern.visual-container-component:nth-child(14) > transform:nth-child(1)")
                 self.action.move_to_element(category).perform()
-                time.sleep(5)
+                category.click()
+                #self.action.move_to_element(category).perform()
                 # # click on menu item Scheduled Foreign Exchange
                 # print('clicking on first subcategory...')
                 # sub_category = self.driver.find_element_by_css_selector("visual-container-modern.visual-container-component:nth-child(19) > transform:nth-child(1)")
@@ -165,7 +176,10 @@ class TernaSpider():
             except NoSuchElementException:
                 print('Try Again')
                 time.sleep(1)
-
+            except TimeoutException:
+                print('Try Again Time')
+                time.sleep(1)
+        
         while not historyowned:
             try:
                 # Download button
