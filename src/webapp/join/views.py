@@ -5,3 +5,6 @@ def index(request):
 
 def runModel(request):
     return render(request, 'runModel.html')
+
+def about(request):
+    return render(request, 'dataSource.html')
