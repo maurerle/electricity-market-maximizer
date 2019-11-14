@@ -28,7 +28,8 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 STATICFILES_DIRS = [
-    "/home/luca/Codes/smartgrids/src/webapp/join/static",
+    #"/home/luca/Codes/smartgrids/src/webapp/join/static",
+    "/home/luca/Codes/smartgrids/src/webapp/static",
 ]
 
 # Application definition
