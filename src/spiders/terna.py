@@ -276,7 +276,7 @@ print(day)
 print(dl_center['frame'])
 spider = TernaSpider()
 spider.getHistory(dl_center['url'], dl_center['frame'])
-spider.quit()
+#spider.quit()
 #
 # #LOAD ACQUISITION TODAY - all categories
 # for item in load:
