@@ -13,8 +13,8 @@ def process_file(fname):
 
 	Returns
 	-------
-	m_dict : dict
-		dictionary with the reformatted data
+	m_list : list
+		list of dictionaries with the reformatted data
 	"""
 
 	with open(DOWNLOAD + '/' + fname, 'r') as file:
@@ -26,24 +26,25 @@ def process_file(fname):
 	# Delete unuseful information of the xml file
 	del dic["xs:schema"]
 
-	date = dic[next(iter(dic))][0]['Data']
-
-	# Create an empty dictionary with 24 keys (keys' format is yyyymmdd_hh)
-	m_dict = {}
+	# Everything is under a key...
+	dic = dic[next(iter(dic))]
+	
+	# New list of 24 dictionaries, one per hour
+	m_list = []
+	date = dic[0]['Data']
 	for hour in range(1,25):
-		key = date + '_' + '{:02d}'.format(hour)
-		m_dict[key] = {'Data': date, 'Ora': '{:02d}'.format(hour)}
+		m_list[hour] = {'Data': date, 'Ora': '{:02d}'.format(hour)}
 
-	# Fill up the new dictionary m_dict with reformatted keys and values
-	for h in dic[next(iter(dic))]:
-		key1 = h['Data'] + '_' + '{:02d}'.format(int(h['Ora']))
+	# Fill up the new list m_list with reformatted keys and values
+	for h in dic:
+		key1 = (int(h['Ora'])) - 1 # hours go from 1 to 24, list indices start from 0
 
 		# Start iterating from the 4th key (first 3 keys are 'Data', 'Mercato', 'Ora')
 		for i in list(h.keys())[3:]:
 			key2 = h['Mercato'] + '_' + i + suffix(fname[11:-4])
-			m_dict[key1][key2] = float(h[i].replace(',','.'))
+			m_list[key1][key2] = float(h[i].replace(',','.'))
 
-	return m_dict
+	return m_list
 
 
 def process_transit_file(fname):
@@ -56,8 +57,8 @@ def process_transit_file(fname):
 	
 	Returns
 	-------
-	m_dict : dict
-		dictionary with the reformatted data
+	m_list : list
+		list of dictionaries with the reformatted data
 	"""
 
 	with open(DOWNLOAD + '/' + fname, 'r') as file:
@@ -69,24 +70,55 @@ def process_transit_file(fname):
 	# Delete unuseful information of the xml file
 	del dic["xs:schema"]
 
-	date = dic[next(iter(dic))][0]['Data']
-
-	# Create an empty dictionary with 24 keys (keys' format is yyyymmdd_hh)
-	m_dict = {}
+	# Everything is under a key...
+	dic = dic[next(iter(dic))]
+	
+	# New list of 24 dictionaries, one per hour
+	m_list = []
+	date = dic[0]['Data']
 	for hour in range(1,25):
-		key = date + '_' + '{:02d}'.format(hour)
-		m_dict[key] = {'Data': date, 'Ora': '{:02d}'.format(hour)}
+		m_list[hour] = {'Data': date, 'Ora': '{:02d}'.format(hour)}
 
 	# Fill up the new dictionary m_dict with reformatted keys and values
-	for h in dic[next(iter(dic))]:
-		key1 = h['Data'] + '_' + '{:02d}'.format(int(h['Ora']))
+	for h in dic:
+		key1 = (int(h['Ora'])) - 1 # hours go from 1 to 24, list indices start from 0
 
 		# Start iterating from the 6th key (first 5 keys are 'Data', 'Mercato', 'Ora', 'Da', 'A')
 		for i in list(h.keys())[5:]:
 			key2 = h['Mercato'] + '_' + h['Da'] + '_' + h['A'] + '_' + i
-			m_dict[key1][key2] = float(h[i].replace(',','.'))
+			m_list[key1][key2] = float(h[i].replace(',','.'))
 
-	return m_dict
+	return m_list
+
+
+def process_OffPub(fname):
+	"""Function to process XXXOffertePubblice.xml files (XXX = {MGP, MI1, MI2, ...})
+	
+	Parameters
+	----------
+	fname : str
+		name of the .xml file
+	
+	Returns
+	-------
+	m_list : list
+		list of dictionaries with the reformatted data
+	"""
+
+	with open(DOWNLOAD + '/' + fname, 'r') as file:
+	    data = file.read()
+
+	# Convert the xml file to dictionary
+	dic = xmltodict.parse(data)["NewDataSet"]
+
+	# Delete unuseful information of the xml file
+	del dic["xs:schema"]
+
+	# Everything is under a key...
+	dic = dic[next(iter(dic))]
+
+	return dic
+
 
 def suffix(i):
 	"""Generate a suffix for fields which have the same name in more than one file.

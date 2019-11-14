@@ -111,13 +111,22 @@ class FileProcessor(threading.Thread):
             collection = self.db['MI']
         elif fname[8:11] == 'MSD' or fname[8:11] == 'MBP':
             collection = self.db['MSD']
+        elif fname[11:-4] == 'OffertePubbliche':
+            collection = self.db['OffertePubbliche']
         
         if fname[11:-4] == 'LimitiTransito' or fname[11:-4] == 'Transiti':
-            data = process_transit_file(fname)
+            parsed_data = process_transit_file(fname)
+            sendData(parsed_data)
+        elif fname[11:-4] == 'OffertePubbliche':
+            parsed_data = process_OffPub(fname)
+            collection.insert_many(parsed_data)
         else:
-            data = process_file(fname)
+            parsed_data = process_file(fname)
+            sendData(parsed_data)
 
-        for item in data.values():
+
+    def sendData(parsed_data):
+        for item in parsed_data:
             try:
                 collection.update_one({'Data':item['Data'], 'Ora':item['Ora']}, 
                                     {"$set": item}, 
