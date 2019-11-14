@@ -115,7 +115,7 @@ class TernaSpider():
         target.exists()
         p_file_0.replace(target)
 
-    def getHistory(self, url, frm, mod, d):
+    def getHistory(self, url, frm):
 
         self.driver.get(url)
         self.driver.switch_to.frame(self.driver.find_element_by_id(frm))
@@ -129,37 +129,55 @@ class TernaSpider():
         except TimeoutException:
             time.sleep(1)
             print("again")
+
         historyowned = False
 
         while not historyowned:
 
             try:
                 # click on menu item Transmission
-                # click on menu item Scheduled Foreign Echange
-                # set Country
+                print('clicking on transmission...')
+                category = self.driver.find_element_by_css_selector(
+                    "visual-container-modern.visual-container-component:nth-child(14) > transform:nth-child(1)")
+                self.driver.execute_script('arguments[0].click();', category)
+                self.action.move_to_element(category).perform()
+                time.sleep(5)
+                # # click on menu item Scheduled Foreign Exchange
+                # print('clicking on first subcategory...')
+                # sub_category = self.driver.find_element_by_css_selector("visual-container-modern.visual-container-component:nth-child(19) > transform:nth-child(1)")
+                # self.driver.execute_script('arguments[0].click();', sub_category)
+                # self.action.move_to_element(sub_category).perform()
+                # set Country - Default All
                 # set month
                 # set Year
                 # Click on Options button
-                btn = self.driver.find_element_by_class_name('vcMenuBtn')
-                self.driver.execute_script('arguments[0].click();', btn)
-                self.action.move_to_element(btn).perform()
-                # Click on Export Data
-                btn = self.driver.find_element_by_xpath(
-                    "/html/body/div[" + d + "]/drop-down-list/ng-transclude/ng-repeat[1]/drop-down-list-item/ng-transclude/ng-switch/div")
-                self.action.move_to_element(btn).perform()
-                self.driver.execute_script('arguments[0].click();', btn)
-                # click on Export Data
+                # btn = self.driver.find_element_by_class_name('vcMenuBtn')
+                # self.driver.execute_script('arguments[0].click();', btn)
+                # self.action.move_to_element(btn).perform()
+                # # Click on Export Data
+                # btn = self.driver.find_element_by_xpath(
+                #     "/html/body/div[9]/drop-down-list/ng-transclude/ng-repeat[1]/drop-down-list-item/ng-transclude/ng-switch/div")
+                # self.action.move_to_element(btn).perform()
+                # self.driver.execute_script('arguments[0].click();', btn)
                 # click on download button
-
-
                 historyowned=True
 
             except NoSuchElementException:
                 print('Try Again')
                 time.sleep(1)
 
+        while not historyowned:
+            try:
+                # Download button
+                btn = self.driver.find_element_by_class_name("primary")
+                self.driver.execute_script('arguments[0].click();', btn)
+                historyowned = True
+            except NoSuchElementException:
+                print('Try Again')
+                time.sleep(1)
 
 
+#passare in config
 load = [
             { #Total Load
                 'name': 'TotalLoad',
@@ -224,12 +242,13 @@ dl_center = {
     'url':'https://www.terna.it/it/sistema-elettrico/transparency-report/download-center',
     'frame': 'iframeDownload',
     'ntch': '',
-    'div':'div'
+    'div':''
 }
 
 
 
 ###############################################################################
+#just some uses of Path.
 xpath=Path.cwd()
 print('cwd ' + str(xpath))
 print('[-1] ' + str(xpath.parents[1]))
@@ -239,22 +258,30 @@ print(xpath)
 day = datetime.now().strftime('%d%m%Y')
 print(day)
 
-for item in load:
-    print(item['frame'])
-    spider = TernaSpider()
-    spider.getData(item['url'], item['frame'], item['ntch'], item['div'])
-    spider.checkdownload(xpath_file)
-    spider.setFname(xpath, item['name'], day)
-    spider.quit()
-
-
-for gen in generation:
-    print(gen['frame'])
-    spider = TernaSpider()
-    spider.getData(gen['url'], gen['frame'], gen['ntch'], gen['div'])
-    spider.checkdownload(xpath_file)
-    spider.setFname(xpath, gen['name'], day)
-    spider.quit()
+#Download Center
+print(dl_center['frame'])
+spider = TernaSpider()
+spider.getHistory(dl_center['url'], dl_center['frame'])
+spider.quit()
+#
+# #LOAD ACQUISITION TODAY - all categories
+# for item in load:
+#     print(item['frame'])
+#     spider = TernaSpider()
+#     spider.getData(item['url'], item['frame'], item['ntch'], item['div'])
+#     spider.checkdownload(xpath_file)
+#     spider.setFname(xpath, item['name'], day)
+#     spider.quit()
+#
+#
+# #GENERATION ACQUISITION TODAY - all categories
+# for gen in generation:
+#     print(gen['frame'])
+#     spider = TernaSpider()
+#     spider.getData(gen['url'], gen['frame'], gen['ntch'], gen['div'])
+#     spider.checkdownload(xpath_file)
+#     spider.setFname(xpath, gen['name'], day)
+#     spider.quit()
 
 
 
