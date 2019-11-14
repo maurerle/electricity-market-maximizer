@@ -2,3 +2,4 @@ logs/
 downloads/
 __pycache__/
 .vscode/
+.idea/

@@ -1,19 +1,17 @@
 import sys
 import threading
-import logging
-import logging.config
 from src.common.config import *
 from src.loggerbot.bot import bot
 from src.database.xmlprocessors import *
 import time
 from pymongo import MongoClient
 
-
 sys.dont_write_bytecode = True
+
 
 class FileProcessor(threading.Thread):
     """A thread class used to process .xml files and send data to the database.
-	
+
     Parameters
     ----------
     log : logging.logger
@@ -21,21 +19,21 @@ class FileProcessor(threading.Thread):
     target : str
         the type of files to process ('history' or 'daily')
 
-	Attributes
-	----------
+    Attributes
+    ----------
     target : str
         the type of files to process ('history' or 'daily')
     log : logging.logger
         logger instance to display and save logs
     db : pymongo.database.Database
         the database to use
-	
-	Methods
-	-------
+
+    Methods
+    -------
     databaseInit()
     run()
     toDatabase(fname)
-	"""
+    """
 
     def __init__(self, log, target):
         threading.Thread.__init__(self)
@@ -48,7 +46,7 @@ class FileProcessor(threading.Thread):
         """Initialize the connection to the database.
 
         Returns
-		-------
+        -------
         db : pymongo.database.Database
             the database to use
         """
@@ -63,7 +61,6 @@ class FileProcessor(threading.Thread):
             self.log.error("Exception while connecting to the db: " + str(e))
             # Bot Notification
             bot('ERROR', 'GME_MongoClient', 'Connection failed.')
-        
 
     def run(self):
         """Method called when the thread start.
@@ -97,11 +94,11 @@ class FileProcessor(threading.Thread):
     def toDatabase(self, fname):
         """Process and send the data to the database.
 
-		Parameters
-		----------
+        Parameters
+        ----------
         fname : str
             name of the .xml file to process
-		"""
+        """
 
         self.log.info(f"Processing {fname}")
 
@@ -116,20 +113,19 @@ class FileProcessor(threading.Thread):
         
         if fname[11:-4] == 'LimitiTransito' or fname[11:-4] == 'Transiti':
             parsed_data = process_transit_file(fname)
-            sendData(parsed_data)
+            self.sendData(parsed_data, collection)
         elif fname[11:-4] == 'OffertePubbliche':
             parsed_data = process_OffPub(fname)
             collection.insert_many(parsed_data)
         else:
             parsed_data = process_file(fname)
-            sendData(parsed_data)
+            self.sendData(parsed_data, collection)
 
-
-    def sendData(parsed_data):
+    def sendData(self, parsed_data, collection):
         for item in parsed_data:
             try:
-                collection.update_one({'Data':item['Data'], 'Ora':item['Ora']}, 
-                                    {"$set": item}, 
+                collection.update_one({'Data':item['Data'], 'Ora':item['Ora']},
+                                    {"$set": item},
                                     upsert=True)
             except Exception as e:
                 self.log.error("Exception while updating the db: " + str(e))
