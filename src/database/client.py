@@ -15,10 +15,10 @@ def databaseInit():
     try:
         client = MongoClient('mongodb+srv://new-user:politomerda@cluster0-awyti.mongodb.net/test?retryWrites=true&w=majority')
         db = client['InterProj']
+        return db
     except Exception as e:
         print("Exception while connecting to the db: " + str(e))
-    
-    return db
+
 
 def main_menu(db):
     """Main menu. The user can choose a market or quit the program
