@@ -136,42 +136,35 @@ class TernaSpider():
         except TimeoutException:
             time.sleep(1)
             print("again")
-
+        gparent = self.driver.find_element_by_tag_name('html')
         historyowned = False
-
+        
         while not historyowned: 
             try:
                 # click on menu item Transmission
                 print('clicking on transmission...')
                 wait(self.driver, 1).until(ec.element_to_be_clickable((
             	By.CSS_SELECTOR, 
-            	"visual-container-modern.visual-container-component:nth-child(14) > transform:nth-child(1)"
+            	"visual-container-modern.visual-container-component:nth-child(4) > transform:nth-child(1)"
         	    )))
-                category = self.driver.find_element_by_css_selector("visual-container-modern.visual-container-component:nth-child(14) > transform:nth-child(1)")
-                #self.action.move_to_element(category).perform()
-                category.click()
-                self.selectYear()
-                self.goBack(15)
-                self.selectMonth()
-                #self.action.move_to_element(category).perform()
-                # # click on menu item Scheduled Foreign Exchange
-                # print('clicking on first subcategory...')
-                # sub_category = self.driver.find_element_by_css_selector("visual-container-modern.visual-container-component:nth-child(19) > transform:nth-child(1)")
-                # self.driver.execute_script('arguments[0].click();', sub_category)
-                # self.action.move_to_element(sub_category).perform()
-                # set Country - Default All
-                # set month
-                # set Year
-                # Click on Options button
-                # btn = self.driver.find_element_by_class_name('vcMenuBtn')
-                # self.driver.execute_script('arguments[0].click();', btn)
-                # self.action.move_to_element(btn).perform()
-                # # Click on Export Data
-                # btn = self.driver.find_element_by_xpath(
-                #     "/html/body/div[9]/drop-down-list/ng-transclude/ng-repeat[1]/drop-down-list-item/ng-transclude/ng-switch/div")
-                # self.action.move_to_element(btn).perform()
-                # self.driver.execute_script('arguments[0].click();', btn)
-                # click on download button
+                parent = self.driver.find_element_by_css_selector(".visualContainerHost > visual-container-repeat:nth-child(1)")
+                temp = parent.find_element_by_css_selector("visual-container-modern.visual-container-component:nth-child(14) > transform:nth-child(1)")
+                temp.click()
+                temp = parent.find_element_by_css_selector("visual-container-modern.visual-container-component:nth-child(19) > transform:nth-child(1)")
+                temp.click()
+                self.selectYear(parent, 2016)
+                time.sleep(1)
+                self.selectYear(parent, 2017)
+                time.sleep(1)
+                self.selectMonth(parent, gparent, 'Jan')
+                temp = parent.find_element_by_css_selector("visual-container-modern.visual-container-component:nth-child(21) > transform:nth-child(1)")
+                temp.click()
+                self.selectYear(parent, 2016)
+                time.sleep(1)
+                self.selectYear(parent, 2017)
+                time.sleep(1)
+                self.selectMonth(parent, gparent, 'Jan')
+
                 historyowned=True
 
             except NoSuchElementException:
@@ -191,33 +184,31 @@ class TernaSpider():
                 print('Try Again')
                 time.sleep(1)
 
-    def selectYear(self):
-        year = "2016"
-        wait(self.driver, 1).until(ec.element_to_be_clickable((
+    def selectYear(self, elem, year):
+        wait(elem, 1).until(ec.element_to_be_clickable((
             By.XPATH, 
             f"//*[text()={year}]"
         )))
         #ybar = driver.find_element_by_class_name("slicerItemsContainer")
         #ylist = driver.find_elements_by_class_name("individualItemContainer")
-        item = self.driver.find_element_by_xpath(f"//*[text()={year}]")
+        item = elem.find_element_by_xpath(f"//*[text()={year}]")
         item.click()
 
-    def goBack(self, nit):
-        print('Going back')
-        for i in range(nit):
-            item = self.driver.find_element_by_xpath('./..') 
-            print(item.get_attribute('innerHTML'))
-
-    def selectMonth(self):
-        print("here")
-        month = 'Jan'
-        wait(self.driver, 2).until(ec.element_to_be_clickable((
+    def selectMonth(self, elem, gelem, month):
+        month = 'Feb'
+        wait(elem, 2).until(ec.element_to_be_clickable((
             By.CSS_SELECTOR, 
             "visual-container-modern.visual-container-component:nth-child(16) > transform:nth-child(1) > div:nth-child(1) > div:nth-child(3) > visual-modern:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1)"
         )))
-        item = self.driver.find_element_by_css_selector("visual-container-modern.visual-container-component:nth-child(16) > transform:nth-child(1) > div:nth-child(1) > div:nth-child(3) > visual-modern:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1)")
-        #item = driver.find_element_by_class_name("slicer-dropdown-menu").click()
-        print(item.get_attribute('innerHTML'))      
+        #item = elem.find_element_by_css_selector("visual-container-modern.visual-container-component:nth-child(16) > transform:nth-child(1) > div:nth-child(1) > div:nth-child(3) > visual-modern:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1)")
+        #item.click()
+        time.sleep(1)
+        for i in range(1,10):
+            item = gelem.find_element_by_css_selector(f"div.row:nth-child({i}) > div:nth-child(1)")
+            self.driver.execute_script("arguments[0].click();", item)
+            time.sleep(1)
+
+
 #passare in config
 load = [
             { #Total Load
