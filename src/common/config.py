@@ -1,4 +1,5 @@
 import os
+import queue
 from datetime import datetime
 
 # ======================================
@@ -18,6 +19,7 @@ os.environ['MOZ_HEADLESS'] = '1'
 # GME urls
 DOWNLOAD = os.getcwd()+'/downloads'
 RESTRICTION = 'https://www.mercatoelettrico.org/It/Download/DownloadDati.aspx'
+
 GME_NEXT = [
 	{
 		'fname':'MGP_PrezziConvenzionali',
@@ -187,10 +189,15 @@ GME = [
 	}	
 ]
 
+GME_WEEK = {
+	'fname':'OfferteFree_Pubbliche',
+	'url':'https://www.mercatoelettrico.org/it/Download/DownloadDati.aspx?val=OfferteFree_Pubbliche'
+}
+
 # Dynamic file history
 START =  datetime(2017, 2, 1)
-D_FILES = len(GME) + len(GME_NEXT)
-H_FILES = ((datetime.now() - START).days +1)* len(GME_NEXT) + ((datetime.now() - START).days )* len(GME) - 2
+QUEUE = queue.Queue()
+
 # ======================================
 # DATABASE
 # ======================================

@@ -41,10 +41,10 @@ def databaseInit():
     try:
         client = MongoClient('mongodb+srv://new-user:politomerda@cluster0-awyti.mongodb.net/test?retryWrites=true&w=majority')
         db = client['InterProj']
+        return db
     except Exception as e:
         print("Exception while connecting to the db: " + str(e))
-    
-    return db
+
 
 def getDocument(db, market, date, hour):
     """Retrive the document from the database and print it.

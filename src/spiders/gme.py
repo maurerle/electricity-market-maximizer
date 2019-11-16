@@ -88,7 +88,7 @@ class GMESpider():
 		self.log.info("Agreements passed")
 	
 		
-	def getData(self, gme, start, end):
+	def getData(self, gme, start, *end):
 		"""Insert the starting and ending date of data and download them by emulating the 
 		user's click. After the download in the 'downloads/' folder, the file is checked.
 		If the download failed, it is tried again.
@@ -105,25 +105,35 @@ class GMESpider():
 		"""
 		downloaded = False
 		restarted = False
+		
 		while not downloaded:
 			try:
-				self.log.info("Retrieving data:\n\t{}\n\t{} - {}".format(gme['fname'], start, end))
+				if len(end)>0:
+					self.log.info("Retrieving data:\n\t{}\n\t{} - {}".format(gme['fname'], start, end[0]))
+				else:
+					self.log.info("Retrieving data:\n\t{}\n\t{}".format(gme['fname'], start))
 				self.driver.get(gme['url'])
 				# Set the starting and endig date.
 				# The GME has the one-month restriction
 				_input = self.driver.find_element_by_id('ContentPlaceHolder1_tbDataStart')
 				_input.send_keys(start)
-				_input = self.driver.find_element_by_id('ContentPlaceHolder1_tbDataStop')
-				_input.send_keys(end)
+				if len(end)>0:
+					_input = self.driver.find_element_by_id('ContentPlaceHolder1_tbDataStop')
+					_input.send_keys(end)
 				
 				# Download file
 				_input = self.driver.find_element_by_id('ContentPlaceHolder1_btnScarica')
 				_input.click()
 				
 				# Check if download succeded
-				downloaded = self.checkDownload(
-					self.getFname(gme['fname'], start, end)
-				)
+				if len(end)>0:
+					downloaded = self.checkDownload(
+						self.getFname(gme['fname'], start, end[0])
+					)
+				else:
+					downloaded = self.checkDownload(
+						self.getFname(gme['fname'], start)
+					)
 
 				# Bot Notifications
 				if downloaded and restarted:
@@ -138,7 +148,7 @@ class GMESpider():
 				time.sleep(5)
 	
 		
-	def getFname(self, fname, start, end):
+	def getFname(self, fname, start, *end):
 		"""Build the downloaded zipped file name on the basis of the starting and 
 		ending date.
 
@@ -158,9 +168,13 @@ class GMESpider():
 				zipped file name
 		"""
 		dds,mms,yys = start.split("/")
-		dde,mme,yye = end.split("/")
-		period = yys+mms+dds+yye+mme+dde
-		fname += period
+		if len(end)>0:
+			dde,mme,yye = end[0].split("/")
+			period = yys+mms+dds+yye+mme+dde
+			fname += period
+		else:
+			period = yys+mms+dds
+			fname = period + fname
 		fname += '.zip'
 		
 		return fname
@@ -205,9 +219,13 @@ class GMESpider():
 				.zip file name
 		"""
 		unzipped = False
+		containzip = False
 		while not unzipped:
 			try:
 				with ZipFile(DOWNLOAD+'/'+fname, 'r') as zip:  
+					zlist = zip.namelist()
+					if '.zip' in zlist[0]:
+						containzip = True
 					# extracting all the files 
 					self.log.info("Extracting data...") 
 					zip.extractall(DOWNLOAD) 
@@ -215,6 +233,21 @@ class GMESpider():
 			
 				os.remove(DOWNLOAD+'/'+fname)
 				unzipped = True
+
+				# Add the .xml files to the queue
+				if not containzip:
+					[QUEUE.put(i) for i in zlist]
+
+				# Remove the MPEG files
+				for files in os.listdir(DOWNLOAD):
+					if 'MPEG' in files: 
+						os.remove(DOWNLOAD+'/'+files)
+
+				# If the zip contains zipped files extract them
+				if containzip:
+					for item in zlist:
+						if 'MPEG' not in item:
+							self.unZip(item)
 			
 			except:	
 				self.log.error(f"{fname} not found. Trying again...")
