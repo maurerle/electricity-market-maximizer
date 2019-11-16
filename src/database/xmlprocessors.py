@@ -33,7 +33,7 @@ def process_file(fname):
 	m_list = []
 	date = dic[0]['Data']
 	for hour in range(1, 25):
-		m_list[hour] = {'Data': date, 'Ora': '{:02d}'.format(hour)}
+		m_list.append({'Data': date, 'Ora': '{:02d}'.format(hour)})
 
 	# Fill up the new list m_list with reformatted keys and values
 	for h in dic:
@@ -77,7 +77,7 @@ def process_transit_file(fname):
 	m_list = []
 	date = dic[0]['Data']
 	for hour in range(1, 25):
-		m_list[hour] = {'Data': date, 'Ora': '{:02d}'.format(hour)}
+		m_list.append({'Data': date, 'Ora': '{:02d}'.format(hour)})
 
 	# Fill up the new dictionary m_dict with reformatted keys and values
 	for h in dic:

@@ -1,4 +1,5 @@
 import os
+import queue
 from datetime import datetime
 
 # ======================================
@@ -195,8 +196,8 @@ GME_WEEK = {
 
 # Dynamic file history
 START =  datetime(2017, 2, 1)
-D_FILES = len(GME) + len(GME_NEXT) + len(GME_WEEK)
-H_FILES = ((datetime.now() - START).days +1)* len(GME_NEXT) + ((datetime.now() - START).days )* len(GME) - 2
+QUEUE = queue.Queue()
+
 # ======================================
 # DATABASE
 # ======================================

@@ -233,8 +233,11 @@ class GMESpider():
 			
 				os.remove(DOWNLOAD+'/'+fname)
 				unzipped = True
-				
-				
+
+				# Add the .xml files to the queue
+				if not containzip:
+					[QUEUE.put(i) for i in zlist]
+
 				# Remove the MPEG files
 				for files in os.listdir(DOWNLOAD):
 					if 'MPEG' in files: 

@@ -16,13 +16,9 @@ class FileProcessor(threading.Thread):
     ----------
     log : logging.logger
         logger instance to display and save logs
-    target : str
-        the type of files to process ('history' or 'daily')
 
     Attributes
     ----------
-    target : str
-        the type of files to process ('history' or 'daily')
     log : logging.logger
         logger instance to display and save logs
     db : pymongo.database.Database
@@ -35,11 +31,11 @@ class FileProcessor(threading.Thread):
     toDatabase(fname)
     """
 
-    def __init__(self, log, target):
+    def __init__(self, log):
         threading.Thread.__init__(self)
-        self.target = target
         self.log = log
         self.db = self.databaseInit()
+        self.stop_event = threading.Event()
         self.start()
 
     def databaseInit(self):
@@ -63,33 +59,26 @@ class FileProcessor(threading.Thread):
             bot('ERROR', 'GME_MongoClient', 'Connection failed.')
 
     def run(self):
-        """Method called when the thread start.
+        """Method called when the thread starts.
         It runs until the files in the download folder have all been
         processed and sent to the database.
         """
 
         self.log.info("GME Processor Running")
-        file_cnt = 0
-        if self.target == 'history':
-            LIMIT = H_FILES
-        elif self.target == 'daily':
-            LIMIT = D_FILES
+        
+        while not self.stop_event.is_set() or not QUEUE.empty():
+            fname = QUEUE.get()
+            # Processing
+            self.toDatabase(fname) #!!! Leaveme here!! Processa un file per volta
+            # Clean folder
+            os.remove(DOWNLOAD + '/' + fname)
+            time.sleep(.5)
 
-        while file_cnt < LIMIT:
-            # File history managing
-            flist = os.listdir(DOWNLOAD)
-            flist = list(set(flist) - set([x for x in flist if 'zip' in x or 'void' in x]))
-            try:
-                fname = flist[0]
-                # Processing
-                self.toDatabase(fname) #!!! Leaveme here!! Processa un file per volta
-                # Clean folder
-                os.remove(DOWNLOAD + '/' + fname)
-                file_cnt += 1
-            except:
-                time.sleep(2)
-            time.sleep(.1)
         self.log.info("GME Processing Done")
+
+    def stop(self):
+        """Set the stop event"""
+        self.stop_event.set()
 
     def toDatabase(self, fname):
         """Process and send the data to the database.
@@ -102,14 +91,14 @@ class FileProcessor(threading.Thread):
 
         self.log.info(f"Processing {fname}")
 
-        if fname[8:11] == 'MGP':
+        if fname[11:-4] == 'OffertePubbliche':
+            collection = self.db['OffertePubbliche']
+        elif fname[8:11] == 'MGP':
             collection = self.db['MGP']
         elif fname[8:10] == 'MI':
             collection = self.db['MI']
         elif fname[8:11] == 'MSD' or fname[8:11] == 'MBP':
             collection = self.db['MSD']
-        elif fname[11:-4] == 'OffertePubbliche':
-            collection = self.db['OffertePubbliche']
         
         if fname[11:-4] == 'LimitiTransito' or fname[11:-4] == 'Transiti':
             parsed_data = process_transit_file(fname)

@@ -19,8 +19,8 @@ def getDay():
 	"""
 	bot('INFO', 'GME', 'getDaily started.')
 	spider = GMESpider(logger)
-	FileProcessor(logger, 'daily')
-
+	processor = FileProcessor(logger)
+	
 	date = datetime.now().strftime('%d/%m/%Y')
 	date_nxt = (datetime.now() + relativedelta(days=+1)).strftime('%d/%m/%Y')
 	date_week = (datetime.now() + relativedelta(days=-8)).strftime('%d/%m/%Y')
@@ -32,6 +32,7 @@ def getDay():
 	spider.getData(GME_WEEK, date_week)
 
 	spider.driver.quit()
+	processor.stop()
 	bot('INFO', 'GME', 'getDaily ended.')
 
 def getHistory():
