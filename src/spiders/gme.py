@@ -1,5 +1,5 @@
 import sys
-import os
+from pathlib import Path
 import time
 import requests as req
 from src.common.config import *
@@ -193,7 +193,7 @@ class GMESpider():
 			bool
 				True if the file has been downloaded, False otherwise
 		"""
-		if os.path.isfile(DOWNLOAD+'/'+fname):
+		if Path(DOWNLOAD+'/'+fname).is_file():
 			self.log.info("Zip file downloaded".format(fname))
 			self.unZip(fname)
 			
@@ -230,8 +230,8 @@ class GMESpider():
 					self.log.info("Extracting data...") 
 					zip.extractall(DOWNLOAD) 
 					self.log.info("Data extracted") 
-			
-				os.remove(DOWNLOAD+'/'+fname)
+
+				Path(DOWNLOAD+'/'+fname).unlink()
 				unzipped = True
 
 				# Add the .xml files to the queue
@@ -239,16 +239,17 @@ class GMESpider():
 					[QUEUE.put(i) for i in zlist]
 
 				# Remove the MPEG files
-				for files in os.listdir(DOWNLOAD):
-					if 'MPEG' in files: 
-						os.remove(DOWNLOAD+'/'+files)
+				for files in Path(DOWNLOAD).iterdir():
+					if 'MPEG' in str(files): 
+						files.unlink()
+
 
 				# If the zip contains zipped files extract them
 				if containzip:
 					for item in zlist:
 						if 'MPEG' not in item:
 							self.unZip(item)
-			
+
 			except:	
 				self.log.error(f"{fname} not found. Trying again...")
 				

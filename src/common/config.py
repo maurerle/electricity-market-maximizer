@@ -1,4 +1,4 @@
-import os
+from os import environ, getcwd
 import queue
 from datetime import datetime
 
@@ -14,10 +14,10 @@ CHAT_IDS = [523755114, 166462336, 192294736, 396732122]
 # ======================================
 
 # Hide the Firefox window when automating with selenium
-os.environ['MOZ_HEADLESS'] = '1'
+environ['MOZ_HEADLESS'] = '1'
 
 # GME urls
-DOWNLOAD = os.getcwd()+'/downloads'
+DOWNLOAD = getcwd()+'/downloads'
 RESTRICTION = 'https://www.mercatoelettrico.org/It/Download/DownloadDati.aspx'
 
 GME_NEXT = [
