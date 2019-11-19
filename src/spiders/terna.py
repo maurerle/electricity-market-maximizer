@@ -40,9 +40,9 @@ class TernaSpider():
         self.action = ActionChains(self.driver)
 
 
-    def getData(self,url, frm, mod, d):
+    def getData(self,url):
         self.driver.get(url)
-        self.driver.switch_to.frame(self.driver.find_element_by_id(frm))
+        self.driver.switch_to.frame(self.driver.find_element_by_id("iframeEnergyBal"))
 
         try:
             wait(self.driver, 1).until(ec.frame_to_be_available_and_switch_to_it((
@@ -56,17 +56,39 @@ class TernaSpider():
             
         terna_owned = False
         while not terna_owned:
-            try:       
-                # Click on graph
-                graph = self.driver.find_element_by_css_selector("visual-container-modern.visual-container-component:nth-child("+mod+") > transform:nth-child(1)")
+            try: 
+                parent = self.driver.find_element_by_class_name("canvasFlexBox")   
+                # Div
+                btn = parent.find_element_by_css_selector("visual-container-modern.visual-container-component:nth-child(34) > transform:nth-child(1) > div:nth-child(1) > div:nth-child(3) > visual-modern:nth-child(1) > div:nth-child(1)")
+                print(f'customRange:{btn}')
+                self.driver.execute_script('arguments[0].click();', btn)
+                time.sleep(10)
+                
+                #Inputs
+                form = parent.find_elements_by_tag_name("input")
+                self.driver.execute_script('arguments[0].click();', form[0])
+                time.sleep(1)
+                form[0].send_keys('15/11/2019')
+                time.sleep(2)
+                self.driver.execute_script('arguments[0].click();', form[1])
+                time.sleep(1)
+                form[1].send_keys('15/11/2019')
+                parent.click()
+                # Graph
+                graph = parent.find_element_by_css_selector("visual-container-modern.visual-container-component:nth-child(31) > transform:nth-child(1)")
+                #graph = self.driver.find_element_by_css_selector("visual-container-modern.visual-container-component:nth-child(31) > transform:nth-child(1)")
+                print(f'graph:{graph}')
                 self.driver.execute_script('arguments[0].click();', graph)
                 self.action.move_to_element(graph).perform()
-                # Click on Options button
-                btn = self.driver.find_element_by_class_name('vcMenuBtn')
+                
+                # Options
+                btn = parent.find_element_by_class_name('vcMenuBtn')
+                print(f'Menu:{btn}')
                 self.driver.execute_script('arguments[0].click();', btn)
                 self.action.move_to_element(btn).perform()
-                # Click on Export Data
-                btn = self.driver.find_element_by_xpath("/html/body/div["+d+"]/drop-down-list/ng-transclude/ng-repeat[1]/drop-down-list-item/ng-transclude/ng-switch/div")
+                
+                # Export Data
+                btn = parent.find_element_by_xpath("/html/body/div[9]/drop-down-list/ng-transclude/ng-repeat[1]/drop-down-list-item/ng-transclude/ng-switch/div")
                 self.action.move_to_element(btn).perform()
                 self.driver.execute_script('arguments[0].click();', btn)
                 terna_owned = True
@@ -210,76 +232,20 @@ class TernaSpider():
 
 
 #passare in config
-load = [
-            { #Total Load
-                'name': 'TotalLoad',
-                'url': 'https://www.terna.it/it/sistema-elettrico/transparency-report/total-load',
-                'frame': 'iframeTotalLoad',
-                'ntch': '6',
-                'div': '9'
-
-            },
-            {#Market Load
-                'name':'MarketLoad',
-                'url': 'https://www.terna.it/it/sistema-elettrico/transparency-report/market-load',
-                'frame': 'iframeMarketLoad',
-                'ntch': '6',
-                'div':'9'
-
-            },
-            {#peak-valley-load
-                'name':'PeakValleyLoad',
-                'url': 'https://www.terna.it/it/sistema-elettrico/transparency-report/peak-valley-load',
-                'frame': 'iframePeakValleyLoad',
-                'ntch': '23',
-                'div':'9'
-
-            }
-        ]
-generation = [
-            {
-                'name': 'ActualGen',
-                'url': 'https://www.terna.it/it/sistema-elettrico/transparency-report/actual-generation',
-                'frame': 'iframeActualGen',
-                'ntch': '28',
-                'div': '9'
-
-            },
-            {
-                'name':'RenewableGen',
-                'url': 'https://www.terna.it/it/sistema-elettrico/transparency-report/renewable-generation',
-                'frame': 'iframeRenewableGen',
-                'ntch': '13',
-                'div':'9'
-
-            },
-            {
+TERNA_URL = {
                 'name':'EnergyBal',
                 'url': 'https://www.terna.it/it/sistema-elettrico/transparency-report/energy-balance',
                 'frame': 'iframeEnergyBal',
                 'ntch': '31',
                 'div':'9'
 
-            },
-            {
-                'name':'InstalledCap',
-                'url': 'https://www.terna.it/it/sistema-elettrico/transparency-report/installed-capacity',
-                'frame': 'iframeInstalledCap',
-                'ntch': '8',
-                'div':'9'
-
             }
-        ]
-dl_center = {
-    'url':'https://www.terna.it/it/sistema-elettrico/transparency-report/download-center',
-    'frame': 'iframeDownload',
-    'ntch': '',
-    'div':''
-}
-
-
+#start dp1574187165921
+#end dp1574187165922
+#custom range visual-container-modern.visual-container-component:nth-child(34) > transform:nth-child(1)
 
 ###############################################################################
+"""
 #just some uses of Path.
 xpath=Path.cwd()
 print('cwd ' + str(xpath))
@@ -295,25 +261,13 @@ print(dl_center['frame'])
 spider = TernaSpider()
 spider.getHistory(dl_center['url'], dl_center['frame'])
 #spider.quit()
-#
-# #LOAD ACQUISITION TODAY - all categories
-# for item in load:
-#     print(item['frame'])
-#     spider = TernaSpider()
-#     spider.getData(item['url'], item['frame'], item['ntch'], item['div'])
-#     spider.checkdownload(xpath_file)
-#     spider.setFname(xpath, item['name'], day)
-#     spider.quit()
-#
-#
+"""
 # #GENERATION ACQUISITION TODAY - all categories
-# for gen in generation:
-#     print(gen['frame'])
-#     spider = TernaSpider()
-#     spider.getData(gen['url'], gen['frame'], gen['ntch'], gen['div'])
-#     spider.checkdownload(xpath_file)
-#     spider.setFname(xpath, gen['name'], day)
-#     spider.quit()
+spider = TernaSpider()
+spider.getData(TERNA_URL['url'])
+spider.checkdownload(xpath_file)
+spider.setFname(xpath, TERNA_URL['name'], day)
+spider.quit()
 
 
 
