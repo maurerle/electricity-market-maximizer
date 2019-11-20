@@ -48,7 +48,7 @@ class TernaSpider():
         self.action = ActionChains(self.driver)
 
 
-    def getData(self,url):
+    def getData(self, url, start, end):
         self.driver.get(url)
         self.driver.switch_to.frame(
             self.driver.find_element_by_id("iframeEnergyBal")
@@ -94,10 +94,10 @@ class TernaSpider():
                 form = parent.find_elements_by_tag_name("input")
                 self.driver.execute_script('arguments[0].click();', form[0])
                 time.sleep(1)
-                form[0].send_keys('15/10/2019')
+                form[0].send_keys(start)
                 self.driver.execute_script('arguments[0].click();', form[1])
                 time.sleep(1)
-                form[1].send_keys('15/10/2019')
+                form[1].send_keys(end)
                 
                 # Graph
                 graph = self.driver.find_element_by_css_selector(
@@ -164,7 +164,7 @@ class TernaSpider():
         target.exists()
         p_file_0.replace(target)
 
-
+"""
 #passare in config
 TERNA_URL = {
                 'name':'EnergyBal',
@@ -188,12 +188,12 @@ day = datetime.now().strftime('%d%m%Y')
 
 # #GENERATION ACQUISITION TODAY - all categories
 spider = TernaSpider()
-spider.getData(TERNA_URL['url'])
+spider.getData(TERNA_URL['url'], '1/02/2017', '1/02/2018')
 spider.checkdownload(xpath_file)
 spider.setFname(xpath, TERNA_URL['name'], day)
 spider.quit()
 
-
+"""
 
 
 '''
