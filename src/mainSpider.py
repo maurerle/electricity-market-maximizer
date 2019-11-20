@@ -27,8 +27,9 @@ def getDay():
 	date_nxt = (datetime.now() + relativedelta(days=+1)).strftime('%d/%m/%Y')
 	date_week = (datetime.now() + relativedelta(days=-8)).strftime('%d/%m/%Y')
 
-	terna(TERNA['url'], date, date)
+	terna.getData(TERNA['url'], date, date)
 	terna.driver.quit()
+	
 	for item in GME:
 		gme.getData(item, date, date)
 	for item in GME_NEXT:
@@ -49,11 +50,36 @@ def getHistory():
 
 	start = START
 	limit = datetime.now()
+
+	# Terna
+	while start.strftime('%YY') != limit.strftime('%YY'):
+		end = start + relativedelta(years=+1, days=-1)
+		
+		terna = TernaSpider()
+		terna.getData(
+			TERNA['url'], 
+			start.strftime('%d/%m/%Y'), 
+			end.strftime('%d/%m/%Y')
+		)
+		terna.driver.quit()
+		del terna
+		
+		start = end + relativedelta(days=+ 1)
 	
+	end = datetime.now() + relativedelta(days=-1)
+	
+	terna = TernaSpider()
+	terna.getData(
+		TERNA['url'], 
+		start.strftime('%d/%m/%Y'), 
+		end.strftime('%d/%m/%Y')
+	)
+	terna.driver.quit()
+	
+	start = START
 	# Start downloading
 	while start.strftime('%m/%Y') != limit.strftime('%m/%Y'):
 		end = start + relativedelta(months=+1, days=-1)
-		
 		for item in GME:
 			gme.getData(
 				item, 
@@ -66,7 +92,7 @@ def getHistory():
 				start.strftime('%d/%m/%Y'), 
 				end.strftime('%d/%m/%Y')
 			)
-		
+
 		start = end + relativedelta(days=+ 1)
 	
 	# Get the current month until the day before the current

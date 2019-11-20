@@ -12,15 +12,15 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
-#from src.common.config import *
+from src.common.config import *
 
 import logging
 import logging.config
 
 # logging.config.fileConfig('src/logging.conf')
 # logger = logging.getLogger(__name__)
-path=(Path.cwd())
-path = str(path.parents[1] / 'downloads')
+#path=(Path.cwd())
+#path = str(path.parents[1] / 'downloads')
 
 class TernaSpider():
     def __init__(self):
@@ -31,9 +31,9 @@ class TernaSpider():
             "browser.download.manager.showWhenStarting",
             False
         )
-        profile.set_preference("browser.download.dir", path)
-        profile.set_preference("browser.download.downloadDir", path)
-        profile.set_preference("browser.download.defaultFolder", path)
+        profile.set_preference("browser.download.dir", DOWNLOAD)
+        profile.set_preference("browser.download.downloadDir", DOWNLOAD)
+        profile.set_preference("browser.download.defaultFolder", DOWNLOAD)
         profile.set_preference(
         	"browser.helperApps.neverAsk.saveToDisk", 
             "application/vnd.openxmlformats-officedocument.spreadsheetml."\
@@ -42,7 +42,7 @@ class TernaSpider():
 
         self.driver = webdriver.Firefox(
             profile, 
-            service_log_path='../../logs/geckodrivers.log'
+            log_path='logs/geckodrivers.log'
         )
         self.driver.set_page_load_timeout(20)
         self.action = ActionChains(self.driver)
@@ -136,71 +136,17 @@ class TernaSpider():
                 break       
             except NoSuchElementException:
                 time.sleep(1)
+            
+        self.setFname(start)
 
-    def quit(self):
-        time.sleep(6)
-        self.driver.close()
+    def setFname(self, date):
+        date = date.replace('/','')
+        while True:
+            for files in Path(DOWNLOAD).iterdir():
+                if 'data.xlsx' in str(files):
+                    target = Path(f"{DOWNLOAD}/{TERNA['name']}{date}.xlsx")
+                    time.sleep(2)
+                    files.replace(target)
 
-    def checkdownload(self, file_path):
-        while not os.path.exists(file_path):
-
-            time.sleep(1)
-
-        if os.path.isfile(file_path):
-
-            print ("File is downloaded in following dir: " + str(file_path))
-        else:
-            raise ValueError("%s isn't a file!" % file_path)
-
-    def setFname(self, pat, fname, date):
-        time.sleep(5)
-        p = Path(pat)
-        flist = [x for x in p.glob('data.xlsx')]
-        print(flist)
-        p_file_0 = flist[0]
-        print(type(p_file_0))
-        print(p_file_0.name)
-        target = Path(str(pat) +'/'+ str(fname) + str(date) + str('.xlsx'))
-        target.exists()
-        p_file_0.replace(target)
-
-"""
-#passare in config
-TERNA_URL = {
-                'name':'EnergyBal',
-                'url': 'https://www.terna.it/it/sistema-elettrico/transparency-report/energy-balance',
-                'frame': 'iframeEnergyBal',
-                'ntch': '31',
-                'div':'9'
-
-            }
-#start dp1574187165921
-#end dp1574187165922
-#custom range visual-container-modern.visual-container-component:nth-child(34) > transform:nth-child(1)
-
-###############################################################################
-
-#just some uses of Path.
-xpath=Path.cwd()
-xpath = xpath.parents[1] / 'downloads/'
-xpath_file = xpath / 'data.xlsx'
-day = datetime.now().strftime('%d%m%Y')
-
-# #GENERATION ACQUISITION TODAY - all categories
-spider = TernaSpider()
-spider.getData(TERNA_URL['url'], '1/02/2017', '1/02/2018')
-spider.checkdownload(xpath_file)
-spider.setFname(xpath, TERNA_URL['name'], day)
-spider.quit()
-
-"""
-
-
-'''
-
-TODO: 
-getHistory function (download center)
-introdurre cicli for in getData
-check installedCap downlaod
-
-'''
+                    return target
+        time.sleep(1)

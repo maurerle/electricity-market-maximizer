@@ -5,6 +5,7 @@ from src.loggerbot.bot import bot
 from src.database.xmlprocessors import *
 import time
 from pymongo import MongoClient
+import os
 
 sys.dont_write_bytecode = True
 
