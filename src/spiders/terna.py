@@ -149,4 +149,5 @@ class TernaSpider():
                     files.replace(target)
                     
                     QUEUE.put(f"{TERNA['name']}{date}.xlsx")
+                    return None
         time.sleep(1)
