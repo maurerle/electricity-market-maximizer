@@ -3,7 +3,6 @@ import logging
 import logging.config
 from src.loggerbot import bot
 from src.database.processor import FileProcessor
-from src.database.processorCSV import FileProcessorCSV
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from src.spiders.gme import *

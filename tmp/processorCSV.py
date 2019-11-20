@@ -88,9 +88,9 @@ class FileProcessorCSV(threading.Thread):
         self.log.info("TERNA Processing Done")
 
 
-    @staticmethod
-    async def to_insert(document, collection):
-        result = await collection.insert_one(document)
+
+    async def to_insert(self, document, collection):
+        result = await self.db.collection.insert_one(document)
         
     def toDatabase(self, fname):
         """it processes and sends documents to the database.

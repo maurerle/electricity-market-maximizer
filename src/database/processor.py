@@ -109,11 +109,13 @@ class FileProcessor(threading.Thread):
             parsed_data = process_OffPub(fname)
             collection.insert_many(parsed_data)
         elif 'xlsx' in fname:
-            pass
+            df = ParseCsv.excel_to_dic(f"{DOWNLOAD}/{fname}")
+            parsed_data = ParseCsv.to_list_dict(df)
         else:
             parsed_data = process_file(fname)
             self.sendData(parsed_data, collection)
-
+        print(parsed_data)
+        
     def sendData(self, parsed_data, collection):
         for item in parsed_data:
             try:
