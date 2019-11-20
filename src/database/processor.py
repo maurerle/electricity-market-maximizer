@@ -5,7 +5,8 @@ from src.common.config import DOWNLOAD, DB_NAME, MONGO_STRING, QUEUE
 from src.loggerbot.bot import bot
 from src.database.xmlprocessors import process_file, process_transit_file, process_OffPub
 import time
-from pymongo import MongoClient
+import motor.motor_asyncio
+import asyncio
 
 sys.dont_write_bytecode = True
 
@@ -50,7 +51,7 @@ class FileProcessor(threading.Thread):
 
         try:
             self.log.info("Attempting to connect to the database...")
-            client = MongoClient(MONGO_STRING)
+            client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_STRING)
             db = client[DB_NAME]
             self.log.info("Connected to the database.")
             return db
