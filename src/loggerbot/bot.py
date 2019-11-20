@@ -1,8 +1,8 @@
-import sys
-import telepot
-from src.common.config import *
+from sys import dont_write_bytecode
+from telepot import Bot
+from src.common.config import TOKEN, CHAT_IDS
 
-sys.dont_write_bytecode = True
+dont_write_bytecode = True
 
 def bot(level, obj, msg): 
     """Telegram bot obtain WARNING level logs remotely.
@@ -16,7 +16,7 @@ def bot(level, obj, msg):
     msg : str
         error message
     """
-    logger = telepot.Bot(TOKEN)
+    logger = Bot(TOKEN)
     for id in CHAT_IDS:
         try:
             logger.sendMessage(id, 

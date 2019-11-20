@@ -1,8 +1,8 @@
 from datetime import datetime
-import time
+from time import sleep
 from pathlib import Path
-import os
 from typing import Dict, List
+from sys import dont_write_bytecode
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait as wait
@@ -12,16 +12,12 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
-from src.common.config import *
+from src.common.config import DOWNLOAD, TERNA, QUEUE
 
 import logging
 import logging.config
 
-# logging.config.fileConfig('src/logging.conf')
-# logger = logging.getLogger(__name__)
-#path=(Path.cwd())
-#path = str(path.parents[1] / 'downloads')
-
+dont_write_bytecode = True
 class TernaSpider():
     def __init__(self):
         profile = webdriver.FirefoxProfile()  # path -- gekodriver
@@ -64,7 +60,7 @@ class TernaSpider():
                 )
                 break
             except TimeoutException:
-                time.sleep(1)
+                sleep(1)
             
         while True:
             try: 
@@ -88,15 +84,15 @@ class TernaSpider():
                         )
                         break
                     except TimeoutException:
-                        time.sleep(1)
+                        sleep(1)
                 
                 #Inputs
                 form = parent.find_elements_by_tag_name("input")
                 self.driver.execute_script('arguments[0].click();', form[0])
-                time.sleep(1)
+                sleep(1)
                 form[0].send_keys(start)
                 self.driver.execute_script('arguments[0].click();', form[1])
-                time.sleep(1)
+                sleep(1)
                 form[1].send_keys(end)
                 
                 # Graph
@@ -126,7 +122,7 @@ class TernaSpider():
                 break
 
             except NoSuchElementException:
-                time.sleep(1)
+                sleep(1)
 
         while True:
             try:
@@ -135,7 +131,7 @@ class TernaSpider():
                 self.driver.execute_script('arguments[0].click();', btn)
                 break       
             except NoSuchElementException:
-                time.sleep(1)
+                sleep(1)
             
         self.setFname(start)
 
@@ -145,9 +141,9 @@ class TernaSpider():
             for files in Path(DOWNLOAD).iterdir():
                 if 'data.xlsx' in str(files):
                     target = Path(f"{DOWNLOAD}/{TERNA['name']}{date}.xlsx")
-                    time.sleep(2)
+                    sleep(2)
                     files.replace(target)
                     
                     QUEUE.put(f"{TERNA['name']}{date}.xlsx")
                     return None
-        time.sleep(1)
+        sleep(1)

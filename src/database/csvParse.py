@@ -1,14 +1,15 @@
 """ The parse has to convert the input CSV into a JSON file in order to load it on a
      MongoDB DataBase
 """
-import sys
-import pandas as pd
+from sys import version_info, dont_write_bytecode
+from pandas import read_excel
 import logging
 from pathlib import Path
 from collections import defaultdict
 import xlrd
 
-if sys.version_info[:2] < (3, 7):
+dont_write_bytecode = True
+if version_info[:2] < (3, 7):
     raise RuntimeError("Python version >= 3.7 required.")
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s : %(message)s',
@@ -44,11 +45,11 @@ class ParseCsv():
         """
         try:
             if flag:
-                df = pd.read_excel(io=path, header=header, skiprows=3)
+                df = read_excel(io=path, header=header, skiprows=3)
                 df = df.drop([0])
                 return df
             else:
-                df = pd.read_excel(io=path, header=header, skiprows=skiprows)
+                df = read_excel(io=path, header=header, skiprows=skiprows)
                 df = df.drop([0])
                 return df
         except Exception as e:

@@ -1,15 +1,15 @@
-import sys
+from sys import dont_write_bytecode
 import logging
 import logging.config
-from src.loggerbot import bot
+from src.loggerbot.bot import bot
 from src.database.processor import FileProcessor
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
-from src.spiders.gme import *
-from src.spiders.terna import *
-from src.common.config import *
+from src.spiders.gme import GMESpider
+from src.spiders.terna import TernaSpider
+from src.common.config import GME, GME_NEXT, GME_WEEK, START, TERNA
 
-sys.dont_write_bytecode = True
+dont_write_bytecode = True
 
 logging.config.fileConfig('src/common/logging.conf')
 logger = logging.getLogger(__name__)

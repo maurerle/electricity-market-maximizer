@@ -1,14 +1,13 @@
-import sys
+from sys import dont_write_bytecode
 from pathlib import Path
-import time
-import requests as req
-from src.common.config import *
+from time import sleep
+from src.common.config import DOWNLOAD, RESTRICTION, QUEUE 
 from src.loggerbot.bot import bot
 from zipfile import ZipFile
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
-sys.dont_write_bytecode = True
+dont_write_bytecode = True
 
 class GMESpider():
 	"""Description
@@ -75,7 +74,7 @@ class GMESpider():
 			except:
 				self.log.error("GME connection failed. Trying again.")
 				restarted = True
-				time.sleep(5)
+				sleep(5)
 
 		# Flag the Agreement checkboxes
 		_input = self.driver.find_element_by_id('ContentPlaceHolder1_CBAccetto1')
@@ -145,7 +144,7 @@ class GMESpider():
 			except:
 				self.log.warning('Trying again...')
 				restarted = True
-				time.sleep(5)
+				sleep(5)
 	
 		
 	def getFname(self, fname, start, *end):
@@ -259,4 +258,4 @@ class GMESpider():
 				except:
 					pass
 
-				time.sleep(5)
+				sleep(5)

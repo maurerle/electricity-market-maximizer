@@ -1,5 +1,5 @@
 from os import environ, getcwd
-import queue
+from queue import Queue
 from datetime import datetime
 
 # ======================================
@@ -200,7 +200,7 @@ TERNA = {
 }
 # Dynamic file history
 START =  datetime(2017, 2, 1)
-QUEUE = queue.Queue()
+QUEUE = Queue()
 
 # ======================================
 # DATABASE

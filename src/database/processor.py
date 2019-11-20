@@ -1,17 +1,17 @@
-import sys
-import threading
+from sys import dont_write_bytecode
+from threading import Thread, Event
 from pathlib import Path
 from src.common.config import DOWNLOAD, DB_NAME, MONGO_STRING, QUEUE
 from src.loggerbot.bot import bot
-from src.database.csvParse import *
+from src.database.csvParse import ParseCsv
 from src.database.xmlprocessors import process_file, process_transit_file, process_OffPub
-import time
+from time import sleep
 import motor.motor_asyncio
 
-sys.dont_write_bytecode = True
+dont_write_bytecode = True
 
 
-class FileProcessor(threading.Thread):
+class FileProcessor(Thread):
     """A thread class used to process .xml files and send data to the database.
 
     Parameters
@@ -34,10 +34,10 @@ class FileProcessor(threading.Thread):
     """
 
     def __init__(self, log):
-        threading.Thread.__init__(self)
+        Thread.__init__(self)
         self.log = log
         self.db = self.databaseInit()
-        self.stop_event = threading.Event()
+        self.stop_event = Event()
         self.start()
 
     def databaseInit(self):
@@ -74,7 +74,7 @@ class FileProcessor(threading.Thread):
             self.toDatabase(fname)
             # Clean folder
             Path(DOWNLOAD + '/' + fname).unlink()
-            time.sleep(.5)
+            sleep(.5)
 
         self.log.info("GME Processing Done")
 
