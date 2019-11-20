@@ -3,6 +3,7 @@ import logging
 import logging.config
 from src.loggerbot import bot
 from src.database.processor import FileProcessor
+from src.database.processorCSV import FileProcessorCSV
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from src.spiders.gme import *
@@ -20,6 +21,7 @@ def getDay():
 	bot('INFO', 'GME', 'getDaily started.')
 	spider = GMESpider(logger)
 	processor = FileProcessor(logger)
+	csvProcessor = FileProcessorCSV(logger, collection='TERNA')
 	
 	date = datetime.now().strftime('%d/%m/%Y')
 	date_nxt = (datetime.now() + relativedelta(days=+1)).strftime('%d/%m/%Y')
@@ -30,9 +32,11 @@ def getDay():
 	for item in GME_NEXT:
 		spider.getData(item, date_nxt, date_nxt)
 	spider.getData(GME_WEEK, date_week)
+	#TO DO: a for loop for obtaining TERNA's file
 
 	spider.driver.quit()
 	processor.stop()
+	csvProcessor.stop()
 	bot('INFO', 'GME', 'getDaily ended.')
 
 def getHistory():
@@ -42,6 +46,7 @@ def getHistory():
 	bot('INFO', 'GME', 'getHistory started.')
 	spider = GMESpider(logger)
 	processor = FileProcessor(logger)
+	csvProcessor = FileProcessorCSV(logger, collection='TERNA')
 
 	start = START
 	limit = datetime.now()
@@ -62,7 +67,7 @@ def getHistory():
 				start.strftime('%d/%m/%Y'), 
 				end.strftime('%d/%m/%Y')
 			)
-		
+		# TO DO: a for loop for obtaining TERNA's file
 		start = end + relativedelta(days=+ 1)
 	
 	# Get the current month until the day before the current
@@ -80,7 +85,7 @@ def getHistory():
 				start.strftime('%d/%m/%Y'), 
 				datetime.now().strftime('%d/%m/%Y')
 		)
-	
+	# TO DO: a for loop for obtaining TERNA's file
 	# Get the public offers referred to one week before the current
 	start = START
 	limit = datetime.now() + relativedelta(days=-7)
@@ -91,4 +96,5 @@ def getHistory():
 
 	spider.driver.quit()
 	processor.stop()
+	csvProcessor.stop()
 	bot('INFO', 'GME', 'getHistory ended.')
