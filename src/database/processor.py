@@ -1,8 +1,9 @@
 import sys
 import threading
-from src.common.config import *
+from pathlib import Path
+from src.common.config import DOWNLOAD, DB_NAME, MONGO_STRING, QUEUE
 from src.loggerbot.bot import bot
-from src.database.xmlprocessors import *
+from src.database.xmlprocessors import process_file, process_transit_file, process_OffPub
 import time
 from pymongo import MongoClient
 
@@ -71,7 +72,7 @@ class FileProcessor(threading.Thread):
             # Processing
             self.toDatabase(fname) #!!! Leaveme here!! Processa un file per volta
             # Clean folder
-            os.remove(DOWNLOAD + '/' + fname)
+            Path(DOWNLOAD + '/' + fname).unlink()
             time.sleep(.5)
 
         self.log.info("GME Processing Done")
