@@ -1,6 +1,5 @@
 logs/
 downloads/
 __pycache__/
-src/spiders/geckodriver.log
 .vscode/
 .idea/

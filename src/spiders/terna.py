@@ -24,7 +24,7 @@ path = str(path.parents[1] / 'downloads')
 
 class TernaSpider():
     def __init__(self):
-        profile = webdriver.FirefoxProfile()
+        profile = webdriver.FirefoxProfile()  # path -- gekodriver
         profile.set_preference("browser.download.folderList", 2)
         profile.set_preference("browser.helperApps.alwaysAsk.force", False)
         profile.set_preference(
@@ -137,6 +137,9 @@ class TernaSpider():
             except NoSuchElementException:
                 time.sleep(1)
 
+    def quit(self):
+        time.sleep(6)
+        self.driver.close()
 
     def checkdownload(self, file_path):
         while not os.path.exists(file_path):
@@ -162,6 +165,19 @@ class TernaSpider():
         p_file_0.replace(target)
 
 """
+#passare in config
+TERNA_URL = {
+                'name':'EnergyBal',
+                'url': 'https://www.terna.it/it/sistema-elettrico/transparency-report/energy-balance',
+                'frame': 'iframeEnergyBal',
+                'ntch': '31',
+                'div':'9'
+
+            }
+#start dp1574187165921
+#end dp1574187165922
+#custom range visual-container-modern.visual-container-component:nth-child(34) > transform:nth-child(1)
+
 ###############################################################################
 
 #just some uses of Path.
