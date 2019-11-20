@@ -1,6 +1,10 @@
 selenium
-pymongo[srv]
 python-dateutil
 telepot
 xmltodict
 django
+xlrd
+collections
+pandas
+motor
+zipfile
