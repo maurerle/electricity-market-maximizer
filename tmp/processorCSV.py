@@ -45,7 +45,6 @@ class FileProcessorCSV(threading.Thread):
         self.collection = collection
         self.db = self.database_init()
         self.stop_event = threading.Event()
-
         self.start()
 
     def database_init(self):
@@ -88,11 +87,12 @@ class FileProcessorCSV(threading.Thread):
         self.log.info("TERNA Processing Done")
 
 
+    @staticmethod
+    async def to_insert(document, collection):
 
-    async def to_insert(self, document, collection):
-        result = await self.db.collection.insert_one(document)
-        
-    def toDatabase(self, fname):
+        result = await collection.insert_one(document)
+
+    def to_database(self, fname):
         """it processes and sends documents to the database.
         :param fname = file path
         """
@@ -100,13 +100,12 @@ class FileProcessorCSV(threading.Thread):
         self.log.info(f"Processing files: {fname}")
         flag = ParseCsv.find_name(fname)
         try:
-            df = ParseCsv.excel_to_dic(f"{DOWNLOAD}/{fname}")
+            df = ParseCsv.excel_to_dic(fname)
             _dict = ParseCsv.to_dict(df, flag)
             self.log.info(f"Parsed file {fname}")
         except Exception as e:
             self.log.error(f"the file {fname} can not be parsed." + str(e))
 
-        asyncio.run(self.to_insert(_dict, self.collection))
-
-        #loop = asyncio.get_event_loop()
-        #loop.run_until_complete(self.to_insert(_dict, self.collection))
+        FileProcessorCSV.to_insert(_dict, self.collection)
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.to_insert(_dict, self.collection))
