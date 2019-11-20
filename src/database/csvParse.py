@@ -59,13 +59,17 @@ class ParseCsv():
     @staticmethod
     def to_list_dict(df):
         """This method can process correctly all types of TERNA's file. """
-        ag_dict_ = df.groupby([0])[[2, 1]].apply(lambda g: dict(map(tuple, g.values.tolist()))).to_dict()
-        ag_dict = {}
+        ag_dict_ = df.groupby([0])[[2, 1]].apply(lambda g: dict(map(tuple, g.values.tolist())))
         # Energy Balance: the total power used to meet the total load of italy, internal and foreign power.
         ls = []
-        for key, value in ag_dict_.items():
-            ls.append({'Data': key.strftime('%d/%m/%Y'), 'Ora': key.strftime('%H:%M'), 'Energy Balance': value})
-        
+        for _key, _value in ag_dict_.items():
+            ag_dict = {}
+            ag_dict['Data'] = _key.strftime('%Y%m%d')
+            ag_dict['Ora'] = _key.strftime('%H')
+            for key, value in _value.items():
+                ag_dict[key] = value
+            ls.append(ag_dict)
+            
         return ls
 
 

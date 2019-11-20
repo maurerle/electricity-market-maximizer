@@ -101,6 +101,8 @@ class FileProcessor(threading.Thread):
             collection = self.db['MI']
         elif fname[8:11] == 'MSD' or fname[8:11] == 'MBP':
             collection = self.db['MSD']
+        elif 'xlsx' in fname:
+            collection = self.db['Terna']
 
         if fname[11:-4] == 'LimitiTransito' or fname[11:-4] == 'Transiti':
             parsed_data = process_transit_file(fname)
@@ -111,10 +113,10 @@ class FileProcessor(threading.Thread):
         elif 'xlsx' in fname:
             df = ParseCsv.excel_to_dic(f"{DOWNLOAD}/{fname}")
             parsed_data = ParseCsv.to_list_dict(df)
+            self.sendData(parsed_data, collection)
         else:
             parsed_data = process_file(fname)
             self.sendData(parsed_data, collection)
-        print(parsed_data)
         
     def sendData(self, parsed_data, collection):
         for item in parsed_data:
