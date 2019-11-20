@@ -77,6 +77,7 @@ class FileProcessor(Thread):
             sleep(.5)
 
         self.log.info("GME Processing Done")
+        bot('INFO', 'PROCESSOR', 'Processing Done.')
 
     def stop(self):
         """Set the stop event"""
@@ -127,4 +128,4 @@ class FileProcessor(Thread):
             except Exception as e:
                 self.log.error("Exception while updating the db: " + str(e))
                 # Bot Notification
-                bot('ERROR', 'GME_MongoClient', 'Update failed.')
+                bot('ERROR', 'PROCESSOR', 'Update failed.')

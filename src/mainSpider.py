@@ -18,9 +18,9 @@ def getDay():
 	"""Visit the GME website and wake up the spider to retrieve 
 	the daily data, then send the spider to sleep until the next day.
 	"""
-	bot('INFO', 'GME', 'getDaily started.')
+	bot('INFO', 'GME/TERNA', 'getDaily started.')
 	gme = GMESpider(logger)
-	terna = TernaSpider()
+	terna = TernaSpider(logger)
 	processor = FileProcessor(logger)
 	
 	date = datetime.now().strftime('%d/%m/%Y')
@@ -29,7 +29,7 @@ def getDay():
 
 	terna.getData(TERNA['url'], date, date)
 	terna.driver.quit()
-	
+	bot('INFO', 'TERNA', 'getDaily ended.')
 	for item in GME:
 		gme.getData(item, date, date)
 	for item in GME_NEXT:
@@ -55,7 +55,7 @@ def getHistory():
 	while start.strftime('%YY') != limit.strftime('%YY'):
 		end = start + relativedelta(years=+1, days=-1)
 		
-		terna = TernaSpider()
+		terna = TernaSpider(logger)
 		terna.getData(
 			TERNA['url'], 
 			start.strftime('%d/%m/%Y'), 
@@ -68,14 +68,15 @@ def getHistory():
 	
 	end = datetime.now() + relativedelta(days=-1)
 	
-	terna = TernaSpider()
+	terna = TernaSpider(logger)
 	terna.getData(
 		TERNA['url'], 
 		start.strftime('%d/%m/%Y'), 
 		end.strftime('%d/%m/%Y')
 	)
 	terna.driver.quit()
-	
+	bot('INFO', 'TERNA', 'getHistory ended.')
+
 	start = START
 	# Start downloading
 	while start.strftime('%m/%Y') != limit.strftime('%m/%Y'):

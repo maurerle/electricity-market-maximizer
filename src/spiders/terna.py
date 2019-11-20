@@ -3,7 +3,7 @@ from time import sleep
 from pathlib import Path
 from typing import Dict, List
 from sys import dont_write_bytecode
-
+from src.loggerbot.bot import bot
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait as wait
 from selenium.webdriver.support import expected_conditions as ec
@@ -14,12 +14,9 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 from src.common.config import DOWNLOAD, TERNA, QUEUE
 
-import logging
-import logging.config
-
 dont_write_bytecode = True
 class TernaSpider():
-    def __init__(self):
+    def __init__(self, logger):
         profile = webdriver.FirefoxProfile()  # path -- gekodriver
         profile.set_preference("browser.download.folderList", 2)
         profile.set_preference("browser.helperApps.alwaysAsk.force", False)
@@ -42,7 +39,7 @@ class TernaSpider():
         )
         self.driver.set_page_load_timeout(20)
         self.action = ActionChains(self.driver)
-
+        self.log = logger
 
     def getData(self, url, start, end):
         self.driver.get(url)

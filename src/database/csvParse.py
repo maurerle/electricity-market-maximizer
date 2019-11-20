@@ -12,12 +12,6 @@ dont_write_bytecode = True
 if version_info[:2] < (3, 7):
     raise RuntimeError("Python version >= 3.7 required.")
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s : %(message)s',
-                    datefmt='%d/%m/%Y %H:%M ',
-                    level=logging.DEBUG)
-
-logger = logging.getLogger(__name__)
-
 class ParseCsv():
     """A Parse class used to parse CSV file into json file for processing them on a MongoDB.
      Methods
