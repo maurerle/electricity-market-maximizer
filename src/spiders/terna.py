@@ -147,6 +147,6 @@ class TernaSpider():
                     target = Path(f"{DOWNLOAD}/{TERNA['name']}{date}.xlsx")
                     time.sleep(2)
                     files.replace(target)
-
-                    return target
+                    
+                    QUEUE_TERNA.put(f"{TERNA['name']}{date}.xlsx")
         time.sleep(1)

@@ -6,6 +6,7 @@ import pandas as pd
 import logging
 from pathlib import Path
 from collections import defaultdict
+import xlrd
 
 if sys.version_info[:2] < (3, 7):
     raise RuntimeError("Python version >= 3.7 required.")
@@ -41,9 +42,7 @@ class ParseCsv:
          :return a pandas.DataFrame
 
         """
-
         try:
-            #logging.info('DataFrame will be created.')
             if flag:
                 df = pd.read_excel(io=path, header=header, skiprows=3)
                 df = df.drop([0])

@@ -114,7 +114,7 @@ def getHistory():
 				start.strftime('%d/%m/%Y'), 
 				datetime.now().strftime('%d/%m/%Y')
 		)
-	# TO DO: a for loop for obtaining TERNA's file
+
 	# Get the public offers referred to one week before the current
 	start = START
 	limit = datetime.now() + relativedelta(days=-7)

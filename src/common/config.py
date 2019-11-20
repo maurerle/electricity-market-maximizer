@@ -202,7 +202,7 @@ TERNA = {
 START =  datetime(2017, 2, 1)
 QUEUE_GME = queue.Queue()
 QUEUE_TERNA = queue.Queue()
-N_F_TERNA = len(TERNA)
+
 # ======================================
 # DATABASE
 # ======================================

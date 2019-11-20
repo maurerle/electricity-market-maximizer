@@ -67,8 +67,8 @@ class FileProcessor(threading.Thread):
 
         self.log.info("GME Processor Running")
         
-        while not self.stop_event.is_set() or not QUEUE.empty():
-            fname = QUEUE.get()
+        while not self.stop_event.is_set() or not QUEUE_GME.empty():
+            fname = QUEUE_GME.get()
             # Processing
             self.toDatabase(fname) #!!! Leaveme here!! Processa un file per volta
             # Clean folder
