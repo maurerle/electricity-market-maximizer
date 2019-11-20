@@ -1,4 +1,4 @@
-from src.common.config import *
+from src.common.config import DOWNLOAD
 import xmltodict
 
 
