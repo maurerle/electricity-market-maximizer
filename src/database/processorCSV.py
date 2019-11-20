@@ -45,6 +45,7 @@ class FileProcessorCSV(threading.Thread):
         self.collection = collection
         self.db = self.database_init()
         self.stop_event = threading.Event()
+
         self.start()
 
     def database_init(self):
@@ -89,9 +90,8 @@ class FileProcessorCSV(threading.Thread):
 
     @staticmethod
     async def to_insert(document, collection):
-
         result = await collection.insert_one(document)
-
+        
     def toDatabase(self, fname):
         """it processes and sends documents to the database.
         :param fname = file path
@@ -106,6 +106,7 @@ class FileProcessorCSV(threading.Thread):
         except Exception as e:
             self.log.error(f"the file {fname} can not be parsed." + str(e))
 
-        FileProcessorCSV.to_insert(_dict, self.collection)
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.to_insert(_dict, self.collection))
+        asyncio.run(self.to_insert(_dict, self.collection))
+
+        #loop = asyncio.get_event_loop()
+        #loop.run_until_complete(self.to_insert(_dict, self.collection))
