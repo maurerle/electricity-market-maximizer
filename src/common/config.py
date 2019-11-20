@@ -194,6 +194,10 @@ GME_WEEK = {
 	'url':'https://www.mercatoelettrico.org/it/Download/DownloadDati.aspx?val=OfferteFree_Pubbliche'
 }
 
+TERNA = {
+	'name':'EnergyBal',
+	'url': 'https://www.terna.it/it/sistema-elettrico/transparency-report/energy-balance',
+}
 # Dynamic file history
 START =  datetime(2017, 2, 1)
 QUEUE = queue.Queue()

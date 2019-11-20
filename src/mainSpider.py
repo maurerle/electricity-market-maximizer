@@ -6,6 +6,7 @@ from src.database.processor import FileProcessor
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from src.spiders.gme import *
+from src.spiders.terna import *
 from src.common.config import *
 
 sys.dont_write_bytecode = True
@@ -18,20 +19,24 @@ def getDay():
 	the daily data, then send the spider to sleep until the next day.
 	"""
 	bot('INFO', 'GME', 'getDaily started.')
-	spider = GMESpider(logger)
+	gme = GMESpider(logger)
+	terna = TernaSpider()
 	processor = FileProcessor(logger)
 	
 	date = datetime.now().strftime('%d/%m/%Y')
 	date_nxt = (datetime.now() + relativedelta(days=+1)).strftime('%d/%m/%Y')
 	date_week = (datetime.now() + relativedelta(days=-8)).strftime('%d/%m/%Y')
 
+	terna.getData(TERNA['url'], date, date)
+	terna.driver.quit()
+	
 	for item in GME:
-		spider.getData(item, date, date)
+		gme.getData(item, date, date)
 	for item in GME_NEXT:
-		spider.getData(item, date_nxt, date_nxt)
-	spider.getData(GME_WEEK, date_week)
+		gme.getData(item, date_nxt, date_nxt)
+	gme.getData(GME_WEEK, date_week)
 
-	spider.driver.quit()
+	gme.driver.quit()
 	processor.stop()
 	bot('INFO', 'GME', 'getDaily ended.')
 
@@ -40,24 +45,49 @@ def getHistory():
 	01/02/2017 since the current day, then set the spider to sleep.
 	"""
 	bot('INFO', 'GME', 'getHistory started.')
-	spider = GMESpider(logger)
+	gme = GMESpider(logger)
 	processor = FileProcessor(logger)
 
 	start = START
 	limit = datetime.now()
+
+	# Terna
+	while start.strftime('%YY') != limit.strftime('%YY'):
+		end = start + relativedelta(years=+1, days=-1)
+		
+		terna = TernaSpider()
+		terna.getData(
+			TERNA['url'], 
+			start.strftime('%d/%m/%Y'), 
+			end.strftime('%d/%m/%Y')
+		)
+		terna.driver.quit()
+		del terna
+		
+		start = end + relativedelta(days=+ 1)
 	
+	end = datetime.now() + relativedelta(days=-1)
+	
+	terna = TernaSpider()
+	terna.getData(
+		TERNA['url'], 
+		start.strftime('%d/%m/%Y'), 
+		end.strftime('%d/%m/%Y')
+	)
+	terna.driver.quit()
+	
+	start = START
 	# Start downloading
 	while start.strftime('%m/%Y') != limit.strftime('%m/%Y'):
 		end = start + relativedelta(months=+1, days=-1)
-		
 		for item in GME:
-			spider.getData(
+			gme.getData(
 				item, 
 				start.strftime('%d/%m/%Y'), 
 				end.strftime('%d/%m/%Y')
 			)
 		for item in GME_NEXT:
-			spider.getData(
+			gme.getData(
 				item, 
 				start.strftime('%d/%m/%Y'), 
 				end.strftime('%d/%m/%Y')
@@ -69,26 +99,26 @@ def getHistory():
 	end = datetime.now()+ relativedelta(days=-1)
 	
 	for item in GME:
-		spider.getData(
+		gme.getData(
 			item, 
 			start.strftime('%d/%m/%Y'), 
 			end.strftime('%d/%m/%Y')
 		)
 	for item in GME_NEXT:
-		spider.getData(
+		gme.getData(
 				item, 
 				start.strftime('%d/%m/%Y'), 
 				datetime.now().strftime('%d/%m/%Y')
 		)
-	
+
 	# Get the public offers referred to one week before the current
 	start = START
 	limit = datetime.now() + relativedelta(days=-7)
 	
 	while start.strftime('%dd/%mm/%YY') != limit.strftime('%dd/%mm/%YY'):
-		spider.getData(GME_WEEK, start.strftime('%d/%m/%Y'))
+		gme.getData(GME_WEEK, start.strftime('%d/%m/%Y'))
 		start += relativedelta(days=+1)
 
-	spider.driver.quit()
+	gme.driver.quit()
 	processor.stop()
 	bot('INFO', 'GME', 'getHistory ended.')

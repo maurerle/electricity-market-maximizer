@@ -1,10 +1,12 @@
 import sys
 import threading
-from src.common.config import *
+from pathlib import Path
+from src.common.config import DOWNLOAD, DB_NAME, MONGO_STRING, QUEUE
 from src.loggerbot.bot import bot
-from src.database.xmlprocessors import *
+from src.database.csvParse import *
+from src.database.xmlprocessors import process_file, process_transit_file, process_OffPub
 import time
-from pymongo import MongoClient
+import motor.motor_asyncio
 
 sys.dont_write_bytecode = True
 
@@ -49,7 +51,7 @@ class FileProcessor(threading.Thread):
 
         try:
             self.log.info("Attempting to connect to the database...")
-            client = MongoClient(MONGO_STRING)
+            client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_STRING)
             db = client[DB_NAME]
             self.log.info("Connected to the database.")
             return db
@@ -69,9 +71,9 @@ class FileProcessor(threading.Thread):
         while not self.stop_event.is_set() or not QUEUE.empty():
             fname = QUEUE.get()
             # Processing
-            self.toDatabase(fname) #!!! Leaveme here!! Processa un file per volta
+            self.toDatabase(fname)
             # Clean folder
-            os.remove(DOWNLOAD + '/' + fname)
+            Path(DOWNLOAD + '/' + fname).unlink()
             time.sleep(.5)
 
         self.log.info("GME Processing Done")
@@ -99,17 +101,23 @@ class FileProcessor(threading.Thread):
             collection = self.db['MI']
         elif fname[8:11] == 'MSD' or fname[8:11] == 'MBP':
             collection = self.db['MSD']
-        
+        elif 'xlsx' in fname:
+            collection = self.db['Terna']
+
         if fname[11:-4] == 'LimitiTransito' or fname[11:-4] == 'Transiti':
             parsed_data = process_transit_file(fname)
             self.sendData(parsed_data, collection)
         elif fname[11:-4] == 'OffertePubbliche':
             parsed_data = process_OffPub(fname)
             collection.insert_many(parsed_data)
+        elif 'xlsx' in fname:
+            df = ParseCsv.excel_to_dic(f"{DOWNLOAD}/{fname}")
+            parsed_data = ParseCsv.to_list_dict(df)
+            self.sendData(parsed_data, collection)
         else:
             parsed_data = process_file(fname)
             self.sendData(parsed_data, collection)
-
+        
     def sendData(self, parsed_data, collection):
         for item in parsed_data:
             try:
