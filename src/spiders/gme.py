@@ -236,7 +236,7 @@ class GMESpider():
 
 				# Add the .xml files to the queue
 				if not containzip:
-					[QUEUE_GME.put(i) for i in zlist]
+					[QUEUE.put(i) for i in zlist]
 
 				# Remove the MPEG files
 				for files in Path(DOWNLOAD).iterdir():

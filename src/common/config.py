@@ -200,8 +200,7 @@ TERNA = {
 }
 # Dynamic file history
 START =  datetime(2017, 2, 1)
-QUEUE_GME = queue.Queue()
-QUEUE_TERNA = queue.Queue()
+QUEUE = queue.Queue()
 
 # ======================================
 # DATABASE

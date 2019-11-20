@@ -3,6 +3,7 @@ import threading
 from pathlib import Path
 from src.common.config import DOWNLOAD, DB_NAME, MONGO_STRING, QUEUE
 from src.loggerbot.bot import bot
+from src.database.csvParse import *
 from src.database.xmlprocessors import process_file, process_transit_file, process_OffPub
 import time
 import motor.motor_asyncio
@@ -67,10 +68,10 @@ class FileProcessor(threading.Thread):
 
         self.log.info("GME Processor Running")
         
-        while not self.stop_event.is_set() or not QUEUE_GME.empty():
-            fname = QUEUE_GME.get()
+        while not self.stop_event.is_set() or not QUEUE.empty():
+            fname = QUEUE.get()
             # Processing
-            self.toDatabase(fname) #!!! Leaveme here!! Processa un file per volta
+            self.toDatabase(fname)
             # Clean folder
             Path(DOWNLOAD + '/' + fname).unlink()
             time.sleep(.5)
@@ -100,13 +101,15 @@ class FileProcessor(threading.Thread):
             collection = self.db['MI']
         elif fname[8:11] == 'MSD' or fname[8:11] == 'MBP':
             collection = self.db['MSD']
-        
+
         if fname[11:-4] == 'LimitiTransito' or fname[11:-4] == 'Transiti':
             parsed_data = process_transit_file(fname)
             self.sendData(parsed_data, collection)
         elif fname[11:-4] == 'OffertePubbliche':
             parsed_data = process_OffPub(fname)
             collection.insert_many(parsed_data)
+        elif 'xlsx' in fname:
+            pass
         else:
             parsed_data = process_file(fname)
             self.sendData(parsed_data, collection)

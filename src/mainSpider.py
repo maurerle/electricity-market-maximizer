@@ -23,7 +23,6 @@ def getDay():
 	gme = GMESpider(logger)
 	terna = TernaSpider()
 	processor = FileProcessor(logger)
-	csvProcessor = FileProcessorCSV(logger, collection='TERNA')
 	
 	date = datetime.now().strftime('%d/%m/%Y')
 	date_nxt = (datetime.now() + relativedelta(days=+1)).strftime('%d/%m/%Y')
@@ -40,7 +39,6 @@ def getDay():
 
 	gme.driver.quit()
 	processor.stop()
-	csvProcessor.stop()
 	bot('INFO', 'GME', 'getDaily ended.')
 
 def getHistory():
@@ -50,7 +48,6 @@ def getHistory():
 	bot('INFO', 'GME', 'getHistory started.')
 	gme = GMESpider(logger)
 	processor = FileProcessor(logger)
-	csvProcessor = FileProcessorCSV(logger, collection='TERNA')
 
 	start = START
 	limit = datetime.now()
@@ -125,5 +122,4 @@ def getHistory():
 
 	gme.driver.quit()
 	processor.stop()
-	csvProcessor.stop()
 	bot('INFO', 'GME', 'getHistory ended.')
