@@ -18,8 +18,31 @@ from src.common.config import DOWNLOAD, TERNA, QUEUE
 
 dont_write_bytecode = True
 class TernaSpider():
+    """Reach the Energy Balance field of the Terna website and download data
+    referred to an indicated range of days. Then store their name in a queue 
+    from which they will be processed.
+    
+    Parameters
+    ----------
+    logger : logging.logger
+        logger instance to display and save logs
+    
+    Attributes
+    ----------
+    driver : selenium.webdriver.firefox.webdriver.WebDriver
+        web driver emulating the user's actions on the browser
+    action : selenium.webdriver.common.action_chains.ActionChains
+        used to perform mouse hovering
+    passed : bool
+        flag to notify that a connection or congestion error occurred
+    
+    Methods
+    -------
+    getData(url, start, end)
+    setFname(date)    
+    """
     def __init__(self, logger):
-        profile = webdriver.FirefoxProfile()  # path -- gekodriver
+        profile = webdriver.FirefoxProfile()
         profile.set_preference("browser.download.folderList", 2)
         profile.set_preference("browser.helperApps.alwaysAsk.force", False)
         profile.set_preference(
@@ -45,6 +68,22 @@ class TernaSpider():
         self.passed = False
 
     def getData(self, url, start, end):
+        """The spider get the url, find the "Custom Range" button and insert 
+        the starting and ending download period. Then moves back to the graph,
+        enable the Options button, select the "Export data" entry of the 
+        dropdown menu and finally downloads data.
+        If any connection or congestion problem occurs, the process is 
+        automatically repeated.
+        
+        Parameters
+        ----------
+        url : str
+            Terna website url
+        start : str
+            starting download period
+        end : str
+            ending download period
+        """
         self.driver.get(url)
         self.driver.switch_to.frame(
             self.driver.find_element_by_id("iframeEnergyBal")
@@ -64,6 +103,7 @@ class TernaSpider():
             
         while True:
             try: 
+                # Get the parent div
                 parent = self.driver.find_element_by_class_name("canvasFlexBox")   
                 # Div
                 btn = parent.find_element_by_css_selector(
@@ -95,6 +135,7 @@ class TernaSpider():
                 sleep(1)
                 form[1].send_keys(end)
                 self.log.info('[TERNA] Date inserted')
+                
                 # Graph
                 graph = self.driver.find_element_by_css_selector(
                     "#pvExplorationHost > div > div > exploration > div "\
@@ -124,21 +165,29 @@ class TernaSpider():
 
             except NoSuchElementException:
                 sleep(1)
+            
             except StaleElementReferenceException:
                 self.log.error('[TERNA] Stale error. Try again..')
+                
                 try:
                     bot('ERROR', 'TERNA', 'Stale error. Try again..')
                 except:
                     pass
+                
                 self.getData(url, start, end)
+                
                 break
+            
             except ElementNotInteractableException:
                 self.log.error('[TERNA] Interactable error. Try again..')
+                
                 try:
                     bot('ERROR', 'TERNA', 'Interactable error. Try again..')
                 except:
                     pass
+                
                 self.getData(url, start, end)
+                
                 break
 
         if not self.passed:
@@ -148,13 +197,28 @@ class TernaSpider():
                     btn = self.driver.find_element_by_class_name("primary") 
                     self.driver.execute_script('arguments[0].click();', btn)
                     self.log.info('[TERNA] Export data.')
+                    
                     break       
                 except NoSuchElementException:
                     sleep(1)
+            
             self.passed = True    
             self.setFname(start)
 
     def setFname(self, date):
+        """When the .xlsx data is correctly downloaded its name is changed into
+        EnergyBalDDMMYYY
+        
+        Parameters
+        ----------
+        date : str
+            date data are referred to
+        
+        Returns
+        -------
+        None
+            Only to correctly exit the two loops
+        """
         date = date.replace('/','')
         while True:
             for files in Path(DOWNLOAD).iterdir():
@@ -167,5 +231,6 @@ class TernaSpider():
                     files.replace(target)
                     
                     QUEUE.put(f"{TERNA['name']}{date}.xlsx")
+                    
                     return None
         sleep(1)

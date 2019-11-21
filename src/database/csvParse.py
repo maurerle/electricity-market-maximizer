@@ -1,6 +1,3 @@
-""" The parse has to convert the input CSV into a JSON file in order to load it on a
-     MongoDB DataBase
-"""
 from sys import version_info, dont_write_bytecode
 from pandas import read_excel
 import logging
@@ -9,53 +6,79 @@ from collections import defaultdict
 import xlrd
 
 dont_write_bytecode = True
-if version_info[:2] < (3, 7):
-    raise RuntimeError("Python version >= 3.7 required.")
 
 class ParseCsv():
-    """A Parse class used to parse CSV file into json file for processing them on a MongoDB.
-     Methods
+    """.csv parser to process the .xlsx file and store them in a MongoDB 
+    database.
+    
+    Methods
     -------
-    excel_to_dic
+    excel_to_dic(path, header=None, skiprows=2, flag=False)
+    to_list_dict(df)
 
+    Raises
+    ------
+    RuntimeError
+        check if the python version is the 3.7 one
     """
+    def __init__(self):
+        if version_info[:2] < (3, 7):
+    
+            raise RuntimeError("Python version >= 3.7 required.")
+
 
     @staticmethod
     def excel_to_dic(path, header=None, skiprows=2, flag=False):
-
+        """Reads an excel file, located in a specific path, transforming it 
+        into a python dictionary.
+        
+        Parameters
+        ----------
+        path : pathlib.Path
+            path of the file to process
+        header : optional
+            by default None
+        skiprows : int, optional
+            number of rows to skip, by default 2
+        flag : bool, optional
+            by default False
+        
+        Returns
+        -------
+        pandas.DataFrame
+            dataframe containing the parsed data
         """
-        reads an excel file, located in a specific path, transforming it into a python dictionary
-
-         :param path: path excel file path
-         :param skiprows: list-like, int or callable, optional. Line numbers to skip (0-indexed) or number of lines
-                    to skip (int) at the start of the file.
-
-         :param header: int, list of int, Row number(s) to use as the column names, and the start of the data
-
-         :param flag: Boolean, it is just a check if the file needs 3 rows to be skip. Default is False.
-
-         :return a pandas.DataFrame
-
-        """
-        try:
-            if flag:
-                df = read_excel(io=path, header=header, skiprows=3)
-                df = df.drop([0])
-                return df
-            else:
-                df = read_excel(io=path, header=header, skiprows=skiprows)
-                df = df.drop([0])
-                return df
-        except Exception as e:
-            logging.error("Exception occurred", exc_info=True)
-
+        if flag:
+            df = read_excel(io=path, header=header, skiprows=3)
+            df = df.drop([0])
+            
+            return df
+        else:
+            df = read_excel(io=path, header=header, skiprows=skiprows)
+            df = df.drop([0])
+            
+            return df
 
 
     @staticmethod
     def to_list_dict(df):
-        """This method can process correctly all types of TERNA's file. """
-        ag_dict_ = df.groupby([0])[[2, 1]].apply(lambda g: dict(map(tuple, g.values.tolist())))
-        # Energy Balance: the total power used to meet the total load of italy, internal and foreign power.
+        """Create a list of dictionaries. Each dictionary will be uploaded
+        on the database as a single document.
+        
+        Parameters
+        ----------
+        df : pandas.DataFrame
+            dataframe created by the excel_to_dict() method.
+        
+        Returns
+        -------
+        list
+            dict list to be updated on the database
+        """
+        ag_dict_ = df.groupby([0])[[2, 1]].apply(
+            lambda g: dict(map(tuple, g.values.tolist()))
+        )
+        
         ls = []
         for _key, _value in ag_dict_.items():
             ag_dict = {}
@@ -66,15 +89,3 @@ class ParseCsv():
             ls.append(ag_dict)
             
         return ls
-
-
-    @staticmethod
-    def join_dict(*args):
-        """a method for joining dictionary with same keys: here, it takes all the possible dictionary generates by our
-        model, and return a dictionary with key=date and values as many as values are present in all initial dictionary"""
-
-        d = defaultdict(list)
-        for d_ in args:
-            for key, value in d_.items():
-                d[key].append(value)
-        return d

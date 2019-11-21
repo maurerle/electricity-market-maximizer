@@ -10,7 +10,10 @@ from selenium.webdriver.common.keys import Keys
 dont_write_bytecode = True
 
 class GMESpider():
-	"""Description
+	"""Pass the licens and agreements flags of the GME website, reach the all 
+	download fields, enter the starting and ending download period. Then 
+	extract all the .zip downloaded files and store their name in a queue from
+	which they will be processed.
 
 	Parameters
 	----------
@@ -31,30 +34,38 @@ class GMESpider():
 		getFname(fname, start, end)
 		checkDownload(fname)
 		unzip(fname)
-		updateHistory(flist)
 	"""
 	def __init__(self, log):
 		# Set the firefox profile preferences
 		profile = webdriver.FirefoxProfile()
 		profile.set_preference("browser.download.folderList", 2)
 		profile.set_preference("browser.helperApps.alwaysAsk.force", False)
-		profile.set_preference("browser.download.manager.showWhenStarting",False)
+		profile.set_preference(
+			"browser.download.manager.showWhenStarting",
+			False
+		)
 		profile.set_preference("browser.download.dir", DOWNLOAD)
 		profile.set_preference("browser.download.downloadDir", DOWNLOAD)
 		profile.set_preference("browser.download.defaultFolder", DOWNLOAD)
-		profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/html")
+		profile.set_preference(
+			"browser.helperApps.neverAsk.saveToDisk", 
+			"text/html"
+		)
 		
 		# Class init
-		self.driver = webdriver.Firefox(profile, log_path='logs/geckodrivers.log')
+		self.driver = webdriver.Firefox(
+			profile, 
+			log_path='logs/geckodrivers.log'
+		)
 		self.driver.set_page_load_timeout(15)
 		self.log = log
 		self.passRestrictions()
 	
 		
 	def passRestrictions(self):
-		"""At the beginning of each session the GME website requires the flag and the submission
-		of the Terms and Conditions agreement. Selenium emulate the user's click and passes this
-		restrictions.
+		"""At the beginning of each session the GME website requires the flag 
+		and the submission of the Terms and Conditions agreement. Selenium 
+		emulates the user's click and passes these restrictions.
 		"""
 		connected = False
 		restarted = False
@@ -77,28 +88,35 @@ class GMESpider():
 				sleep(5)
 
 		# Flag the Agreement checkboxes
-		_input = self.driver.find_element_by_id('ContentPlaceHolder1_CBAccetto1')
+		_input = self.driver.find_element_by_id(
+			'ContentPlaceHolder1_CBAccetto1'
+		)
 		_input.click()
-		_input = self.driver.find_element_by_id('ContentPlaceHolder1_CBAccetto2')
+		_input = self.driver.find_element_by_id(
+			'ContentPlaceHolder1_CBAccetto2'
+		)
 		_input.click()
 		# Submit the agreements
-		_input = self.driver.find_element_by_id('ContentPlaceHolder1_Button1')
+		_input = self.driver.find_element_by_id(
+			'ContentPlaceHolder1_Button1'
+		)
 		_input.click()
 		self.log.info("[GME] Agreements passed")
 	
 		
 	def getData(self, gme, start, *end):
-		"""Insert the starting and ending date of data and download them by emulating the 
-		user's click. After the download in the 'downloads/' folder, the file is checked.
-		If the download failed, it is tried again.
+		"""Insert the starting and ending date of data and download them by 
+		emulating the user's click. After the download in the 'downloads/' 
+		folder, the file is checked. If the download failed, it is tried again.
 
 		Parameters
 		----------
 			gme : dict
-				GME url to retrieve data and name of the downloaded file without extension
+				GME url to retrieve data and name of the downloaded file 
+				without extension
 			start : str
 				starting date data are refearred to
-			end : str
+			*end : str
 				ending date data are refearred to
 
 		"""
@@ -108,20 +126,31 @@ class GMESpider():
 		while not downloaded:
 			try:
 				if len(end)>0:
-					self.log.info("[GME] Retrieving data:\n\t{}\n\t{} - {}".format(gme['fname'], start, end[0]))
+					self.log.info(
+						"[GME] Retrieving data:"\
+						f"\n\t{gme['fname']}\n\t{start} - {end[0]}"
+					)
 				else:
-					self.log.info("[GME] Retrieving data:\n\t{}\n\t{}".format(gme['fname'], start))
+					self.log.info(
+						f"[GME] Retrieving data:\n\t{gme['fname']}\n\t{start}"
+					)
 				self.driver.get(gme['url'])
 				# Set the starting and endig date.
 				# The GME has the one-month restriction
-				_input = self.driver.find_element_by_id('ContentPlaceHolder1_tbDataStart')
+				_input = self.driver.find_element_by_id(
+					'ContentPlaceHolder1_tbDataStart'
+				)
 				_input.send_keys(start)
 				if len(end)>0:
-					_input = self.driver.find_element_by_id('ContentPlaceHolder1_tbDataStop')
+					_input = self.driver.find_element_by_id(
+						'ContentPlaceHolder1_tbDataStop'
+					)
 					_input.send_keys(end)
 				
 				# Download file
-				_input = self.driver.find_element_by_id('ContentPlaceHolder1_btnScarica')
+				_input = self.driver.find_element_by_id(
+					'ContentPlaceHolder1_btnScarica'
+				)
 				_input.click()
 				
 				# Check if download succeded
@@ -148,8 +177,8 @@ class GMESpider():
 	
 		
 	def getFname(self, fname, start, *end):
-		"""Build the downloaded zipped file name on the basis of the starting and 
-		ending date.
+		"""Build the downloaded zipped file name on the basis of the starting 
+		and ending date.
 
 		Parameters
 		----------
@@ -158,7 +187,7 @@ class GMESpider():
 				in the config. file
 			start : str
 				starting date data are refearred to
-			end : str
+			*end : str
 				ending date data are refearred to
 
 		Returns
@@ -211,6 +240,8 @@ class GMESpider():
 	
 	def unZip(self, fname):
 		"""Unzip the downloaded files and remove the zipped one from the folder.
+		If the zipped files contains more zipped ones, those are extracted
+		and processed too.
 
 		Parameters
 		----------

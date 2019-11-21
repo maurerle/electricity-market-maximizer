@@ -12,7 +12,8 @@ dont_write_bytecode = True
 
 
 class FileProcessor(Thread):
-    """A thread class used to process .xml files and send data to the database.
+    """A thread class used to process .xml  and .xlsx files and send data to 
+    the database.
 
     Parameters
     ----------
@@ -23,7 +24,7 @@ class FileProcessor(Thread):
     ----------
     log : logging.logger
         logger instance to display and save logs
-    db : pymongo.database.Database
+    db : motor_asyncio.AsyncIOMotorDatabase
         the database to use
 
     Methods
@@ -31,6 +32,7 @@ class FileProcessor(Thread):
     databaseInit()
     run()
     toDatabase(fname)
+    sendData(parsed_data, collection)
     """
 
     def __init__(self, log):
@@ -45,8 +47,9 @@ class FileProcessor(Thread):
 
         Returns
         -------
-        db : pymongo.database.Database
+        db : motor_asyncio.AsyncIOMotorDatabase
             the database to use
+        
         """
 
         try:
@@ -122,6 +125,16 @@ class FileProcessor(Thread):
             self.sendData(parsed_data, collection)
         
     def sendData(self, parsed_data, collection):
+        """Updates the selected collection with the documents made of paresd
+        data.
+        
+        Parameters
+        ----------
+        parsed_data : list
+            dict list with data to store in the database
+        collection : motor_asyncio.AsyncIOMotorCollection
+            collection to update
+        """
         for item in parsed_data:
             try:
                 collection.update_one({'Data':item['Data'], 'Ora':item['Ora']},
