@@ -72,7 +72,7 @@ class GMESpider():
 						pass
 					
 			except:
-				self.log.error("GME connection failed. Trying again.")
+				self.log.error("[GME] connection failed. Trying again.")
 				restarted = True
 				sleep(5)
 
@@ -84,7 +84,7 @@ class GMESpider():
 		# Submit the agreements
 		_input = self.driver.find_element_by_id('ContentPlaceHolder1_Button1')
 		_input.click()
-		self.log.info("Agreements passed")
+		self.log.info("[GME] Agreements passed")
 	
 		
 	def getData(self, gme, start, *end):
@@ -108,9 +108,9 @@ class GMESpider():
 		while not downloaded:
 			try:
 				if len(end)>0:
-					self.log.info("Retrieving data:\n\t{}\n\t{} - {}".format(gme['fname'], start, end[0]))
+					self.log.info("[GME] Retrieving data:\n\t{}\n\t{} - {}".format(gme['fname'], start, end[0]))
 				else:
-					self.log.info("Retrieving data:\n\t{}\n\t{}".format(gme['fname'], start))
+					self.log.info("[GME] Retrieving data:\n\t{}\n\t{}".format(gme['fname'], start))
 				self.driver.get(gme['url'])
 				# Set the starting and endig date.
 				# The GME has the one-month restriction
@@ -142,7 +142,7 @@ class GMESpider():
 					except:
 						pass
 			except:
-				self.log.warning('Trying again...')
+				self.log.warning('[GME] Trying again...')
 				restarted = True
 				sleep(5)
 	
@@ -193,12 +193,12 @@ class GMESpider():
 				True if the file has been downloaded, False otherwise
 		"""
 		if Path(DOWNLOAD+'/'+fname).is_file():
-			self.log.info("Zip file downloaded".format(fname))
+			self.log.info("[GME] Zip file downloaded")
 			self.unZip(fname)
 			
 			return True
 		else:
-			self.log.error("{} download failed".format(fname))
+			self.log.error(f"[GME] {fname} download failed")
 			
 			# Bot Notifications
 			try:
@@ -226,9 +226,9 @@ class GMESpider():
 					if '.zip' in zlist[0]:
 						containzip = True
 					# extracting all the files 
-					self.log.info("Extracting data...") 
+					self.log.info("[GME] Extracting data...") 
 					zip.extractall(DOWNLOAD) 
-					self.log.info("Data extracted") 
+					self.log.info("[GME] Data extracted") 
 
 				Path(DOWNLOAD+'/'+fname).unlink()
 				unzipped = True
@@ -250,7 +250,7 @@ class GMESpider():
 							self.unZip(item)
 
 			except:	
-				self.log.error(f"{fname} not found. Trying again...")
+				self.log.error(f"[GME] {fname} not found. Trying again...")
 				
 				# Bot Notifications
 				try:

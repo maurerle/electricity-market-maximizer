@@ -50,15 +50,17 @@ class FileProcessor(Thread):
         """
 
         try:
-            self.log.info("Attempting to connect to the database...")
+            self.log.info("[PROCESS] Attempting to connect to the database...")
             client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_STRING)
             db = client[DB_NAME]
-            self.log.info("Connected to the database.")
+            self.log.info("[PROCESS] Connected to the database.")
             return db
         except Exception as e:
-            self.log.error("Exception while connecting to the db: " + str(e))
+            self.log.error(
+                f"[PROCESS] Exception while connecting to the db: {e}"
+            )
             # Bot Notification
-            bot('ERROR', 'GME_MongoClient', 'Connection failed.')
+            bot('ERROR', 'PROCESS', 'Connection failed.')
 
     def run(self):
         """Method called when the thread starts.
@@ -66,7 +68,7 @@ class FileProcessor(Thread):
         processed and sent to the database.
         """
 
-        self.log.info("GME Processor Running")
+        self.log.info("[PROCESS] Processor Running")
         
         while not self.stop_event.is_set() or not QUEUE.empty():
             fname = QUEUE.get()
@@ -76,7 +78,7 @@ class FileProcessor(Thread):
             Path(DOWNLOAD + '/' + fname).unlink()
             sleep(.5)
 
-        self.log.info("GME Processing Done")
+        self.log.info("[PROCESS] Processing Done")
         bot('INFO', 'PROCESSOR', 'Processing Done.')
 
     def stop(self):
@@ -92,7 +94,7 @@ class FileProcessor(Thread):
             name of the .xml file to process
         """
 
-        self.log.info(f"Processing {fname}")
+        self.log.info(f"[PROCESS] Processing {fname}")
 
         if fname[11:-4] == 'OffertePubbliche':
             collection = self.db['OffertePubbliche']
@@ -126,6 +128,8 @@ class FileProcessor(Thread):
                                     {"$set": item},
                                     upsert=True)
             except Exception as e:
-                self.log.error("Exception while updating the db: " + str(e))
+                self.log.error(
+                    f"[PROCESS] Exception while updating the db: {e}"
+                )
                 # Bot Notification
                 bot('ERROR', 'PROCESSOR', 'Update failed.')

@@ -11,6 +11,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import ElementNotInteractableException
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
 from src.common.config import DOWNLOAD, TERNA, QUEUE
 
@@ -40,6 +42,7 @@ class TernaSpider():
         self.driver.set_page_load_timeout(20)
         self.action = ActionChains(self.driver)
         self.log = logger
+        self.passed = False
 
     def getData(self, url, start, end):
         self.driver.get(url)
@@ -70,7 +73,7 @@ class TernaSpider():
                     "> div:nth-child(1)"
                 )
                 self.driver.execute_script('arguments[0].click();', btn)
-                
+                self.log.info('[TERNA] Frame switched.')
                 while True:
                     try:
                         wait(parent, 1).until(
@@ -91,7 +94,7 @@ class TernaSpider():
                 self.driver.execute_script('arguments[0].click();', form[1])
                 sleep(1)
                 form[1].send_keys(end)
-                
+                self.log.info('[TERNA] Date inserted')
                 # Graph
                 graph = self.driver.find_element_by_css_selector(
                     "#pvExplorationHost > div > div > exploration > div "\
@@ -107,6 +110,7 @@ class TernaSpider():
                 btn = parent.find_element_by_class_name('vcMenuBtn')
                 self.driver.execute_script('arguments[0].click();', btn)
                 self.action.move_to_element(btn).perform()
+                self.log.info('[TERNA] Options Clicked.')
                 
                 # Export Data
                 btn = parent.find_element_by_xpath(
@@ -120,17 +124,35 @@ class TernaSpider():
 
             except NoSuchElementException:
                 sleep(1)
+            except StaleElementReferenceException:
+                self.log.error('[TERNA] Stale error. Try again..')
+                try:
+                    bot('ERROR', 'TERNA', 'Stale error. Try again..')
+                except:
+                    pass
+                self.getData(url, start, end)
+                break
+            except ElementNotInteractableException:
+                self.log.error('[TERNA] Interactable error. Try again..')
+                try:
+                    bot('ERROR', 'TERNA', 'Interactable error. Try again..')
+                except:
+                    pass
+                self.getData(url, start, end)
+                break
 
-        while True:
-            try:
-                # Download button
-                btn = self.driver.find_element_by_class_name("primary") 
-                self.driver.execute_script('arguments[0].click();', btn)
-                break       
-            except NoSuchElementException:
-                sleep(1)
-            
-        self.setFname(start)
+        if not self.passed:
+            while True:
+                try:
+                    # Download button
+                    btn = self.driver.find_element_by_class_name("primary") 
+                    self.driver.execute_script('arguments[0].click();', btn)
+                    self.log.info('[TERNA] Export data.')
+                    break       
+                except NoSuchElementException:
+                    sleep(1)
+            self.passed = True    
+            self.setFname(start)
 
     def setFname(self, date):
         date = date.replace('/','')
@@ -138,6 +160,9 @@ class TernaSpider():
             for files in Path(DOWNLOAD).iterdir():
                 if 'data.xlsx' in str(files):
                     target = Path(f"{DOWNLOAD}/{TERNA['name']}{date}.xlsx")
+                    self.log.info(f"[TERNA] {TERNA['name']}{date}.xlsx"\
+                        " downloaded."
+                    )
                     sleep(2)
                     files.replace(target)
                     
