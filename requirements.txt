@@ -4,7 +4,6 @@ telepot
 xmltodict
 django
 xlrd
-collections
+collections-extended
 pandas
 motor
-zipfile
