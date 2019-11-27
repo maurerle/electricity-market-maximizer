@@ -14,7 +14,9 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
-from src.common.config import DOWNLOAD, QUEUE
+from src.common.config import DOWNLOAD, QUEUE, START
+import requests as req
+from bs4 import BeautifulSoup as bs
 
 dont_write_bytecode = True
 class TernaSpider():
@@ -266,3 +268,50 @@ class TernaSpider():
                     
                     return None
         sleep(1)
+
+class TernaReserve():
+    def __init__ (self):
+        self.driver = webdriver.Firefox(
+            log_path='logs/geckodrivers.log'
+        )
+        self.driver.set_page_load_timeout(20)
+    
+    def getDaily(self):
+        today = datetime.now().strftime('%Y%m%d')
+
+        url = 'https://www.terna.it/it/sistema-elettrico/dispacciamento/stima-domanda-oraria-energia-riserva-secondaria-terziaria'
+        self.driver.get(url)
+        sleep(5)
+
+        soup = bs(self.driver.page_source, 'html.parser')
+        for a in soup.find_all('a', href=True):
+            if 'Fabbisogno' and today in a['href']:
+                print('Found')
+                break
+    
+    def getHistory(self):
+        today = datetime.now().strftime('%Y%m%d')
+        limit = datetime(2017,1,31).strftime('%Y%m%d')
+        
+        refs = []
+        url = 'https://www.terna.it/it/sistema-elettrico/dispacciamento/stima-domanda-oraria-energia-riserva-secondaria-terziaria'
+        self.driver.get(url)
+        sleep(5)
+        while True:
+            sleep(1)
+            soup = bs(self.driver.page_source, 'html.parser')
+            for a in soup.find_all('a', href=True):
+                if 'Fabbisogno' in a['href'] and today not in a['href']:
+                    if limit in a['href']:
+                        return None
+                    else:
+                        self.download(a['href'])
+                        refs.append(a['href'])
+            nxt = self.driver.find_element_by_xpath('/html/body/form/div[3]/div/div/div[1]/div/div/div[3]/div/div/div/div/div/div/div[3]/div[1]/div/div/div/ul/li[3]/a')
+            nxt.click()
+    
+    def download(self, href):
+        fname = href.split('/')[-1]
+        with open(f'{DOWNLOAD}/{fname}', 'wb') as file:
+            res = req.get(href)
+            file.write(res.content)

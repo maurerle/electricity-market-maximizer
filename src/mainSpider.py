@@ -6,7 +6,7 @@ from src.database.processor import FileProcessor
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from src.spiders.gme import GMESpider
-from src.spiders.terna import TernaSpider
+from src.spiders.terna import TernaSpider, TernaReserve
 from src.common.config import GME, GME_NEXT, GME_WEEK, START, TERNA
 
 dont_write_bytecode = True
@@ -15,6 +15,9 @@ logging.config.fileConfig('src/common/logging.conf')
 logger = logging.getLogger(__name__)
 
 def getDay():
+	terna = TernaReserve()
+	terna.getHistory()
+	exit()
 	"""Visit the GME website and Terna one, call the spiders to retrieve 
 	the daily data and call the file processor to update the file to a MongoDB
 	database.
