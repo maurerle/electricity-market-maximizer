@@ -14,7 +14,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
-from src.common.config import DOWNLOAD, TERNA, QUEUE
+from src.common.config import DOWNLOAD, QUEUE
 
 dont_write_bytecode = True
 class TernaSpider():
@@ -67,7 +67,7 @@ class TernaSpider():
         self.log = logger
         self.passed = False
 
-    def getData(self, url, start, end):
+    def getData(self, item, start, end):
         """The spider get the url, find the "Custom Range" button and insert 
         the starting and ending download period. Then moves back to the graph,
         enable the Options button, select the "Export data" entry of the 
@@ -77,16 +77,16 @@ class TernaSpider():
         
         Parameters
         ----------
-        url : str
-            Terna website url
+        item : dict
+            download information of the Terna item
         start : str
             starting download period
         end : str
             ending download period
         """
-        self.driver.get(url)
+        self.driver.get(item['url'])
         self.driver.switch_to.frame(
-            self.driver.find_element_by_id("iframeEnergyBal")
+            self.driver.find_element_by_id(item['iframe'])
         )
 
         while True:
@@ -106,9 +106,10 @@ class TernaSpider():
                 # Get the parent div
                 parent = self.driver.find_element_by_class_name("canvasFlexBox")   
                 # Div
+                
                 btn = parent.find_element_by_css_selector(
                     "visual-container-modern.visual-container-component:nth"\
-                    "-child(34) > transform:nth-child(1) > div:nth-child(1) "\
+                    f"-child({item['child']}) > transform:nth-child(1) > div:nth-child(1) "\
                     "> div:nth-child(3) > visual-modern:nth-child(1) "\
                     "> div:nth-child(1)"
                 )
@@ -136,13 +137,44 @@ class TernaSpider():
                 form[1].send_keys(end)
                 self.log.info('[TERNA] Date inserted')
                 
+                break
+
+            except NoSuchElementException:
+                sleep(1)
+            
+            except StaleElementReferenceException:
+                self.log.error('[TERNA] Stale error. Try again..')
+                
+                try:
+                    bot('ERROR', 'TERNA', 'Stale error. Try again..')
+                except:
+                    pass
+                
+                self.getData(url, start, end)
+                
+                break
+            
+            except ElementNotInteractableException:
+                self.log.error('[TERNA] Interactable error. Try again..')
+                
+                try:
+                    bot('ERROR', 'TERNA', 'Interactable error. Try again..')
+                except:
+                    pass
+                
+                self.getData(url, start, end)
+                
+                break
+
+        while True:
+            try: 
                 # Graph
                 graph = self.driver.find_element_by_css_selector(
                     "#pvExplorationHost > div > div > exploration > div "\
                     "> explore-canvas-modern > div > div.canvasFlexBox > div "\
                     "> div.displayArea.disableAnimations.fitToPage "\
                     "> div.visualContainerHost > visual-container-repeat "\
-                    "> visual-container-modern:nth-child(23) > transform"
+                    f"> visual-container-modern:nth-child({item['graph']}) > transform"
                 )
                 self.driver.execute_script('arguments[0].click();', graph)
                 self.action.move_to_element(graph).perform()
@@ -152,12 +184,10 @@ class TernaSpider():
                 self.driver.execute_script('arguments[0].click();', btn)
                 self.action.move_to_element(btn).perform()
                 self.log.info('[TERNA] Options Clicked.')
-                
+
                 # Export Data
                 btn = parent.find_element_by_xpath(
-                    "/html/body/div[9]/drop-down-list/ng-transclude/"\
-                    "ng-repeat[1]/drop-down-list-item/ng-transclude/ng-switch/"\
-                    "div"
+                    "/html/body/div[8]/drop-down-list/ng-transclude/ng-repeat[1]/drop-down-list-item/ng-transclude/ng-switch/div"
                 )
                 self.action.move_to_element(btn).perform()
                 self.driver.execute_script('arguments[0].click();', btn)
@@ -190,6 +220,8 @@ class TernaSpider():
                 
                 break
 
+
+
         if not self.passed:
             while True:
                 try:
@@ -203,9 +235,9 @@ class TernaSpider():
                     sleep(1)
             
             self.passed = True    
-            self.setFname(start)
+            self.setFname(item, start)
 
-    def setFname(self, date):
+    def setFname(self, item, date):
         """When the .xlsx data is correctly downloaded its name is changed into
         EnergyBalDDMMYYY
         
@@ -223,14 +255,14 @@ class TernaSpider():
         while True:
             for files in Path(DOWNLOAD).iterdir():
                 if 'data.xlsx' in str(files):
-                    target = Path(f"{DOWNLOAD}/{TERNA['name']}{date}.xlsx")
-                    self.log.info(f"[TERNA] {TERNA['name']}{date}.xlsx"\
+                    target = Path(f"{DOWNLOAD}/{item['name']}{date}.xlsx")
+                    self.log.info(f"[TERNA] {item['name']}{date}.xlsx"\
                         " downloaded."
                     )
                     sleep(2)
                     files.replace(target)
                     
-                    QUEUE.put(f"{TERNA['name']}{date}.xlsx")
+                    QUEUE.put(f"{item['name']}{date}.xlsx")
                     
                     return None
         sleep(1)

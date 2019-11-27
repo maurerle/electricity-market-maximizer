@@ -19,13 +19,9 @@ def getDay():
 	the daily data and call the file processor to update the file to a MongoDB
 	database.
 	"""
-	logger.info('[TERNA] getDay() started.')
-	logger.info('[GME] getDay() started.')
 	bot('INFO', 'GME/TERNA', 'getDaily started.')
 	
 	# Classes init
-	gme = GMESpider(logger)
-	terna = TernaSpider(logger)
 	processor = FileProcessor(logger)
 	
 	# Date creation
@@ -34,13 +30,18 @@ def getDay():
 	date_week = (datetime.now() + relativedelta(days=-8)).strftime('%d/%m/%Y')
 	
 	# Terna spider works
-	terna.getData(TERNA['url'], date, date)
-	terna.driver.quit()
+	logger.info('[TERNA] getDay() started.')
+	for item in TERNA:
+		terna = TernaSpider(logger)
+		terna.getData(item, date, date)
+		terna.driver.quit()
 	
 	# Logs
 	bot('INFO', 'TERNA', 'getDaily ended.')
 	logger.info('[TERNA] getDay() ended.')
 	
+	gme = GMESpider(logger)
+	logger.info('[GME] getDay() started.')
 	# GME spider works
 	for item in GME:
 		gme.getData(item, date, date)
@@ -71,15 +72,15 @@ def getHistory():
 	logger.info('[TERNA] getHistory() started.')
 	while start.strftime('%YY') != limit.strftime('%YY'):
 		end = start + relativedelta(years=+1, days=-1)
-		
-		terna = TernaSpider(logger)
-		terna.getData(
-			TERNA['url'], 
-			start.strftime('%d/%m/%Y'), 
-			end.strftime('%d/%m/%Y')
-		)
-		terna.driver.quit()
-		del terna
+		for item in TERNA:
+			terna = TernaSpider(logger)
+			terna.getData(
+				item, 
+				start.strftime('%d/%m/%Y'), 
+				end.strftime('%d/%m/%Y')
+			)
+			terna.driver.quit()
+			del terna
 		
 		start = end + relativedelta(days=+ 1)
 	
@@ -87,13 +88,14 @@ def getHistory():
 	
 	# Terna spider works. From the 1st of the current month to the day before
 	# the current one
-	terna = TernaSpider(logger)
-	terna.getData(
-		TERNA['url'], 
-		start.strftime('%d/%m/%Y'), 
-		end.strftime('%d/%m/%Y')
-	)
-	terna.driver.quit()
+	for item in TERNA:
+		terna = TernaSpider(logger)
+		terna.getData(
+			item, 
+			start.strftime('%d/%m/%Y'), 
+			end.strftime('%d/%m/%Y')
+		)
+		terna.driver.quit()
 
 	# Logs
 	logger.info('[TERNA] getHistory() ended.')

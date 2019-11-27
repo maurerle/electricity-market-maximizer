@@ -14,7 +14,7 @@ CHAT_IDS = [523755114, 166462336, 192294736, 396732122]
 # ======================================
 
 # Hide the Firefox window when automating with selenium
-environ['MOZ_HEADLESS'] = '1'
+#environ['MOZ_HEADLESS'] = '1'
 
 # GME urls
 DOWNLOAD = getcwd()+'/downloads'
@@ -194,10 +194,29 @@ GME_WEEK = {
 	'url':'https://www.mercatoelettrico.org/it/Download/DownloadDati.aspx?val=OfferteFree_Pubbliche'
 }
 
-TERNA = {
-	'name':'EnergyBal',
-	'url': 'https://www.terna.it/it/sistema-elettrico/transparency-report/energy-balance',
-}
+
+TERNA = [
+	{
+		'name':'EnergyBal',
+		'url': 'https://www.terna.it/it/sistema-elettrico/transparency-report/energy-balance',
+		'iframe': 'iframeEnergyBal',
+		'child':34,
+		'graph':23
+	},{
+		'name':'TotalLoad',
+		'url': 'https://www.terna.it/en/electric-system/transparency-report/total-load',
+		'iframe': 'iframeTotalLoad',
+		'child':26,
+		'graph':6	
+	},{
+		'name':'MarketLoad',
+		'url': 'https://www.terna.it/en/electric-system/transparency-report/market-load',
+		'iframe': 'iframeMarketLoad',
+		'child':26,
+		'graph':6	
+	}
+]
+
 # Dynamic file history
 START =  datetime(2017, 2, 1)
 QUEUE = Queue()
