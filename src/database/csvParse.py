@@ -60,7 +60,6 @@ class ParseCsv():
 
             return df
 
-
     @classmethod
     def to_list_dict(cls, df, field):
         """Create a list of dictionaries. Each dictionary will be uploaded
