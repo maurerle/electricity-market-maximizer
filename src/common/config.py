@@ -223,13 +223,6 @@ GME_WEEK = {
 
 TERNA = [
 	{
-		'name':'EnergyBal',
-		'url': 'https://www.terna.it/it/sistema-elettrico/transparency-report/'\
-			   'energy-balance',
-		'iframe': 'iframeEnergyBal',
-		'child':34,
-		'graph':23
-	},{
 		'name':'TotalLoad',
 		'url': 'https://www.terna.it/en/electric-system/transparency-report/'\
 			   'total-load',
@@ -243,6 +236,13 @@ TERNA = [
 		'iframe': 'iframeMarketLoad',
 		'child':26,
 		'graph':6	
+	},{
+		'name':'EnergyBal',
+		'url': 'https://www.terna.it/it/sistema-elettrico/transparency-report/'\
+			   'energy-balance',
+		'iframe': 'iframeEnergyBal',
+		'child':34,
+		'graph':23
 	}
 ]
 
