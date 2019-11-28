@@ -118,7 +118,12 @@ class FileProcessor(Thread):
             collection.insert_many(parsed_data)
         elif 'xlsx' in fname:
             df = ParseCsv.excel_to_dic(f"{DOWNLOAD}/{fname}")
-            parsed_data = ParseCsv.to_list_dict(df)
+            if 'EnergyBal' in fname:
+                parsed_data = ParseCsv.to_list_dict(df, 'EnBal')
+            elif 'TotalLoad' in fname:
+                parsed_data = ParseCsv.to_list_dict(df, 'ToLo')
+            elif 'MarketLoad' in fname:
+                parsed_data = ParseCsv.to_list_dict(df, 'MaLo')
             self.sendData(parsed_data, collection)
         else:
             parsed_data = process_file(fname)
