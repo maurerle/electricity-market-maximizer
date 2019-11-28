@@ -125,6 +125,7 @@ class ParseCsv():
                 ls.append(ag_dict)
                 if ag_dict['Ora'] == '23':
                     break
+        
         for item in ls:
             item['Timestamp'] = mktime(
                 datetime.strptime(
