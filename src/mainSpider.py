@@ -29,19 +29,6 @@ def getDay():
 	date_nxt = (datetime.now() + relativedelta(days=+1)).strftime('%d/%m/%Y')
 	date_week = (datetime.now() + relativedelta(days=-8)).strftime('%d/%m/%Y')
 	
-	#===================
-	# Terna spider works
-	#===================
-	logger.info('[TERNA] getDay() started.')
-	for item in TERNA:
-		terna = TernaSpider(logger)
-		terna.getData(item, date, date)
-		terna.driver.quit()
-	
-	# Logs
-	bot('INFO', 'TERNA', 'getDaily ended.')
-	logger.info('[TERNA] getDay() ended.')
-	
 	#=====================================
 	# Terna Secondary Reserve spider works
 	#=====================================
@@ -54,6 +41,19 @@ def getDay():
 	# Logs 
 	bot('INFO', 'TERNA2', 'getDaily ended.')
 	logger.info('[TERNA2] getDay() ended.')
+
+	#===================
+	# Terna spider works
+	#===================
+	logger.info('[TERNA] getDay() started.')
+	for item in TERNA:
+		terna = TernaSpider(logger)
+		terna.getData(item, date, date)
+		terna.driver.quit()
+	
+	# Logs
+	bot('INFO', 'TERNA', 'getDaily ended.')
+	logger.info('[TERNA] getDay() ended.')
 
 	#=================
 	# GME spider works

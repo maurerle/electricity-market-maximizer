@@ -5,6 +5,8 @@ from pathlib import Path
 from collections import defaultdict
 import xlrd
 from numpy import max as nmax
+from time import mktime
+from datetime import datetime
 
 dont_write_bytecode = True
 
@@ -109,5 +111,26 @@ class ParseCsv():
                         'Data':cls.date
                     }
                 )
+        else:
+            ag_dict_ = df.groupby([1]).apply(
+                lambda g: dict(map(tuple, g.values.tolist()))
+            )
+            for _key, _value in ag_dict_.items():
+                ag_dict = {}
+                ag_dict['Data'] = _key.strftime('%Y%m%d')
+                ag_dict['Ora'] = _key.strftime('%H')
+                for key, value in _value.items():
+                    ag_dict[f'ResSec_{key}'] = value
 
-        return ls
+                ls.append(ag_dict)
+                if ag_dict['Ora'] == '23':
+                    break
+        for item in ls:
+            item['Timestamp'] = mktime(
+                datetime.strptime(
+                    f"{item['Data']}:{item['Ora']}", 
+                    '%Y%m%d:%H'
+                ).timetuple()
+            )
+            
+        return ls 
