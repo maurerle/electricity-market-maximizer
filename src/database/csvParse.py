@@ -61,7 +61,7 @@ class ParseCsv():
 
 
     @staticmethod
-    def to_list_dict(df):
+    def to_list_dict(df, flag):
         """Create a list of dictionaries. Each dictionary will be uploaded
         on the database as a single document.
         
@@ -75,10 +75,15 @@ class ParseCsv():
         list
             dict list to be updated on the database
         """
-        ag_dict_ = df.groupby([0])[[2, 1]].apply(
-            lambda g: dict(map(tuple, g.values.tolist()))
-        )
-        
+        if flag == 'E':
+            ag_dict_ = df.groupby([0])[[2, 1]].apply(
+                lambda g: dict(map(tuple, g.values.tolist()))
+            )
+        elif flag == 'SR':
+            ag_dict_ = df.groupby([1]).apply(
+                lambda g: dict(map(tuple, g.values.tolist()))
+            )
+            
         ls = []
         for _key, _value in ag_dict_.items():
             ag_dict = {}
