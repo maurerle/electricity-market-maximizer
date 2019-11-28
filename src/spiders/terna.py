@@ -14,13 +14,15 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
-from src.common.config import DOWNLOAD, QUEUE
+from src.common.config import DOWNLOAD, QUEUE, TERNA2
+import requests as req
+from bs4 import BeautifulSoup as bs
 
 dont_write_bytecode = True
 class TernaSpider():
-    """Reach the Energy Balance field of the Terna website and download data
-    referred to an indicated range of days. Then store their name in a queue 
-    from which they will be processed.
+    """Reach the Energy Balance, Ttoal and Market load fields of the Terna 
+    website and download datavreferred to an indicated range of days. Then 
+    store their name in a queue from which they will be processed.
     
     Parameters
     ----------
@@ -239,10 +241,12 @@ class TernaSpider():
 
     def setFname(self, item, date):
         """When the .xlsx data is correctly downloaded its name is changed into
-        EnergyBalDDMMYYY
+        EnergyBalDDMMYYY, TotalLoadDDMMYYY or MarketLoadDDMMYYY
         
         Parameters
         ----------
+        item : dict
+            download information of the Terna item
         date : str
             date data are referred to
         
@@ -266,3 +270,114 @@ class TernaSpider():
                     
                     return None
         sleep(1)
+
+
+class TernaReserve():
+    """Reach the Terna's secondary reserve page and retrieve the daily data
+    and the ones from the 01/02/2017 to create the database.
+    When the file is downloaded, it is added to the processing queue.
+
+    Attributes
+    ----------
+    driver : selenium.webdriver.firefox.webdriver.WebDriver
+        web driver emulating the user's actions on the browser
+
+    Methods
+    -------
+    getDaily()
+    getHistory()
+    download(href)
+    
+    Returns
+    -------
+    None
+        exit from the while loops
+    """
+    def __init__ (self):
+        self.driver = webdriver.Firefox(
+            log_path='logs/geckodrivers.log'
+        )
+        self.driver.set_page_load_timeout(20)
+        self.driver.get(TERNA2)
+    
+    def getDaily(self):
+        """Find the link of Terna's secondary reserve data referred to the 
+        current day.
+        """
+        today = datetime.now().strftime('%Y%m%d')
+
+        # Wait until the table is not loaded
+        while True:
+            try:
+                temp = self.driver.find_element_by_class_name(
+                    'terna-icon-download'
+                )
+                break
+            except NoSuchElementException:
+                sleep(1)
+        # Find the download lnks
+        soup = bs(self.driver.page_source, 'html.parser')
+        for a in soup.find_all('a', href=True):
+            if 'download.terna.it' and today in a['href']:
+                self.download(a['href'])
+                break
+                     
+    def getHistory(self):
+        """Find the link of all the Terna's secondary reserve data from the 
+        starting day up to the day before the current one.
+        
+        Returns
+        -------
+        None
+            exiting the while loops
+        """
+        # Day limits
+        today = datetime.now().strftime('%Y%m%d')
+        limit = datetime(2017,1,31).strftime('%Y%m%d')
+        dayM = datetime.strptime(today, '%Y%m%d')
+        daym = datetime.strptime(limit, '%Y%m%d')
+        limit = (dayM - daym).days
+                
+        cnt = 2
+        while True:
+            # Wait until the table is not loaded
+            while True:
+                try:
+                    temp = self.driver.find_element_by_class_name(
+                        'terna-icon-download'
+                    )
+                    break
+                except NoSuchElementException:
+                    sleep(1)
+
+            soup = bs(self.driver.page_source, 'html.parser')
+            # Find the download links
+            for a in soup.find_all('a', href=True):
+                if 'download.terna.it' in a['href'] and today not in a['href']:
+                    if cnt == limit:
+                        return None
+                    cnt+=1
+                    self.download(a['href'])
+            # Move to the next table
+            nxt = self.driver.find_element_by_xpath(
+                '/html/body/form/div[3]/div/div/div[1]/div/div/div[3]/div/'\
+                'div/div/div/div/div/div[3]/div[1]/div/div/div/ul/li[3]/a'
+            )
+            nxt.click()
+    
+    def download(self, href):
+        """Download the data by performing an HTTP get request and by saving
+        the response into a file. Then add the file to the processing queue.
+        
+        Parameters
+        ----------
+        href : str
+            download link
+        """
+        fname = href.split('/')[-1]
+        # Download files
+        with open(f'{DOWNLOAD}/{fname}', 'wb') as file:
+            res = req.get(href)
+            file.write(res.content)
+        # Add it to the queue for the processor
+        QUEUE.put(fname)

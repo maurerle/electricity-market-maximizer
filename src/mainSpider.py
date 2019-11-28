@@ -6,7 +6,7 @@ from src.database.processor import FileProcessor
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from src.spiders.gme import GMESpider
-from src.spiders.terna import TernaSpider
+from src.spiders.terna import TernaSpider, TernaReserve
 from src.common.config import GME, GME_NEXT, GME_WEEK, START, TERNA
 
 dont_write_bytecode = True
@@ -19,7 +19,7 @@ def getDay():
 	the daily data and call the file processor to update the file to a MongoDB
 	database.
 	"""
-	bot('INFO', 'GME/TERNA', 'getDaily started.')
+	bot('INFO', 'GME/TERNA/TERNA2', 'getDaily started.')
 	
 	# Classes init
 	processor = FileProcessor(logger)
@@ -29,7 +29,9 @@ def getDay():
 	date_nxt = (datetime.now() + relativedelta(days=+1)).strftime('%d/%m/%Y')
 	date_week = (datetime.now() + relativedelta(days=-8)).strftime('%d/%m/%Y')
 	
+	#===================
 	# Terna spider works
+	#===================
 	logger.info('[TERNA] getDay() started.')
 	for item in TERNA:
 		terna = TernaSpider(logger)
@@ -40,9 +42,25 @@ def getDay():
 	bot('INFO', 'TERNA', 'getDaily ended.')
 	logger.info('[TERNA] getDay() ended.')
 	
-	gme = GMESpider(logger)
-	logger.info('[GME] getDay() started.')
+	#=====================================
+	# Terna Secondary Reserve spider works
+	#=====================================
+	logger.info('[TERNA2] getDay() started.')
+	
+	terna = TernaReserve()
+	terna.getDaily()
+	terna.driver.quit()
+	
+	# Logs 
+	bot('INFO', 'TERNA2', 'getDaily ended.')
+	logger.info('[TERNA2] getDay() ended.')
+
+	#=================
 	# GME spider works
+	#=================
+	logger.info('[GME] getDay() started.')
+
+	gme = GMESpider(logger)
 	for item in GME:
 		gme.getData(item, date, date)
 	for item in GME_NEXT:
@@ -50,7 +68,10 @@ def getDay():
 	gme.getData(GME_WEEK, date_week)
 
 	gme.driver.quit()
+	
+	#===================
 	# Kill the processor
+	#===================
 	processor.stop()
 	
 	# Logs
@@ -68,7 +89,9 @@ def getHistory():
 	start = START
 	limit = datetime.now()
 
+	#=============================================================
 	# Terna spider works. From the 01/02/2017 to the current month
+	#=============================================================
 	logger.info('[TERNA] getHistory() started.')
 	while start.strftime('%YY') != limit.strftime('%YY'):
 		end = start + relativedelta(years=+1, days=-1)
@@ -101,7 +124,23 @@ def getHistory():
 	logger.info('[TERNA] getHistory() ended.')
 	bot('INFO', 'TERNA', 'getHistory ended.')
 
+	#=======================================================================
+	# Terna Secondary Reserve spider works. From the starting day to the day
+	# before the current one
+	#=======================================================================
+	logger.info('[TERNA2] getDay() started.')
+	
+	terna = TernaReserve()
+	terna.getHistory()
+	terna.driver.quit()
+	
+	# Logs 
+	bot('INFO', 'TERNA2', 'getDaily ended.')
+	logger.info('[TERNA2] getDay() ended.')
+
+	#=================
 	# GME spider works
+	#=================
 	gme = GMESpider(logger)
 	logger.info('[GME] getHistory() started.')
 	start = START
