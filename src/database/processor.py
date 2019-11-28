@@ -107,7 +107,7 @@ class FileProcessor(Thread):
             collection = self.db['MI']
         elif fname[8:11] == 'MSD' or fname[8:11] == 'MBP':
             collection = self.db['MSD']
-        elif 'xlsx' in fname:
+        elif 'xls' in fname:
             collection = self.db['Terna']
 
         if fname[11:-4] == 'LimitiTransito' or fname[11:-4] == 'Transiti':
@@ -116,7 +116,7 @@ class FileProcessor(Thread):
         elif fname[11:-4] == 'OffertePubbliche':
             parsed_data = process_OffPub(fname)
             collection.insert_many(parsed_data)
-        elif 'xlsx' in fname:
+        elif 'xls' in fname:
             df = ParseCsv.excel_to_dic(f"{DOWNLOAD}/{fname}")
             if 'EnergyBal' in fname:
                 parsed_data = ParseCsv.to_list_dict(df, 'EnBal')
@@ -124,6 +124,8 @@ class FileProcessor(Thread):
                 parsed_data = ParseCsv.to_list_dict(df, 'ToLo')
             elif 'MarketLoad' in fname:
                 parsed_data = ParseCsv.to_list_dict(df, 'MaLo')
+            else:
+                parsed_data = ParseCsv.to_list_dict(df, 'RiSe')
             self.sendData(parsed_data, collection)
         else:
             parsed_data = process_file(fname)
