@@ -33,7 +33,7 @@ def process_file(fname):
 	# New list of 24 dictionaries, one per hour
 	m_list = []
 	date = dic[0]['Data']
-	for hour in range(1, 25):
+	for hour in range(24):
 		timestamp = datetime.strptime(f"{date}:{hour}", "%Y%m%d:%H").timestamp()
 		m_list.append({'Data': date, 'Ora': '{:02d}'.format(hour), 'Timestamp': timestamp})
 
@@ -78,7 +78,7 @@ def process_transit_file(fname):
 	# New list of 24 dictionaries, one per hour
 	m_list = []
 	date = dic[0]['Data']
-	for hour in range(1, 25):
+	for hour in range(24):
 		timestamp = datetime.strptime(f"{date}:{hour}", "%Y%m%d:%H").timestamp()
 		m_list.append({'Data': date, 'Ora': '{:02d}'.format(hour), 'Timestamp': timestamp})
 
