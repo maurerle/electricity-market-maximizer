@@ -25,11 +25,10 @@ class ParseCsv():
         check if the python version is the 3.7 one
     """
     if version_info[:2] < (3, 7):
-    
-            raise RuntimeError("Python version >= 3.7 required.")
+        raise RuntimeError("Python version >= 3.7 required.")
 
     @classmethod
-    def excel_to_dic(cls, path, header=None, skiprows=2, flag=False):
+    def excel_to_dic(cls, path, header=None, skiprows=3):
         """Reads an excel file, located in a specific path, transforming it 
         into a python dictionary.
         
@@ -49,18 +48,12 @@ class ParseCsv():
         pandas.DataFrame
             dataframe containing the parsed data
         """
-        if flag:
-            df = read_excel(io=path, header=header, skiprows=3)
-            df = df.drop([0])
-            
-            return df
-        else:
-            df = read_excel(io=path, header=header, skiprows=skiprows)
-            df = df.drop([0])
-            cls.date = path[-13:-5]
-            cls.date = f'{cls.date[-4:]}{cls.date[2:4]}{cls.date[0:2]}'
+        
+        df = read_excel(io=path, header=header, skiprows=skiprows)
+        cls.date = path[-13:-5]
+        cls.date = f'{cls.date[-4:]}{cls.date[2:4]}{cls.date[0:2]}'
 
-            return df
+        return df
 
     @classmethod
     def to_list_dict(cls, df, field):
@@ -116,6 +109,9 @@ class ParseCsv():
                 lambda g: dict(map(tuple, g.values.tolist()))
             )
             for _key, _value in ag_dict_.items():
+                if _key < datetime(2017, 2, 1):
+                    return None
+
                 ag_dict = {}
                 ag_dict['Data'] = _key.strftime('%Y%m%d')
                 ag_dict['Ora'] = _key.strftime('%H')
