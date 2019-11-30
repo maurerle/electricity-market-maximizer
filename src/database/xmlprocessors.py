@@ -1,5 +1,6 @@
 from src.common.config import DOWNLOAD
 import xmltodict
+from datetime import datetime
 
 
 def process_file(fname):
@@ -32,8 +33,9 @@ def process_file(fname):
 	# New list of 24 dictionaries, one per hour
 	m_list = []
 	date = dic[0]['Data']
-	for hour in range(1, 25):
-		m_list.append({'Data': date, 'Ora': '{:02d}'.format(hour)})
+	for hour in range(24):
+		timestamp = datetime.strptime(f"{date}:{hour}", "%Y%m%d:%H").timestamp()
+		m_list.append({'Data': date, 'Ora': '{:02d}'.format(hour), 'Timestamp': timestamp})
 
 	# Fill up the new list m_list with reformatted keys and values
 	for h in dic:
@@ -76,8 +78,9 @@ def process_transit_file(fname):
 	# New list of 24 dictionaries, one per hour
 	m_list = []
 	date = dic[0]['Data']
-	for hour in range(1, 25):
-		m_list.append({'Data': date, 'Ora': '{:02d}'.format(hour)})
+	for hour in range(24):
+		timestamp = datetime.strptime(f"{date}:{hour}", "%Y%m%d:%H").timestamp()
+		m_list.append({'Data': date, 'Ora': '{:02d}'.format(hour), 'Timestamp': timestamp})
 
 	# Fill up the new dictionary m_dict with reformatted keys and values
 	for h in dic:
