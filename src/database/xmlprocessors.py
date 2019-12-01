@@ -44,7 +44,10 @@ def process_file(fname):
 		# Start iterating from the 4th key (first 3 keys are 'Data', 'Mercato', 'Ora')
 		for i in list(h.keys())[3:]:
 			key2 = h['Mercato'] + '_' + i + suffix(fname[11:-4])
-			m_list[key1][key2] = float(h[i].replace(',', '.'))
+			try:
+				m_list[key1][key2] = float(h[i].replace(',', '.'))
+			except IndexError:
+				break
 
 	return m_list
 
@@ -89,7 +92,10 @@ def process_transit_file(fname):
 		# Start iterating from the 6th key (first 5 keys are 'Data', 'Mercato', 'Ora', 'Da', 'A')
 		for i in list(h.keys())[5:]:
 			key2 = h['Mercato'] + '_' + h['Da'] + '_' + h['A'] + '_' + i
-			m_list[key1][key2] = float(h[i].replace(',', '.'))
+			try:
+				m_list[key1][key2] = float(h[i].replace(',', '.'))
+			except IndexError:
+				break
 
 	return m_list
 
