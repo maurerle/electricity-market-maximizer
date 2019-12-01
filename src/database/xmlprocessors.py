@@ -112,7 +112,7 @@ def process_OffPub(fname):
 		data = file.read()
 
 	# Convert the xml file to dictionary
-	dic = xmltodict.parse(data, postprocessor=is_float)["NewDataSet"]
+	dic = xmltodict.parse(data, postprocessor=type_conv)["NewDataSet"]
 
 	# Delete unuseful information of the xml file
 	del dic["xs:schema"]
@@ -122,10 +122,22 @@ def process_OffPub(fname):
 	# Everything is under a key...
 	dic = dic[next(iter(dic))]
 
+	for i in dic:
+		date = i['BID_OFFER_DATE_DT']
+		hour = int(i['INTERVAL_NO']) - 1
+		i['Timestamp_Flow'] = datetime.strptime(f"{date}:{hour}", "%Y%m%d:%H").timestamp()
+
+		date = i['SUBMITTED_DT']
+		i['Timestamp_Submission'] = datetime.strptime(f"{date}", "%Y%m%d%H%M%S%f").timestamp()
+
 	return dic
 
 
-def is_float(path, key, value):
+def type_conv(path, key, value):
+	if key == 'BID_OFFER_DATE_DT' or key == 'SUBMITTED_DT':
+		return key, value
+	if key == 'BILATERAL_IN':
+		return key, bool(value)
 	try:
 		return key, float(value)
 	except (ValueError, TypeError):

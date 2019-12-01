@@ -1,11 +1,6 @@
 from sys import version_info, dont_write_bytecode
 from pandas import read_excel
-import logging
-from pathlib import Path
-from collections import defaultdict
-import xlrd
 from numpy import max as nmax
-from time import mktime
 from datetime import datetime
 
 dont_write_bytecode = True
@@ -40,8 +35,6 @@ class ParseCsv():
             by default None
         skiprows : int, optional
             number of rows to skip, by default 2
-        flag : bool, optional
-            by default False
         
         Returns
         -------
@@ -123,11 +116,9 @@ class ParseCsv():
                     break
         
         for item in ls:
-            item['Timestamp'] = mktime(
-                datetime.strptime(
+            item['Timestamp'] = datetime.strptime(
                     f"{item['Data']}:{item['Ora']}", 
                     '%Y%m%d:%H'
-                ).timetuple()
-            )
+                ).timestamp()
             
         return ls 
