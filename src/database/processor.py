@@ -54,7 +54,8 @@ class FileProcessor(Thread):
 
         try:
             self.log.info("[PROCESS] Attempting to connect to the database...")
-            client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_STRING)
+            #client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_STRING)
+            client = motor.motor_asyncio.AsyncIOMotorClient('localhost', 27017)
             db = client[DB_NAME]
             self.log.info("[PROCESS] Connected to the database.")
             return db

@@ -152,7 +152,7 @@ class TernaSpider():
                 except:
                     pass
                 
-                self.getData(item['url'], start, end)
+                self.getData(item, start, end)
                 
                 break
             
@@ -164,7 +164,7 @@ class TernaSpider():
                 except:
                     pass
                 
-                self.getData(item['url'], start, end)
+                self.getData(item, start, end)
                 
                 break
 
@@ -206,7 +206,7 @@ class TernaSpider():
                 except:
                     pass
                 
-                self.getData(item['url'], start, end)
+                self.getData(item, start, end)
                 
                 break
             
@@ -218,7 +218,7 @@ class TernaSpider():
                 except:
                     pass
                 
-                self.getData(item['url'], start, end)
+                self.getData(item, start, end)
                 
                 break
 

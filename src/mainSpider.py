@@ -88,7 +88,7 @@ def getHistory():
 
 	start = START
 	limit = datetime.now()
-
+	
 	#=============================================================
 	# Terna spider works. From the 01/02/2017 to the current month
 	#=============================================================
@@ -137,16 +137,19 @@ def getHistory():
 	# Logs 
 	bot('INFO', 'TERNA2', 'getHistory ended.')
 	logger.info('[TERNA2] getHistory() ended.')
-
+	
 	#=================
 	# GME spider works
 	#=================
 	gme = GMESpider(logger)
 	logger.info('[GME] getHistory() started.')
 	start = START
+	
 	# Start downloading
 	while start.strftime('%m/%Y') != limit.strftime('%m/%Y'):
+		
 		end = start + relativedelta(months=+1, days=-1)
+		
 		for item in GME:
 			gme.getData(
 				item, 
@@ -164,20 +167,20 @@ def getHistory():
 	
 	# Get the current month until the day before the current
 	end = datetime.now()+ relativedelta(days=-1)
-	
-	for item in GME:
-		gme.getData(
-			item, 
-			start.strftime('%d/%m/%Y'), 
-			end.strftime('%d/%m/%Y')
-		)
-	for item in GME_NEXT:
-		gme.getData(
+	if start.strftime('%d/%m/%Y')!=datetime.now().strftime('%d/%m/%Y'):
+		for item in GME:
+			gme.getData(
 				item, 
 				start.strftime('%d/%m/%Y'), 
-				datetime.now().strftime('%d/%m/%Y')
-		)
-
+				end.strftime('%d/%m/%Y')
+			)
+		for item in GME_NEXT:
+			gme.getData(
+					item, 
+					start.strftime('%d/%m/%Y'), 
+					datetime.now().strftime('%d/%m/%Y')
+			)
+	
 	# Get the public offers referred to one week before the current
 	start = START
 	limit = datetime.now() + relativedelta(days=-8)
