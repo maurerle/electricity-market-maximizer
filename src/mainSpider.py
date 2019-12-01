@@ -27,7 +27,7 @@ def getDay():
 	# Date creation
 	date = datetime.now().strftime('%d/%m/%Y')
 	date_nxt = (datetime.now() + relativedelta(days=+1)).strftime('%d/%m/%Y')
-	date_week = (datetime.now() + relativedelta(days=-8)).strftime('%d/%m/%Y')
+	date_week = (datetime.now() + relativedelta(days=-7)).strftime('%d/%m/%Y')
 	
 	#=====================================
 	# Terna Secondary Reserve spider works
@@ -180,7 +180,7 @@ def getHistory():
 
 	# Get the public offers referred to one week before the current
 	start = START
-	limit = datetime.now() + relativedelta(days=-7)
+	limit = datetime.now() + relativedelta(days=-8)
 	
 	while start.strftime('%dd/%mm/%YY') != limit.strftime('%dd/%mm/%YY'):
 		gme.getData(GME_WEEK, start.strftime('%d/%m/%Y'))
