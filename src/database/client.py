@@ -46,6 +46,7 @@ def main_menu(db):
     print('\t [2] MI (Mercato Infragiornaliero)')
     print('\t [3] MSD (Mercato per il Servizio di Dispacciamento)')
     print('\t [4] Terna')
+    print('\t [5] Offerte Pubbliche')
     print("\n\t [0] Quit")
     choice = input(" >>  ")
     exec_menu(choice, db)
@@ -63,7 +64,7 @@ def exec_menu(choice, db):
 
     os.system('cls' if os.name == 'nt' else 'clear')
     
-    menu_actions = {'1': 'MGP', '2': 'MI', '3': 'MSD', '4': 'Terna'}
+    menu_actions = {'1': 'MGP', '2': 'MI', '3': 'MSD', '4': 'Terna', '5': 'OffertePubbliche'}
 
     ch = choice.lower()
 
