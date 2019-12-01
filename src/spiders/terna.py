@@ -14,7 +14,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
-from src.common.config import DOWNLOAD, QUEUE, TERNA2
+from src.common.config import DOWNLOAD, QUEUE, TERNA2, TERNA_LIMIT
 import requests as req
 from bs4 import BeautifulSoup as bs
 
@@ -152,7 +152,7 @@ class TernaSpider():
                 except:
                     pass
                 
-                self.getData(url, start, end)
+                self.getData(item['url'], start, end)
                 
                 break
             
@@ -164,7 +164,7 @@ class TernaSpider():
                 except:
                     pass
                 
-                self.getData(url, start, end)
+                self.getData(item['url'], start, end)
                 
                 break
 
@@ -206,7 +206,7 @@ class TernaSpider():
                 except:
                     pass
                 
-                self.getData(url, start, end)
+                self.getData(item['url'], start, end)
                 
                 break
             
@@ -218,7 +218,7 @@ class TernaSpider():
                 except:
                     pass
                 
-                self.getData(url, start, end)
+                self.getData(item['url'], start, end)
                 
                 break
 
@@ -309,7 +309,7 @@ class TernaReserve():
         # Wait until the table is not loaded
         while True:
             try:
-                temp = self.driver.find_element_by_class_name(
+                self.driver.find_element_by_class_name(
                     'terna-icon-download'
                 )
                 break
@@ -333,17 +333,17 @@ class TernaReserve():
         """
         # Day limits
         today = datetime.now().strftime('%Y%m%d')
-        limit = datetime(2017,1,31).strftime('%Y%m%d')
+        limit = TERNA_LIMIT.strftime('%Y%m%d')
         dayM = datetime.strptime(today, '%Y%m%d')
         daym = datetime.strptime(limit, '%Y%m%d')
         limit = (dayM - daym).days
-                
+
         cnt = 2
         while True:
             # Wait until the table is not loaded
             while True:
                 try:
-                    temp = self.driver.find_element_by_class_name(
+                    self.driver.find_element_by_class_name(
                         'terna-icon-download'
                     )
                     break
