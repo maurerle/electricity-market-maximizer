@@ -131,10 +131,12 @@ def process_OffPub(fname):
 	for i in dic:
 		date = i['BID_OFFER_DATE_DT']
 		hour = int(i['INTERVAL_NO']) - 1
-		i['Timestamp_Flow'] = datetime.strptime(f"{date}:{hour}", "%Y%m%d:%H").timestamp()
-
-		date = i['SUBMITTED_DT']
-		i['Timestamp_Submission'] = datetime.strptime(f"{date}", "%Y%m%d%H%M%S%f").timestamp()
+		date_sub = i['SUBMITTED_DT']
+		try:
+			i['Timestamp_Flow'] = datetime.strptime(f"{date}:{hour}", "%Y%m%d:%H").timestamp()
+			i['Timestamp_Submission'] = datetime.strptime(f"{date_sub}", "%Y%m%d%H%M%S%f").timestamp()
+		except ValueError:
+			del i
 
 	return dic
 
