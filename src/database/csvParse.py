@@ -2,6 +2,7 @@ from sys import version_info, dont_write_bytecode
 from pandas import read_excel
 from numpy import max as nmax
 from datetime import datetime
+import pprint
 
 dont_write_bytecode = True
 
@@ -41,7 +42,6 @@ class ParseCsv():
         pandas.DataFrame
             dataframe containing the parsed data
         """
-        
         df = read_excel(io=path, header=header, skiprows=skiprows)
         cls.date = path[-13:-5]
         cls.date = f'{cls.date[-4:]}{cls.date[2:4]}{cls.date[0:2]}'
@@ -79,24 +79,44 @@ class ParseCsv():
                 ls.append(ag_dict)
         elif field == 'ToLo':
             for i in range(0,len(df),4):
-                ls.append(
-                    {
-                        'TotalLoad':nmax(df.iloc[i:i+4,1]),
-                        'TotalLoadForecast':nmax(df.iloc[i:i+4,2]),
-                        'Ora':df.iloc[i,0].strftime('%H'),
-                        'Data':cls.date
-                    }
-                )
+                if df.shape[0] <= 96:
+                    ls.append(
+                        {
+                            'TotalLoad':nmax(df.iloc[i:i+4,1]),
+                            'TotalLoadForecast':nmax(df.iloc[i:i+4,2]),
+                            'Ora':df.iloc[i,0].strftime('%H'),
+                            'Data':cls.date
+                        }
+                    )
+                else:
+                    ls.append(
+                        {
+                            'TotalLoad':nmax(df.iloc[i:i+4,1]),
+                            'TotalLoadForecast':nmax(df.iloc[i:i+4,2]),
+                            'Ora':df.iloc[i,0].strftime('%H'),
+                            'Data':df.iloc[i,0].strftime('%Y%m%d')
+                        }
+                    )
         elif field == 'MaLo':
             for i in range(0,len(df),4):
-                ls.append(
-                    {
-                        'MarketLoad':nmax(df.iloc[i:i+4,1]),
-                        'MarketLoadForecast':nmax(df.iloc[i:i+4,2]),
-                        'Ora':df.iloc[i,0].strftime('%H'),
-                        'Data':cls.date
-                    }
-                )
+                if df.shape[0] <= 96:
+                    ls.append(
+                        {
+                            'MarketLoad':nmax(df.iloc[i:i+4,1]),
+                            'MarketLoadForecast':nmax(df.iloc[i:i+4,2]),
+                            'Ora':df.iloc[i,0].strftime('%H'),
+                            'Data':cls.date
+                        }
+                    )
+                else:
+                    ls.append(
+                        {
+                            'MarketLoad':nmax(df.iloc[i:i+4,1]),
+                            'MarketLoadForecast':nmax(df.iloc[i:i+4,2]),
+                            'Ora':df.iloc[i,0].strftime('%H'),
+                            'Data':df.iloc[i,0].strftime('%Y%m%d')
+                        }
+                    )
         else:
             ag_dict_ = df.groupby([1]).apply(
                 lambda g: dict(map(tuple, g.values.tolist()))
@@ -120,5 +140,5 @@ class ParseCsv():
                     f"{item['Data']}:{item['Ora']}", 
                     '%Y%m%d:%H'
                 ).timestamp()
-            
+ 
         return ls 

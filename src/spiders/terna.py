@@ -108,7 +108,6 @@ class TernaSpider():
                 # Get the parent div
                 parent = self.driver.find_element_by_class_name("canvasFlexBox")   
                 # Div
-                
                 btn = parent.find_element_by_css_selector(
                     "visual-container-modern.visual-container-component:nth"\
                     f"-child({item['child']}) > transform:nth-child(1) > div:nth-child(1) "\
@@ -129,8 +128,31 @@ class TernaSpider():
                     except TimeoutException:
                         sleep(1)
                 
+                
+                # Graph
+                graph = self.driver.find_element_by_css_selector(
+                    "#pvExplorationHost > div > div > exploration > div "\
+                    "> explore-canvas-modern > div > div.canvasFlexBox > div "\
+                    "> div.displayArea.disableAnimations.fitToPage "\
+                    "> div.visualContainerHost > visual-container-repeat "\
+                    f"> visual-container-modern:nth-child({item['graph']}) > transform"
+                )
+                
+                self.driver.execute_script('arguments[0].click();', graph)
+                self.action.move_to_element(graph).perform()
+                if item['name'] != 'EnergyBal':
+                    #Custom Range
+                    btn = self.driver.find_element_by_css_selector(
+                        'visual-container-modern.visual-container-component:'\
+                        f"nth-child({item['custom']}) > transform:nth-child(1) "\
+                        '> div:nth-child(1) > div:nth-child(3) '\
+                        '> visual-modern:nth-child(1) > div:nth-child(1)'
+                    )
+                    self.driver.execute_script('arguments[0].click();', btn)
+                    sleep(5)
+
                 #Inputs
-                form = parent.find_elements_by_tag_name("input")
+                form = self.driver.find_elements_by_tag_name("input")
                 self.driver.execute_script('arguments[0].click();', form[0])
                 sleep(1)
                 form[0].send_keys(start)
@@ -169,8 +191,9 @@ class TernaSpider():
                 break
 
         while True:
-            try: 
+            try:
                 # Graph
+                """
                 graph = self.driver.find_element_by_css_selector(
                     "#pvExplorationHost > div > div > exploration > div "\
                     "> explore-canvas-modern > div > div.canvasFlexBox > div "\
@@ -178,20 +201,28 @@ class TernaSpider():
                     "> div.visualContainerHost > visual-container-repeat "\
                     f"> visual-container-modern:nth-child({item['graph']}) > transform"
                 )
+                """
+                graph = self.driver.find_element_by_css_selector(
+                    'visual-container-modern.visual-container-component:'\
+                    f'nth-child({item["graph2"]}) > transform:nth-child(1)'
+                )
                 self.driver.execute_script('arguments[0].click();', graph)
-                self.action.move_to_element(graph).perform()
+
+                #self.action.move_to_element(graph).perform()
                 
                 # Options
-                btn = parent.find_element_by_class_name('vcMenuBtn')
+                btn = self.driver.find_element_by_class_name('vcMenuBtn')
                 self.driver.execute_script('arguments[0].click();', btn)
-                self.action.move_to_element(btn).perform()
+                
+                #self.action.move_to_element(btn).perform()
+                sleep(2)
                 self.log.info('[TERNA] Options Clicked.')
-
+                
                 # Export Data
                 btn = parent.find_element_by_xpath(
                     "/html/body/div[8]/drop-down-list/ng-transclude/ng-repeat[1]/drop-down-list-item/ng-transclude/ng-switch/div"
                 )
-                self.action.move_to_element(btn).perform()
+                #self.action.move_to_element(btn).perform()
                 self.driver.execute_script('arguments[0].click();', btn)
                 break
 
@@ -221,8 +252,6 @@ class TernaSpider():
                 self.getData(item, start, end)
                 
                 break
-
-
 
         if not self.passed:
             while True:
