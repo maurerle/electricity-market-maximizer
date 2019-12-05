@@ -233,9 +233,8 @@ TERNA2 = 'https://www.terna.it/it/sistema-elettrico/dispacciamento/'\
 	     'stima-domanda-oraria-energia-riserva-secondaria-terziaria'
 
 # Dynamic file history
-START =  datetime(2019, 10, 1)
-#TERNA_LIMIT = datetime(2017,1,31)
-TERNA_LIMIT = datetime(2019, 1, 1)
+START =  datetime(2017, 2, 1)
+TERNA_LIMIT = datetime(2017,1,31)
 QUEUE = Queue()
 
 
