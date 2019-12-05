@@ -142,6 +142,7 @@ def getHistory():
 	# GME spider works
 	#=================
 	gme = GMESpider(logger)
+	
 	logger.info('[GME] getHistory() started.')
 	start = START
 	
