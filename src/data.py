@@ -173,8 +173,8 @@ def caseStudyOperatorQ(op):
 
 ops = [
     'IREN ENERGIA SPA',
-    #'ENI SPA',
-    #'ENEL PRODUZIONE S.P.A.'
+    'ENI SPA',
+    'ENEL PRODUZIONE S.P.A.'
 ]
 
 zones = [
@@ -256,7 +256,8 @@ def aggResamp(cursor, s_freq, *field):
 # All the companies, awarded price per zone. No isles
 #====================================================
 fig = plt.figure()
-for item in ['NORD', 'CNOR', 'SUD', 'CSUD']:
+#for item in ['NORD', 'CNOR', 'SUD', 'CSUD']:
+for item in ['NORD']:
     print(f'Processing zone: {item}')
     cur = offers.aggregate(awdZone(item), allowDiskUse=True)
     df = aggResamp(cur, '12H', 'AWD_PRICE')
@@ -278,33 +279,34 @@ for line in lgnd.get_lines():
 
 plt.show()
 exit()
+"""
 
-#
+#===============================
 # Case of study, three companies 
-#
+#===============================
 fig = plt.figure()
 
 for item in ops:
-    off = []
-    time = []
-    temp = offers.aggregate(caseStudyOperator(item), allowDiskUse=True)
-
-    for item2 in temp:
-        off.append(item2['OFF_PRICE'])
-        time.append(datetime.fromtimestamp(item2['TIME']))
-    df = pd.DataFrame({
-        'OFF':off,
-        'TIME':time
-    })
-    df = df.set_index(pd.DatetimeIndex(df['TIME']))
-    
-
-    resamp = (
-    df
-    .resample('1H')
-    .agg(['std','mean'])
+    cur = offers.aggregate(caseStudyOperator(item), allowDiskUse=True)
+    df = aggResamp(cur, '12H', 'OFF_PRICE')
+    plt.plot(
+        df.index,
+        df['AWD_PRICE']['mean'],
+        linewidth=.6, 
+        label=item
     )
-    
+
+plt.ylabel('Awarded Price [\u20ac/MWh]')
+plt.xlabel('Date')
+
+lgnd = plt.legend(loc="upper left")
+
+for line in lgnd.get_lines():
+    line.set_linewidth(2)
+
+plt.show()
+exit()
+"""   
     plt.errorbar(
         resamp.index,
         resamp['OFF']['mean'], 
