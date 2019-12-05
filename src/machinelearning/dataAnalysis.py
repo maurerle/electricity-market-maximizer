@@ -7,15 +7,14 @@ from pymongo import MongoClient
 dont_write_bytecode = True
 
 class DataAnalysis():
-    def __init__ (self, log):
-        self.log = log
+    def __init__ (self):
         try:
             #client = MongoClient(MONGO_STRING)
             client = MongoClient('localhost', 27017)
             self.db = client['InterProj']
             
         except Exception as e:
-            self.log.info("Exception while connecting to the db: " + str(e))
+            print("Exception while connecting to the db: " + str(e))
     
     @staticmethod
     def awdZone(zone):
@@ -45,7 +44,7 @@ class DataAnalysis():
         return pipeline
 
     @staticmethod
-    def awdOff(): 
+    def awdOff(awd, off): 
         pipeline = [
                     {
                         '$match':{
@@ -56,8 +55,8 @@ class DataAnalysis():
                         '$project':{
                             '_id':0,
                             'STATUS_CD':1,
-                            'AWD_PRICE':'$AWARDED_PRICE_NO',
-                            'OFF_PRICE':'$ENERGY_PRICE_NO',
+                            'AWD':f'${awd}',
+                            'OFF':f'${off}',
                             'TIME':'$Timestamp_Flow'
                         }
                     }
@@ -117,10 +116,7 @@ class DataAnalysis():
                             'MARKET_CD':'MGP',
                             'OPERATORE':op,
                             'STATUS_CD':'ACC',
-                            'ZONE_CD':'NORD',
-                            'ENERGY_PRICE_NO':{
-                                '$ne':0
-                            },
+                            #'ZONE_CD':'NORD',
                             'Timestamp_Flow':{
                                 '$gt':0
                             }
@@ -140,19 +136,16 @@ class DataAnalysis():
                 ]
         
         return pipeline
-
+    
     @staticmethod
-    def caseStudyOperatorQ(op):
+    def caseStudyOperatorZone(op, zone):
         pipeline = [
                     {
                         '$match':{
                             'MARKET_CD':'MGP',
                             'OPERATORE':op,
                             'STATUS_CD':'ACC',
-                            'ZONE_CD':'NORD',
-                            'QUANTITY_NO':{
-                                '$ne':0
-                            },
+                            'ZONE_CD':zone,
                             'Timestamp_Flow':{
                                 '$gt':0
                             }
@@ -161,7 +154,7 @@ class DataAnalysis():
                         '$project':{
                             '_id':0,
                             'STATUS_CD':1,
-                            'OFF_PRICE':'$QUANTITY_NO',
+                            'OFF_PRICE':'$ENERGY_PRICE_NO',
                             'TIME':'$Timestamp_Flow'
                         }
                     },{
@@ -172,4 +165,3 @@ class DataAnalysis():
                 ]
         
         return pipeline
-    
