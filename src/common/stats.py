@@ -1,12 +1,12 @@
 from sys import dont_write_bytecode
-import logging
-import logging.config
 from src.common.config import MONGO_STRING
 from pymongo import MongoClient
+import pandas as pd
+from datetime import datetime
 
 dont_write_bytecode = True
 
-class DataAnalysis():
+class Statistics():
     def __init__ (self):
         try:
             #client = MongoClient(MONGO_STRING)
@@ -167,3 +167,39 @@ class DataAnalysis():
                 ]
         
         return pipeline
+
+    @staticmethod
+    def aggResamp(cursor, s_freq, *field):
+        ls_1 = []
+        ls_2 = []
+        ls_3 = []
+
+        for item in cursor:
+            ls_1.append(datetime.fromtimestamp(item['TIME']))
+            ls_2.append(item[field[0]])
+            if len(field) == 2:
+                ls_3.append(item[field[1]])
+        print('List created')
+            
+        if len(field) == 2:
+            df = pd.DataFrame({
+                'TIME':ls_1,
+                field[0]:ls_2,
+                field[1]:ls_3
+            })
+        elif len(field) == 1:
+            df = pd.DataFrame({
+                'TIME':ls_1,
+                field[0]:ls_2
+            })
+
+        df = df.set_index(pd.DatetimeIndex(df['TIME']))
+        print('Dataframe created')
+        
+        resamp = (
+            df
+            .resample(s_freq)
+            .agg(['std','mean']))
+        print('Resampled')
+
+        return resamp
