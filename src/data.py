@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 import pprint
 import scipy.signal as sig
 from datetime import datetime
+import time
+import mpl_finance as fin 
 
 dont_write_bytecode = True
 
@@ -17,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 data = DataAnalysis(logger)
 
-offers = data.db['OffertePubbliche']
+offers = data.db['OffertePubbliche2']
 
 def awdZone(zone):
     pipeline = [
@@ -26,11 +28,13 @@ def awdZone(zone):
                         'STATUS_CD':'ACC',
                         'MARKET_CD':'MGP',
                         'ZONE_CD':zone,
+                        'Timestamp_Flow':{
+                            '$gt':0
+                        }
                     }
                 },{
                     '$project':{
                         '_id':0,
-                        'STATUS_CD':1,
                         'AWD_PRICE':'$AWARDED_PRICE_NO',
                         'TIME':'$Timestamp_Flow'
                     }
@@ -110,11 +114,14 @@ def caseStudyOperator(op):
                 {
                     '$match':{
                         'MARKET_CD':'MGP',
-                        #'OPERATORE':op,
+                        'OPERATORE':op,
                         'STATUS_CD':'ACC',
-                        #'ZONE_CD':'NORD',
+                        'ZONE_CD':'NORD',
                         'ENERGY_PRICE_NO':{
                             '$ne':0
+                        },
+                        'Timestamp_Flow':{
+                            '$gt':0
                         }
                     }
                 },{
@@ -122,8 +129,38 @@ def caseStudyOperator(op):
                         '_id':0,
                         'STATUS_CD':1,
                         'OFF_PRICE':'$ENERGY_PRICE_NO',
-                        #'TIME':'$Timestamp_Flow'
-                        'TIME':'$SUBMITTED_DT'
+                        'TIME':'$Timestamp_Flow'
+                    }
+                },{
+                    '$sort':{
+                        'TIME':1
+                    }
+                }
+            ]
+    
+    return pipeline
+
+def caseStudyOperatorQ(op):
+    pipeline = [
+                {
+                    '$match':{
+                        'MARKET_CD':'MGP',
+                        'OPERATORE':op,
+                        'STATUS_CD':'ACC',
+                        'ZONE_CD':'NORD',
+                        'QUANTITY_NO':{
+                            '$ne':0
+                        },
+                        'Timestamp_Flow':{
+                            '$gt':0
+                        }
+                    }
+                },{
+                    '$project':{
+                        '_id':0,
+                        'STATUS_CD':1,
+                        'OFF_PRICE':'$QUANTITY_NO',
+                        'TIME':'$Timestamp_Flow'
                     }
                 },{
                     '$sort':{
@@ -156,10 +193,14 @@ zones = [
 # All the companies, awarded price per zone
 fig = plt.figure()
 for item in zones:
-    temp = list(offers.aggregate(awdZone(item), allowDiskUse=True))
+    ls = []
+    temp = offers.aggregate(awdZone(item), allowDiskUse=True)
+    print('Aggregation')
+    for item2 in temp:
+        ls.append(item2)
+    x = np.asarray([i['TIME'] for i in ls])
+    y = np.asarray([i['AWD_PRICE'] for i in ls])
 
-    x = np.asarray([i['TIME'] for i in temp])
-    y = np.asarray([i['AWD_PRICE'] for i in temp])
 
     plt.plot(x,y, linewidth=.6, label=item)
 
@@ -172,20 +213,63 @@ for line in lgnd.get_lines():
     line.set_linewidth(2)
 
 plt.show()
+"""
 
-# All the companies, awarded price per zone. No SICI and SARD
+
+def aggResamp(cursor, s_freq, *field):
+    ls_1 = []
+    ls_2 = []
+    ls_3 = []
+
+    for item in cursor:
+        ls_1.append(datetime.fromtimestamp(item['TIME']))
+        ls_2.append(item[field[0]])
+        if len(field) == 2:
+            ls_3.append(item[field[1]])
+    print('List created')
+        
+    if len(field) == 2:
+        df = pd.DataFrame({
+            'TIME':ls_1,
+            field[0]:ls_2,
+            field[1]:ls_3
+        })
+    elif len(field) == 1:
+        df = pd.DataFrame({
+            'TIME':ls_1,
+            field[0]:ls_2
+        })
+
+    df = df.set_index(pd.DatetimeIndex(df['TIME']))
+    print('Dataframe created')
+    
+    resamp = (
+        df
+        .resample(s_freq)
+        .agg(['std','mean']))
+    print('Resampled')
+
+    return resamp
+
+
+#====================================================
+# All the companies, awarded price per zone. No isles
+#====================================================
 fig = plt.figure()
-for item in zones:
-    if item != 'SICI' and item != 'SARD':
-        temp = list(offers.aggregate(awdZone(item)))
-
-        x = np.asarray([i['TIME'] for i in temp])
-        y = np.asarray([i['AWD_PRICE'] for i in temp])
-
-        plt.plot(x,y, linewidth=.6, label=item)
+for item in ['NORD', 'CNOR', 'SUD', 'CSUD']:
+    print(f'Processing zone: {item}')
+    cur = offers.aggregate(awdZone(item), allowDiskUse=True)
+    df = aggResamp(cur, '12H', 'AWD_PRICE')
+        
+    plt.plot(
+        df.index,
+        df['AWD_PRICE']['mean'],
+        linewidth=.6, 
+        label=item
+    )
 
 plt.ylabel('Awarded Price [\u20ac/MWh]')
-plt.xlabel('Timestamp')
+plt.xlabel('Date')
 
 lgnd = plt.legend(loc="upper left")
 
@@ -193,6 +277,84 @@ for line in lgnd.get_lines():
     line.set_linewidth(2)
 
 plt.show()
+exit()
+
+#
+# Case of study, three companies 
+#
+fig = plt.figure()
+
+for item in ops:
+    off = []
+    time = []
+    temp = offers.aggregate(caseStudyOperator(item), allowDiskUse=True)
+
+    for item2 in temp:
+        off.append(item2['OFF_PRICE'])
+        time.append(datetime.fromtimestamp(item2['TIME']))
+    df = pd.DataFrame({
+        'OFF':off,
+        'TIME':time
+    })
+    df = df.set_index(pd.DatetimeIndex(df['TIME']))
+    
+
+    resamp = (
+    df
+    .resample('1H')
+    .agg(['std','mean'])
+    )
+    
+    plt.errorbar(
+        resamp.index,
+        resamp['OFF']['mean'], 
+        yerr=resamp['OFF']['std'], 
+        elinewidth=0.5,# width of error bar line
+        ecolor='k',    # color of error bar
+        capsize=3,     # cap length for error bar
+        capthick=0.7   # cap thickness for error bar
+    )
+    plt.xticks(rotation='vertical')
+
+
+for item in ops:
+    off = []
+    time = []
+    temp = offers.aggregate(caseStudyOperatorQ(item), allowDiskUse=True)
+
+    for item2 in temp:
+        off.append(item2['OFF_PRICE'])
+        time.append(datetime.fromtimestamp(item2['TIME']))
+    df = pd.DataFrame({
+        'OFF':off,
+        'TIME':time
+    })
+    df = df.set_index(pd.DatetimeIndex(df['TIME']))
+    
+
+    resamp = (
+    df
+    .resample('1H')
+    .agg(['std','mean'])
+    )
+    
+    plt.errorbar(
+        resamp.index,
+        resamp['OFF']['mean'], 
+        yerr=resamp['OFF']['std'], 
+        elinewidth=0.5,# width of error bar line
+        ecolor='k',    # color of error bar
+        capsize=3,     # cap length for error bar
+        capthick=0.7   # cap thickness for error bar
+    )
+
+lgnd = plt.legend(loc="upper left")
+plt.ylabel('Average Offered Price [\u20ac/MWh]')
+plt.xlabel('Data')
+
+
+
+
 
 # Difference between the offered price and the awarded price for one company.
 fig = plt.figure()
@@ -252,30 +414,82 @@ lgnd.legendHandles[1]._sizes = [5]
 
 plt.show()
 """
+
 pd.set_option('display.max_rows', 700)
 # 3 Companies, offered price per zone
 fig = plt.figure()
+
 for item in ops:
-    temp = list(offers.aggregate(caseStudyOperator(item), allowDiskUse=True))
+    off = []
+    time = []
+    temp = offers.aggregate(caseStudyOperator(item), allowDiskUse=True)
 
-    x = np.asarray([i['TIME'] for i in temp])
-    for item in x:
-        print(item)
-    exit()
-    y = np.asarray([i['OFF_PRICE'] for i in temp])
-    #df=pd.DataFrame(x, y)
+    for item2 in temp:
+        off.append(item2['OFF_PRICE'])
+        time.append(datetime.fromtimestamp(item2['TIME']))
+    df = pd.DataFrame({
+        'OFF':off,
+        'TIME':time
+    })
+    df = df.set_index(pd.DatetimeIndex(df['TIME']))
+    
 
-    exit()
-    plt.plot(y[1],y[0], linewidth=.6, label=item)
+    resamp = (
+    df
+    .resample('1H')
+    .agg(['std','mean'])
+    )
+    
+    plt.errorbar(
+        resamp.index,
+        resamp['OFF']['mean'], 
+        yerr=resamp['OFF']['std'], 
+        elinewidth=0.5,# width of error bar line
+        ecolor='k',    # color of error bar
+        capsize=3,     # cap length for error bar
+        capthick=0.7   # cap thickness for error bar
+    )
+    plt.xticks(rotation='vertical')
 
-plt.ylabel('Awarded Price [\u20ac/MWh]')
-plt.xlabel('Timestamp')
+
+for item in ops:
+    off = []
+    time = []
+    temp = offers.aggregate(caseStudyOperatorQ(item), allowDiskUse=True)
+
+    for item2 in temp:
+        off.append(item2['OFF_PRICE'])
+        time.append(datetime.fromtimestamp(item2['TIME']))
+    df = pd.DataFrame({
+        'OFF':off,
+        'TIME':time
+    })
+    df = df.set_index(pd.DatetimeIndex(df['TIME']))
+    
+
+    resamp = (
+    df
+    .resample('1H')
+    .agg(['std','mean'])
+    )
+    
+    plt.errorbar(
+        resamp.index,
+        resamp['OFF']['mean'], 
+        yerr=resamp['OFF']['std'], 
+        elinewidth=0.5,# width of error bar line
+        ecolor='k',    # color of error bar
+        capsize=3,     # cap length for error bar
+        capthick=0.7   # cap thickness for error bar
+    )
 
 lgnd = plt.legend(loc="upper left")
+plt.ylabel('Average Offered Price [\u20ac/MWh]')
+plt.xlabel('Data')
 
-"""
-lgnd.legendHandles[0]._sizes = [5]
-lgnd.legendHandles[1]._sizes = [5]
-lgnd.legendHandles[2]._sizes = [5]
-"""
+
+
 plt.show()
+
+exit()
+"""

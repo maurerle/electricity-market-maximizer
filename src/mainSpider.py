@@ -142,6 +142,7 @@ def getHistory():
 	# GME spider works
 	#=================
 	gme = GMESpider(logger)
+	"""
 	logger.info('[GME] getHistory() started.')
 	start = START
 	
@@ -180,7 +181,7 @@ def getHistory():
 					start.strftime('%d/%m/%Y'), 
 					datetime.now().strftime('%d/%m/%Y')
 			)
-	
+	"""
 	# Get the public offers referred to one week before the current
 	start = START
 	limit = datetime.now() + relativedelta(days=-8)
