@@ -101,7 +101,7 @@ class FileProcessor(Thread):
         self.log.info(f"[PROCESS] Processing {fname}")
 
         if fname[11:-4] == 'OffertePubbliche':
-            collection = self.db['OffertePubbliche']
+            collection = self.db['OffertePubbliche2']
         elif fname[8:11] == 'MGP':
             collection = self.db['MGP']
         elif fname[8:10] == 'MI':
