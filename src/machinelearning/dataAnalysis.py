@@ -17,7 +17,7 @@ class DataAnalysis():
             print("Exception while connecting to the db: " + str(e))
     
     @staticmethod
-    def awdZone(zone):
+    def awdZone(zone, AWD):
         pipeline = [
                     {
                         '$match':{
@@ -31,7 +31,7 @@ class DataAnalysis():
                     },{
                         '$project':{
                             '_id':0,
-                            'AWD_PRICE':'$AWARDED_PRICE_NO',
+                            'AWD':f"${AWD}",
                             'TIME':'$Timestamp_Flow'
                         }
                     },{
@@ -44,7 +44,7 @@ class DataAnalysis():
         return pipeline
 
     @staticmethod
-    def awdOff(awd, off): 
+    def awdOff(AWD, OFF): 
         pipeline = [
                     {
                         '$match':{
@@ -55,8 +55,8 @@ class DataAnalysis():
                         '$project':{
                             '_id':0,
                             'STATUS_CD':1,
-                            'AWD':f'${awd}',
-                            'OFF':f'${off}',
+                            'AWD':f"${AWD}",
+                            'OFF':f"${OFF}",
                             'TIME':'$Timestamp_Flow'
                         }
                     }
@@ -65,18 +65,20 @@ class DataAnalysis():
         return pipeline
 
     @staticmethod
-    def offStatus(): 
+    def offStatus(OFF): 
         pipeline = [
                     {
                         '$match':{
                             'MARKET_CD':'MGP',
+                            'Timestamp_Flow':{
+                                '$gt':0
+                            }
                         }
                     },{
                         '$project':{
                             '_id':0,
                             'STATUS_CD':1,
-                            'AWD_PRICE':'$AWARDED_PRICE_NO',
-                            'OFF_PRICE':'$ENERGY_PRICE_NO',
+                            'OFF':f"${OFF}",
                             'TIME':'$Timestamp_Flow'
                         }
                     },{
@@ -109,7 +111,7 @@ class DataAnalysis():
         return pipeline
 
     @staticmethod
-    def caseStudyOperator(op):
+    def caseStudyOperator(op, OFF):
         pipeline = [
                     {
                         '$match':{
@@ -125,7 +127,7 @@ class DataAnalysis():
                         '$project':{
                             '_id':0,
                             'STATUS_CD':1,
-                            'OFF_PRICE':'$ENERGY_PRICE_NO',
+                            'OFF':f"${OFF}",
                             'TIME':'$Timestamp_Flow'
                         }
                     },{
@@ -138,7 +140,7 @@ class DataAnalysis():
         return pipeline
     
     @staticmethod
-    def caseStudyOperatorZone(op, zone):
+    def caseStudyOperatorZone(op, zone, OFF):
         pipeline = [
                     {
                         '$match':{
@@ -154,7 +156,7 @@ class DataAnalysis():
                         '$project':{
                             '_id':0,
                             'STATUS_CD':1,
-                            'OFF_PRICE':'$ENERGY_PRICE_NO',
+                            'OFF':f'${OFF}',
                             'TIME':'$Timestamp_Flow'
                         }
                     },{
