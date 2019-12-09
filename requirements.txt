@@ -7,3 +7,4 @@ xlrd
 collections-extended
 pandas
 motor
+seaborn

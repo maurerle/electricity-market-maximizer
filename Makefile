@@ -13,5 +13,8 @@ install:
 	@src/common/addcrontab.sh
 	make runServer
 
-dataAnalysis:
-	@python3 -c 'from src.data import *'
+marketStatistics:
+	@python3 -c 'from src.marketStats import *'
+
+correlation:
+	@python3 -c 'from src.correlation import *'
