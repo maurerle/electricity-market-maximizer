@@ -54,8 +54,7 @@ class FileProcessor(Thread):
 
         try:
             self.log.info("[PROCESS] Attempting to connect to the database...")
-            #client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_STRING)
-            client = motor.motor_asyncio.AsyncIOMotorClient('localhost', 27017)
+            client = motor.motor_asyncio.AsyncIOMotorClient('smartgridspolito.ddns.net', 27888)
             db = client[DB_NAME]
             self.log.info("[PROCESS] Connected to the database.")
             return db
@@ -77,9 +76,12 @@ class FileProcessor(Thread):
         while not self.stop_event.is_set() or not QUEUE.empty():
             fname = QUEUE.get()
             # Processing
-            self.toDatabase(fname)
-            # Clean folder
-            Path(DOWNLOAD + '/' + fname).unlink()
+            try:
+                self.toDatabase(fname)
+                # Clean folder
+                Path(DOWNLOAD + '/' + fname).unlink()
+            except ValueError:
+                bot('ERROR', 'PROCESSOR', f'{fname} skipped.')
             sleep(.5)
 
         self.log.info("[PROCESS] Processing Done")
@@ -101,7 +103,7 @@ class FileProcessor(Thread):
         self.log.info(f"[PROCESS] Processing {fname}")
 
         if fname[11:-4] == 'OffertePubbliche':
-            collection = self.db['OffertePubbliche2']
+            collection = self.db['OffertePubbliche']
         elif fname[8:11] == 'MGP':
             collection = self.db['MGP']
         elif fname[8:10] == 'MI':

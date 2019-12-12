@@ -83,7 +83,7 @@ def getHistory():
 	the data from the 01/02/2017 up to the day before the current one and call 
 	the file processor to update the file to a MongoDB database.
 	"""
-	bot('INFO', 'GME', 'getHistory started.')
+	bot('INFO', 'TERNA', 'getHistory started.')
 	processor = FileProcessor(logger)
 
 	start = START
@@ -123,7 +123,7 @@ def getHistory():
 	# Logs
 	logger.info('[TERNA] getHistory() ended.')
 	bot('INFO', 'TERNA', 'getHistory ended.')
-
+	
 	#=======================================================================
 	# Terna Secondary Reserve spider works. From the starting day to the day
 	# before the current one
