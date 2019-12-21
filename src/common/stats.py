@@ -1,5 +1,4 @@
 from sys import dont_write_bytecode
-from src.common.config import MONGO_STRING
 from pymongo import MongoClient
 import pandas as pd
 from datetime import datetime
@@ -10,7 +9,7 @@ class Statistics():
     def __init__ (self):
         try:
             #client = MongoClient(MONGO_STRING)
-            client = MongoClient('localhost', 27017)
+            client = MongoClient('smartgridspolito.ddns.net', 27888)
             self.db = client['InterProj']
             
         except Exception as e:

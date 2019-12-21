@@ -1,13 +1,13 @@
 from sys import dont_write_bytecode
 from threading import Thread, Event
 from pathlib import Path
-from src.common.config import DOWNLOAD, DB_NAME, MONGO_STRING, QUEUE
+from src.common.config import DOWNLOAD, DB_NAME, QUEUE
 from src.loggerbot.bot import bot
 from src.database.csvParse import ParseCsv
 from src.database.xmlprocessors import process_file, process_transit_file, process_OffPub
 from time import sleep
-import motor.motor_asyncio
-
+import pymongo
+import os
 dont_write_bytecode = True
 
 
@@ -41,7 +41,8 @@ class FileProcessor(Thread):
         self.db = self.databaseInit()
         self.stop_event = Event()
         self.start()
-
+        self.working = False
+        
     def databaseInit(self):
         """Initialize the connection to the database.
 
@@ -54,7 +55,8 @@ class FileProcessor(Thread):
 
         try:
             self.log.info("[PROCESS] Attempting to connect to the database...")
-            client = motor.motor_asyncio.AsyncIOMotorClient('smartgridspolito.ddns.net', 27888)
+            #client = motor.motor_asyncio.AsyncIOMotorClient('smartgridspolito.ddns.net', 27888)
+            client = pymongo.MongoClient('smartgridspolito.ddns.net', 27888)
             db = client[DB_NAME]
             self.log.info("[PROCESS] Connected to the database.")
             return db
@@ -73,16 +75,17 @@ class FileProcessor(Thread):
 
         self.log.info("[PROCESS] Processor Running")
         
-        while not self.stop_event.is_set() or not QUEUE.empty():
-            fname = QUEUE.get()
-            # Processing
-            try:
-                self.toDatabase(fname)
-                # Clean folder
-                Path(DOWNLOAD + '/' + fname).unlink()
-            except ValueError:
-                bot('ERROR', 'PROCESSOR', f'{fname} skipped.')
-            sleep(.5)
+        #while not self.stop_event.is_set() or not QUEUE.empty():
+        #    fname = QUEUE.get()
+        for fname in os.listdir(DOWNLOAD):
+            if 'void' not in fname:
+                try:
+                    self.toDatabase(fname)
+                    # Clean folder
+                    Path(DOWNLOAD + '/' + fname).unlink()
+                except ValueError:
+                    bot('ERROR', 'PROCESSOR', f'{fname} skipped.')
+                sleep(.5)
 
         self.log.info("[PROCESS] Processing Done")
         bot('INFO', 'PROCESSOR', 'Processing Done.')

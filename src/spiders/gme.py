@@ -289,4 +289,4 @@ class GMESpider():
 				except:
 					pass
 
-				sleep(5)
+				sleep(1)

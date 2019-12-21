@@ -44,24 +44,24 @@ class TernaSpider():
     setFname(date)    
     """
     def __init__(self, logger):
-        profile = webdriver.FirefoxProfile()
-        profile.set_preference("browser.download.folderList", 2)
-        profile.set_preference("browser.helperApps.alwaysAsk.force", False)
-        profile.set_preference(
+        self.profile = webdriver.FirefoxProfile()
+        self.profile.set_preference("browser.download.folderList", 2)
+        self.profile.set_preference("browser.helperApps.alwaysAsk.force", False)
+        self.profile.set_preference(
             "browser.download.manager.showWhenStarting",
             False
         )
-        profile.set_preference("browser.download.dir", DOWNLOAD)
-        profile.set_preference("browser.download.downloadDir", DOWNLOAD)
-        profile.set_preference("browser.download.defaultFolder", DOWNLOAD)
-        profile.set_preference(
+        self.profile.set_preference("browser.download.dir", DOWNLOAD)
+        self.profile.set_preference("browser.download.downloadDir", DOWNLOAD)
+        self.profile.set_preference("browser.download.defaultFolder", DOWNLOAD)
+        self.profile.set_preference(
         	"browser.helperApps.neverAsk.saveToDisk", 
             "application/vnd.openxmlformats-officedocument.spreadsheetml."\
             "sheet, application/-csv"
     	)
 
         self.driver = webdriver.Firefox(
-            profile, 
+            self.profile, 
             log_path='logs/geckodrivers.log'
         )
         self.driver.set_page_load_timeout(20)
@@ -173,7 +173,11 @@ class TernaSpider():
                     bot('ERROR', 'TERNA', 'Stale error. Try again..')
                 except:
                     pass
-                
+                self.driver.close()
+                self.driver = webdriver.Firefox(
+                    self.profile, 
+                    log_path='logs/geckodrivers.log'
+                    )
                 self.getData(item, start, end)
                 
                 break
@@ -236,7 +240,11 @@ class TernaSpider():
                     bot('ERROR', 'TERNA', 'Stale error. Try again..')
                 except:
                     pass
-                
+                self.driver.close()
+                self.driver = webdriver.Firefox(
+                    self.profile, 
+                    log_path='logs/geckodrivers.log'
+                    )
                 self.getData(item, start, end)
                 
                 break

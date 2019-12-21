@@ -11,7 +11,7 @@ rcParams.update({'figure.autolayout': True})
 
 data = Statistics()
 
-offers = data.db['OffertePubbliche2']
+offers = data.db['OffertePubbliche']
 
 
 #====================================================

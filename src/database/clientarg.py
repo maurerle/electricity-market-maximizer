@@ -18,7 +18,7 @@ def parse_args(parser):
         parsed arguments
     """
 
-    parser.add_argument("-m", "--market", action="store", dest="market", choices=['MGP','MI','MSD', 'Terna'],
+    parser.add_argument("-m", "--market", action="store", dest="market", choices=['MGP','MI','MSD', 'Terna', 'OffertePubbliche'],
                         help="The market you are interested in")
     parser.add_argument("-d", "--date", action="store", dest="date", type=valid_date,
                         help="Date in YYYYMMDD format")

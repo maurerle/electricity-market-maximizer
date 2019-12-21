@@ -141,8 +141,6 @@ def getHistory():
 	#=================
 	# GME spider works
 	#=================
-	gme = GMESpider(logger)
-	
 	logger.info('[GME] getHistory() started.')
 	start = START
 	
@@ -152,45 +150,52 @@ def getHistory():
 		end = start + relativedelta(months=+1, days=-1)
 		
 		for item in GME:
+			gme = GMESpider(logger)
 			gme.getData(
 				item, 
 				start.strftime('%d/%m/%Y'), 
 				end.strftime('%d/%m/%Y')
 			)
+			gme.driver.quit()
 		for item in GME_NEXT:
+			gme = GMESpider(logger)
 			gme.getData(
 				item, 
 				start.strftime('%d/%m/%Y'), 
 				end.strftime('%d/%m/%Y')
 			)
-		
+			gme.driver.quit()
 		start = end + relativedelta(days=+ 1)
 	
 	# Get the current month until the day before the current
 	end = datetime.now()+ relativedelta(days=-1)
 	if start.strftime('%d/%m/%Y')!=datetime.now().strftime('%d/%m/%Y'):
 		for item in GME:
+			gme = GMESpider(logger)
 			gme.getData(
 				item, 
 				start.strftime('%d/%m/%Y'), 
 				end.strftime('%d/%m/%Y')
 			)
+			gme.driver.quit()
 		for item in GME_NEXT:
+			gme = GMESpider(logger)
 			gme.getData(
 					item, 
 					start.strftime('%d/%m/%Y'), 
 					datetime.now().strftime('%d/%m/%Y')
 			)
+			gme.driver.quit()
 	
 	# Get the public offers referred to one week before the current
 	start = START
 	limit = datetime.now() + relativedelta(days=-8)
 	
 	while start.strftime('%dd/%mm/%YY') != limit.strftime('%dd/%mm/%YY'):
+		gme = GMESpider(logger)
 		gme.getData(GME_WEEK, start.strftime('%d/%m/%Y'))
 		start += relativedelta(days=+1)
-
-	gme.driver.quit()
+		gme.driver.quit()
 	
 	# Logs
 	logger.info('[GME] getHistory() ended.')
