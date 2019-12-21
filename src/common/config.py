@@ -200,6 +200,15 @@ GME_WEEK = {
 
 TERNA = [
 	{
+		'name':'EnergyBal',
+		'url': 'https://www.terna.it/it/sistema-elettrico/transparency-report/'\
+			   'energy-balance',
+		'iframe': 'iframeEnergyBal',
+		'child':34,
+		'graph':31,
+		'custom':34,
+		'graph2':23
+	},{
 		'name':'TotalLoad',
 		'url': 'https://www.terna.it/en/electric-system/transparency-report/'\
 			   'total-load',
@@ -217,15 +226,6 @@ TERNA = [
 		'graph':6,
 		'custom':28,
 		'graph2':5	
-	},{
-		'name':'EnergyBal',
-		'url': 'https://www.terna.it/it/sistema-elettrico/transparency-report/'\
-			   'energy-balance',
-		'iframe': 'iframeEnergyBal',
-		'child':34,
-		'graph':31,
-		'custom':34,
-		'graph2':23
 	}
 ]
 
@@ -233,7 +233,7 @@ TERNA2 = 'https://www.terna.it/it/sistema-elettrico/dispacciamento/'\
 	     'stima-domanda-oraria-energia-riserva-secondaria-terziaria'
 
 # Dynamic file history
-START =  datetime(2017, 2, 1)
+START =  datetime(2018, 5, 1)
 TERNA_LIMIT = datetime(2017,1,31)
 QUEUE = Queue()
 
@@ -243,6 +243,4 @@ QUEUE = Queue()
 # ======================================
 
 # To be changed with Polito cluster credentials
-MONGO_STRING = "mongodb+srv://new-user:politomerda@cluster0-awyti.mongodb.net/'\
-			   'test?retryWrites=true&w=majority"
 DB_NAME = "InterProj"

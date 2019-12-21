@@ -44,24 +44,24 @@ class TernaSpider():
     setFname(date)    
     """
     def __init__(self, logger):
-        profile = webdriver.FirefoxProfile()
-        profile.set_preference("browser.download.folderList", 2)
-        profile.set_preference("browser.helperApps.alwaysAsk.force", False)
-        profile.set_preference(
+        self.profile = webdriver.FirefoxProfile()
+        self.profile.set_preference("browser.download.folderList", 2)
+        self.profile.set_preference("browser.helperApps.alwaysAsk.force", False)
+        self.profile.set_preference(
             "browser.download.manager.showWhenStarting",
             False
         )
-        profile.set_preference("browser.download.dir", DOWNLOAD)
-        profile.set_preference("browser.download.downloadDir", DOWNLOAD)
-        profile.set_preference("browser.download.defaultFolder", DOWNLOAD)
-        profile.set_preference(
+        self.profile.set_preference("browser.download.dir", DOWNLOAD)
+        self.profile.set_preference("browser.download.downloadDir", DOWNLOAD)
+        self.profile.set_preference("browser.download.defaultFolder", DOWNLOAD)
+        self.profile.set_preference(
         	"browser.helperApps.neverAsk.saveToDisk", 
             "application/vnd.openxmlformats-officedocument.spreadsheetml."\
             "sheet, application/-csv"
     	)
 
         self.driver = webdriver.Firefox(
-            profile, 
+            self.profile, 
             log_path='logs/geckodrivers.log'
         )
         self.driver.set_page_load_timeout(20)
@@ -149,8 +149,8 @@ class TernaSpider():
                         '> visual-modern:nth-child(1) > div:nth-child(1)'
                     )
                     self.driver.execute_script('arguments[0].click();', btn)
-                    sleep(5)
-
+                    sleep(8)
+                print('')
                 #Inputs
                 form = self.driver.find_elements_by_tag_name("input")
                 self.driver.execute_script('arguments[0].click();', form[0])
@@ -173,7 +173,11 @@ class TernaSpider():
                     bot('ERROR', 'TERNA', 'Stale error. Try again..')
                 except:
                     pass
-                
+                self.driver.close()
+                self.driver = webdriver.Firefox(
+                    self.profile, 
+                    log_path='logs/geckodrivers.log'
+                    )
                 self.getData(item, start, end)
                 
                 break
@@ -236,7 +240,11 @@ class TernaSpider():
                     bot('ERROR', 'TERNA', 'Stale error. Try again..')
                 except:
                     pass
-                
+                self.driver.close()
+                self.driver = webdriver.Firefox(
+                    self.profile, 
+                    log_path='logs/geckodrivers.log'
+                    )
                 self.getData(item, start, end)
                 
                 break
@@ -315,7 +323,7 @@ class TernaReserve():
     -------
     getDaily()
     getHistory()
-    download(href)
+    download(href, f_cnt)
     
     Returns
     -------
@@ -348,7 +356,7 @@ class TernaReserve():
         soup = bs(self.driver.page_source, 'html.parser')
         for a in soup.find_all('a', href=True):
             if 'download.terna.it' and today in a['href']:
-                self.download(a['href'])
+                self.download(a['href'], 0)
                 break
                      
     def getHistory(self):
@@ -368,6 +376,7 @@ class TernaReserve():
         limit = (dayM - daym).days
 
         cnt = 2
+        f_cnt = 0
         while True:
             # Wait until the table is not loaded
             while True:
@@ -386,7 +395,8 @@ class TernaReserve():
                     if cnt == limit:
                         return None
                     cnt+=1
-                    self.download(a['href'])
+                    self.download(a['href'], f_cnt)
+                    f_cnt+=1
             # Move to the next table
             nxt = self.driver.find_element_by_xpath(
                 '/html/body/form/div[3]/div/div/div[1]/div/div/div[3]/div/'\
@@ -394,7 +404,7 @@ class TernaReserve():
             )
             nxt.click()
     
-    def download(self, href):
+    def download(self, href, f_cnt):
         """Download the data by performing an HTTP get request and by saving
         the response into a file. Then add the file to the processing queue.
         
@@ -402,8 +412,13 @@ class TernaReserve():
         ----------
         href : str
             download link
+        f_cnt : int
+            file counter for files with the same name
         """
         fname = href.split('/')[-1]
+        fname = f'{f_cnt}_{fname}'
+        if 'XLS' in fname:
+            fname = fname.replace('XLS', 'xlsx')
         # Download files
         with open(f'{DOWNLOAD}/{fname}', 'wb') as file:
             res = req.get(href)

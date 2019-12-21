@@ -14,7 +14,7 @@ def databaseInit():
 
     try:
         #client = MongoClient('mongodb+srv://new-user:politomerda@cluster0-awyti.mongodb.net/test?retryWrites=true&w=majority')
-        client = MongoClient('localhost', 27017)
+        client = MongoClient('smartgridspolito.ddns.net', 27888)
         db = client['InterProj']
         return db
     except Exception as e:
