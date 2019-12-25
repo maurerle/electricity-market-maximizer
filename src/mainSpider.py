@@ -8,6 +8,8 @@ from datetime import datetime
 from src.spiders.gme import GMESpider
 from src.spiders.terna import TernaSpider, TernaReserve
 from src.common.config import GME, GME_NEXT, GME_WEEK, START, TERNA
+from sys import argv as args
+import getpass
 
 dont_write_bytecode = True
 
@@ -22,7 +24,7 @@ def getDay():
 	bot('INFO', 'GME/TERNA/TERNA2', 'getDaily started.')
 	
 	# Classes init
-	processor = FileProcessor(logger)
+	processor = FileProcessor(logger, user, passwd)
 	
 	# Date creation
 	date = datetime.now().strftime('%d/%m/%Y')
@@ -84,14 +86,15 @@ def getHistory():
 	the file processor to update the file to a MongoDB database.
 	"""
 	bot('INFO', 'TERNA', 'getHistory started.')
-	processor = FileProcessor(logger)
-
+	processor = FileProcessor(logger, user, passwd)
+	
 	start = START
 	limit = datetime.now()
 	
 	#=============================================================
 	# Terna spider works. From the 01/02/2017 to the current month
 	#=============================================================
+	
 	logger.info('[TERNA] getHistory() started.')
 	while start.strftime('%YY') != limit.strftime('%YY'):
 		end = start + relativedelta(years=+1, days=-1)
@@ -200,4 +203,11 @@ def getHistory():
 	# Logs
 	logger.info('[GME] getHistory() ended.')
 	processor.stop()
+	
 	bot('INFO', 'GME', 'getHistory ended.')
+
+global user 
+global passwd 
+
+user = input('Insert SSH username:\n')
+passwd = getpass.getpass(prompt='Insert SSH passwd:\n')

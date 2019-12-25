@@ -12,9 +12,3 @@ install:
 	@sudo pip3 install -r requirements.txt
 	@src/common/addcrontab.sh
 	make runServer
-
-marketStatistics:
-	@python3 -c 'from src.marketStats import *'
-
-correlation:
-	@python3 -c 'from src.correlation import *'

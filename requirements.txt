@@ -6,5 +6,6 @@ django
 xlrd
 collections-extended
 pandas
-motor
+sshtunnel
+pymongo
 seaborn
