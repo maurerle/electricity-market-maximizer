@@ -1,10 +1,11 @@
 from sys import dont_write_bytecode
 from threading import Thread, Event
 from pathlib import Path
-from src.common.config import DOWNLOAD, DB_NAME, QUEUE
+from src.common.config import DOWNLOAD, DB_NAME, QUEUE, MONGO_HOST
 from src.loggerbot.bot import bot
 from src.database.csvParse import ParseCsv
 from src.database.xmlprocessors import process_file, process_transit_file, process_OffPub
+from sshtunnel import SSHTunnelForwarder
 from time import sleep
 import pymongo
 import os
@@ -35,13 +36,16 @@ class FileProcessor(Thread):
     sendData(parsed_data, collection)
     """
 
-    def __init__(self, log):
+    def __init__(self, log, user, passwd):
         Thread.__init__(self)
         self.log = log
+        self.user = user
+        self.passwd = passwd
         self.db = self.databaseInit()
         self.stop_event = Event()
         self.start()
         self.working = False
+        self.server = None
         
     def databaseInit(self):
         """Initialize the connection to the database.
@@ -55,8 +59,18 @@ class FileProcessor(Thread):
 
         try:
             self.log.info("[PROCESS] Attempting to connect to the database...")
-            #client = motor.motor_asyncio.AsyncIOMotorClient('smartgridspolito.ddns.net', 27888)
-            client = pymongo.MongoClient('smartgridspolito.ddns.net', 27888)
+            # define ssh tunnel
+            server = SSHTunnelForwarder(
+                MONGO_HOST,
+                ssh_username=self.user,
+                ssh_password=self.passwd,
+                remote_bind_address=('127.0.0.1', 27017),
+                local_bind_address=('127.0.0.1', 27017)
+            )
+
+            # start ssh tunnel
+            server.start()
+            client = pymongo.MongoClient('127.0.0.1', 27017)
             db = client[DB_NAME]
             self.log.info("[PROCESS] Connected to the database.")
             return db
@@ -75,20 +89,19 @@ class FileProcessor(Thread):
 
         self.log.info("[PROCESS] Processor Running")
         
-        #while not self.stop_event.is_set() or not QUEUE.empty():
-        #    fname = QUEUE.get()
-        for fname in os.listdir(DOWNLOAD):
-            if 'void' not in fname:
-                try:
-                    self.toDatabase(fname)
-                    # Clean folder
-                    Path(DOWNLOAD + '/' + fname).unlink()
-                except ValueError:
-                    bot('ERROR', 'PROCESSOR', f'{fname} skipped.')
-                sleep(.5)
+        while not self.stop_event.is_set() or not QUEUE.empty():
+            fname = QUEUE.get()
+            try:
+                self.toDatabase(fname)
+                # Clean folder
+                Path(DOWNLOAD + '/' + fname).unlink()
+            except ValueError:
+                bot('ERROR', 'PROCESSOR', f'{fname} skipped.')
+            sleep(.5)
 
         self.log.info("[PROCESS] Processing Done")
         bot('INFO', 'PROCESSOR', 'Processing Done.')
+        self.server.stop()
 
     def stop(self):
         """Set the stop event"""

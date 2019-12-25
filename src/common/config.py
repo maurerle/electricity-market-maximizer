@@ -233,7 +233,7 @@ TERNA2 = 'https://www.terna.it/it/sistema-elettrico/dispacciamento/'\
 	     'stima-domanda-oraria-energia-riserva-secondaria-terziaria'
 
 # Dynamic file history
-START =  datetime(2018, 5, 1)
+START =  datetime(2017, 2, 1)
 TERNA_LIMIT = datetime(2017,1,31)
 QUEUE = Queue()
 
@@ -244,3 +244,4 @@ QUEUE = Queue()
 
 # To be changed with Polito cluster credentials
 DB_NAME = "InterProj"
+MONGO_HOST = "bigdatalab.polito.it"
