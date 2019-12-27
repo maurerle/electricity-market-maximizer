@@ -12,3 +12,6 @@ install:
 	@sudo pip3 install -r requirements.txt
 	@src/common/addcrontab.sh
 	make runServer
+
+model:
+	@python3 -c 'from src import model;'
