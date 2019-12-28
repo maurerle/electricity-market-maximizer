@@ -112,6 +112,7 @@ class MGP():
         model.add(Dropout(0.1))
         
         model.add(Dense(1))
+        
         """
         # MAPE 9.6%
         model.add(LSTM(80, input_shape=(X.shape[1], X.shape[2]), return_sequences=True, unroll=True))
@@ -129,8 +130,8 @@ class MGP():
         
         model.compile(loss='mse', optimizer='adam')
         print(model.summary())
-
-        history = model.fit(x_train,y_train,epochs=100, batch_size=50, validation_data=(x_test,y_test), shuffle=False)
+        
+        history = model.fit(x_train,y_train,epochs=90, batch_size=50, validation_data=(x_test,y_test), shuffle=False)
 
         results = model.predict(x_test)
 
