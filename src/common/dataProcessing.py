@@ -4,6 +4,7 @@ from src.common.config import DB_NAME, MONGO_HOST
 from src.loggerbot.bot import bot
 import pandas as pd
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 class DataProcessing():
     def __init__(self, log, user, passwd):
@@ -45,6 +46,7 @@ class DataProcessing():
         self.server.stop()
     
     def operatorAggregate(self, op, collection):
+        """
         pipeline = [
             {
                 '$match': {
@@ -76,12 +78,14 @@ class DataProcessing():
                     'AWARDED_PRICE_NO':1,
                     'BID_OFFER_DATE_DT':1,
                     'ZONE_CD':1,
-                    'PURPOSE_CD':1
+                    'PURPOSE_CD':1,
+                    'INTERVAL_NO':1
                 }
             },{
                 '$group': {
                     '_id':{
                         'DATE':'$BID_OFFER_DATE_DT',
+                        'HOUR':'$INTERVAL_NO',
                         'TYPE':'$PURPOSE_CD'
                     },
                     'DLY_QTY':{
@@ -100,7 +104,8 @@ class DataProcessing():
             },{
                 '$addFields': {
                     "TYPE": '$_id.TYPE',
-                    "DATE": '$_id.DATE'
+                    "DATE": '$_id.DATE',
+                    'HOUR': '$_id.HOUR'
                 }
             }
         ]
@@ -108,17 +113,29 @@ class DataProcessing():
         cursor = self.db[collection].aggregate(pipeline)
         temp = [x for x in cursor]
         df = pd.DataFrame(temp)
+        """
+        df = pd.read_csv('tempDate.csv')
+        h = df['HOUR'].astype(int).astype(str).copy()
+        temp = df["DATE"].astype(str).str.cat(h, sep =":")
         df['DLY_PRICE'] = df['DLY_GAIN']/df['DLY_QTY']
         df['DLY_AWD_PRICE'] = df['DLY_AWD_GAIN']/df['DLY_AWD_QTY']
         df = df.fillna(0.0)
-        df = df.set_index(pd.to_datetime(df['DATE'], format='%Y%m%d'))
-        df = df.drop(columns=['_id', 'DLY_GAIN', 'DLY_AWD_GAIN', 'DATE'])
+        date_l = []
+        for i in temp:
+            if(':24') in i:
+                i=i.replace(':24', ':00')
+                dtime = datetime.strptime(i, '%Y%m%d:%H') + relativedelta(days=1)
+            else:
+                dtime = datetime.strptime(i, '%Y%m%d:%H')
+            date_l.append(dtime)
+ 
+        df = df.set_index(pd.to_datetime(date_l))
+        df = df.drop(columns=['_id', 'DLY_GAIN', 'DLY_AWD_GAIN', 'DATE', 'HOUR', 'Unnamed: 0'])
 
         df = df.loc[df['TYPE'] == 'BID']
         df = df.sort_index()
 
         bot('INFO','MONGO', 'Aggregation Finished.')
-        
         return df
 
     def mgpAggregate(self, timestamp):
@@ -145,8 +162,8 @@ class DataProcessing():
                 or '_OFF' in col:
                     drop.append(col)
         df = df.set_index(pd.to_datetime(df['Timestamp'], unit='s'))
-        df = df.drop(columns=drop)
-        df = df.resample('D').mean().fillna(0.0)
+        df = df.drop(columns=drop).fillna(0.0)
+        #df = df.resample('D').mean()
         df = df.sort_index()
 
         return df
@@ -156,3 +173,5 @@ class DataProcessing():
         merged = pd.merge(df1, df2, left_index=True, right_index=True)
         
         return merged
+    
+    

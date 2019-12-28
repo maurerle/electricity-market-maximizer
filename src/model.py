@@ -8,4 +8,5 @@ user = input('Insert SSH username:\n')
 passwd = getpass.getpass(prompt='Insert SSH passwd:\n')
 
 mgp = MGP(user, passwd)
-mgp.createSet()
+#mgp.createSet()
+mgp.manage()
