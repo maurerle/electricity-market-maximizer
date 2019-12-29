@@ -3,123 +3,151 @@ from src.common.dataProcessing import DataProcessing
 import logging
 import logging.config
 import numpy as np 
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
-from keras.models import Sequential
-from keras.layers import Dense, LSTM, Dropout, Bidirectional, BatchNormalization, GRU, ELU
+from sklearn.preprocessing import StandardScaler
+from keras.models import Sequential, load_model
+from keras.layers import Dense, LSTM, Dropout, Bidirectional, BatchNormalization
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, mean_absolute_error
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from math import sqrt
 import matplotlib.pyplot as plt
-from sklearn.metrics import r2_score
 from sklearn.decomposition import PCA
-import pprint
 
 logging.config.fileConfig('src/common/logging.conf')
 logger = logging.getLogger(__name__)
 
 
-def scaling(X, y):
+def scaling(X, *y):
     global scaler
     
-    data = np.concatenate((X,y),axis=1)
-    #scaler = MinMaxScaler(feature_range=(-1, 1))
     scaler = StandardScaler()
-    data = scaler.fit_transform(data)
-    data = pd.DataFrame(data)
+    
+    if len(y)>0:
+        y = y[0]
+        data = np.concatenate((X,y),axis=1)
+    
+        data = pd.DataFrame(scaler.fit_transform(data))
 
-    y = data[data.shape[1]-1].to_numpy()
-    X = data[range(data.shape[1]-1)].to_numpy()
-    X = X.reshape(X.shape[0], 1, X.shape[1])
+        y = data[data.shape[1]-1].to_numpy()
+        X = data[range(data.shape[1]-1)].to_numpy() \
+                                        .reshape(X.shape[0], 1, X.shape[1])
 
-    return X, y
+        return X, y
+    else:
+        y = np.ones((X.shape[0], 1), dtype=float)
+        data = np.concatenate((X,y),axis=1)
+    
+        data = pd.DataFrame(scaler.fit_transform(data))
 
-def descaling(x_test, y_test, results):
-    # Descaling
+        y = data[data.shape[1]-1].to_numpy()
+        X = data[range(data.shape[1]-1)].to_numpy() \
+                                        .reshape(X.shape[0], 1, X.shape[1])
+
+        return X
+    
+
+def descaling(x_test, results, *y_test):
+    # Reshaping
     x_test = x_test.reshape(x_test.shape[0], x_test.shape[2])
-    y_test = y_test.reshape(len(y_test), 1)
     results = results.reshape(len(results), 1)
+    print(x_test.shape)
+    print(results.shape)
+    # Descaling predictions
+    df_hat = np.concatenate((x_test, results), axis=1)
+    print(df_hat.shape)
+    df_hat = scaler.inverse_transform(df_hat)
+    y_hat = df_hat[:,df_hat.shape[1]-1]
 
-    dset1 = np.concatenate((x_test, y_test),axis=1)
-    dset2 = np.concatenate((x_test, results), axis=1)
+    if len(y_test)>0:
+        # Reshaping targets
+        y_test = y_test[0]
+        y_test = y_test.reshape(len(y_test), 1)
+        
+        # Descaling targets
+        df_target = np.concatenate((x_test, y_test),axis=1)
+        df_target = scaler.inverse_transform(df_target)
+        y = df_target[:,df_hat.shape[1]-1]
 
-    dset1 = scaler.inverse_transform(dset1)
-    dset2 = scaler.inverse_transform(dset2)
+        return y, y_hat 
+    else:
+        return y_hat
 
 
-    y = dset1[:,dset2.shape[1]-1]
-    y_hat = dset2[:,dset2.shape[1]-1]
-
-    return y, y_hat
 
 
 class MGP():
     def __init__ (self, user, passwd):
         self.user = user
         self.passwd = passwd
+        self.b_qty_model = None
+        self.lag = 1
 
-    def createSet(self):
+    def createSet(self, start, operator):
         mongo = DataProcessing(logger, self.user, self.passwd)
         
         dataset = mongo.merge(
-            mongo.mgpAggregate(1543615200.0),
-            mongo.operatorAggregate('IREN ENERGIA SPA', 'OffertePubbliche')
+            mongo.mgpAggregate(start),
+            mongo.operatorAggregate(operator, 'OffertePubbliche')
         )
-        dataset.to_csv('datasetTest.csv')
+        
+        
+        return dataset
 
-    def manage(self):
-        lag = 1
-        data = pd.read_csv('datasetTest.csv')
+    def prepareData(self, data, target=True):
         data = data.drop(columns=['TYPE', 'Unnamed: 0'])
-        # Create dataset before the scaling
-        new_data=data.shift(periods=-lag, fill_value=0)
-        y = new_data['DLY_QTY'].iloc[:len(new_data.index)-lag,].to_numpy(dtype=float)
         
-        new_data = new_data.drop(columns=['DLY_QTY','DLY_PRICE','DLY_AWD_QTY','DLY_AWD_PRICE'])
-        to_rename = {}
-        for item in new_data.columns:
-            to_rename[item] =item + '_NXT'
-        new_data = new_data.rename(columns=to_rename)
-        data1 = data['DLY_QTY']
-        data = data.join(new_data)
-        #data = data['DLY_QTY']
-        pca = PCA(n_components=30, whiten=True)
+        if target:
+            X = data.iloc[:len(data.index)-self.lag,].to_numpy(dtype=float)
+            X = PCA(n_components=70).fit_transform(X)
+            
+            new_data = data.shift(periods=-self.lag, fill_value=0)
+            y = new_data['DLY_QTY'].iloc[:len(new_data.index)-self.lag,] \
+                                   .to_numpy(dtype=float)
+            new_data = new_data.drop(
+                columns=['DLY_QTY','DLY_PRICE','DLY_AWD_QTY','DLY_AWD_PRICE']
+            )
+            y = y.reshape(len(y), 1)
+
+            X, y = scaling(X, y)
         
-        X = data.iloc[:len(data.index)-lag,].to_numpy(dtype=float)
-        #X = X.reshape(X.shape[0], 1)
-        X = pca.fit_transform(X)
-        y = y.reshape(len(y), 1)
+            return X, y
+        
+        else:
+            X = data.to_numpy(dtype=float)
+            X = PCA(n_components=70).fit_transform(X)
+            X = scaling(X)
 
-        print(X.shape)
-        print(y.shape)
+            return X
 
-        X, y = scaling(X, y)
-
-        x_train, x_test, y_train, y_test = train_test_split(X,y,test_size=.2, random_state = 4)
+    def train(self, data):
+        X, y = self.prepareData(data, target=True)
+        x_train, x_test, y_train, y_test = train_test_split(
+            X,
+            y, 
+            test_size=.2, 
+            random_state = 4
+        )
 
         model = Sequential()
         
-        # MAPE 9.7%
-        """
-        model.add(LSTM(80, input_shape=(X.shape[1], X.shape[2]), return_sequences=True))
+        model.add(
+            LSTM(
+                80, 
+                input_shape=(X.shape[1], X.shape[2]), 
+                return_sequences=True, 
+                unroll=True
+            )
+        )
         model.add(BatchNormalization())
         model.add(Dropout(0.3))
 
-        model.add(Bidirectional(LSTM(50, input_shape=(X.shape[1], X.shape[2]))))
-        model.add(BatchNormalization())
-        model.add(Dropout(0.3))
-
-        model.add(Dense(40))
-        model.add(Dropout(0.1))
-        
-        model.add(Dense(1))
-        
-        """
-        # MAPE 9.6%
-        model.add(LSTM(80, input_shape=(X.shape[1], X.shape[2]), return_sequences=True, unroll=True))
-        model.add(BatchNormalization())
-        model.add(Dropout(0.3))
-
-        model.add(Bidirectional(LSTM(50, input_shape=(X.shape[1], X.shape[2]))))
+        model.add(
+            Bidirectional(
+                LSTM(
+                    50, 
+                    input_shape=(X.shape[1], X.shape[2])
+                )
+            )
+        )
         model.add(BatchNormalization())
         model.add(Dropout(0.3))
         
@@ -130,27 +158,37 @@ class MGP():
         
         model.compile(loss='mse', optimizer='adam')
         print(model.summary())
-        
-        history = model.fit(x_train,y_train,epochs=90, batch_size=50, validation_data=(x_test,y_test), shuffle=False)
+
+        history = model.fit(
+            x_train,
+            y_train,
+            epochs=50, 
+            batch_size=50, 
+            validation_data=(x_test,y_test), 
+            shuffle=False
+        )
 
         results = model.predict(x_test)
 
-        y_test, y_hat_test = descaling(x_test, y_test, results)
+        y_test, y_hat_test = descaling(x_test, results, y_test)
 
+        # Evaluate model
         rmse = sqrt(mean_squared_error(y_test, y_hat_test))
         r2 = r2_score(y_test, y_hat_test)
         mae = mean_absolute_error(y_test, y_hat_test)
         mape = np.mean(np.abs((y_test - y_hat_test) / y_test)) * 100
+
         print(f'RMSE Test:  {rmse}')
-        print(mae)
+        print(f'MAE Test:  {mae}')
         print(f'MAPE: {mape}%')
         print(f'R2 Test:  {r2}')
 
+        # Test Comparison
         plt.scatter(np.arange(y_hat_test.shape[0]), y_hat_test, s=1, color='r')
         plt.plot(y_test, linewidth=.5)
         plt.show()
 
-        #fig = plt.figure()
+        # Regression Line
         plt.xlabel('y')
         plt.ylabel('y_hat')
         plt.scatter(y_test,y_hat_test, s=1, label = 'y vs. y_hat')
@@ -158,6 +196,7 @@ class MGP():
         plt.legend()
         plt.show()
 
+        # Loss Function
         plt.ylabel('MSE')
         plt.xlabel("Epochs")
         plt.plot(history.history['loss'], label = 'Test')
@@ -166,28 +205,23 @@ class MGP():
         plt.show()
 
 
-
-
-
-
-        pca = PCA(n_components=30, whiten=True)
+        model.save('models/my_model.h5') 
         
-        X = data.iloc[:len(data.index)-lag,].to_numpy(dtype=float)
-        #X = X.reshape(X.shape[0], 1)
-        X = pca.fit_transform(X)
-        y = y.reshape(len(y), 1)
+        return model
 
-        print(X.shape)
-        print(y.shape)
 
-        X, y = scaling(X, y)
+    def predict(self, data, *model):
+        if len(model)>0:
+            model = model[0]
+        else:
+            model = load_model('models/my_model.h5')
+        
+        X = self.prepareData(data, target=False)
         results = model.predict(X)
 
-        y_test, y_hat_test = descaling(X, y, results)
+        predictions = descaling(X, results)
 
-        plt.plot(y_test, linewidth=.5)
-        plt.plot(y_hat_test, linewidth=.4)
-        plt.show()
+        return predictions
 
 class MI():
     def __init__ (self):
@@ -196,3 +230,6 @@ class MI():
 class MSD():
     def __init__ (self):
         pass
+
+
+    
