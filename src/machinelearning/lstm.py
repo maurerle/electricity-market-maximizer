@@ -2,15 +2,19 @@ import pandas as pd
 from src.common.dataProcessing import DataProcessing
 import logging
 import logging.config
+from datetime import datetime
 import numpy as np 
 from sklearn.preprocessing import StandardScaler
-from keras.models import Sequential, load_model
-from keras.layers import Dense, LSTM, Dropout, Bidirectional, BatchNormalization
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from math import sqrt
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
+import warnings  
+with warnings.catch_warnings():  
+    warnings.filterwarnings("ignore",category=FutureWarning)
+    from keras.models import Sequential, load_model
+    from keras.layers import Dense, LSTM, Dropout, Bidirectional, BatchNormalization
 
 logging.config.fileConfig('src/common/logging.conf')
 logger = logging.getLogger(__name__)
@@ -71,7 +75,14 @@ def descaling(x_test, results, *y_test):
     else:
         return y_hat
 
-
+def getDifferences(df1, df2):
+    df = pd.merge(df1, df2, left_index=True, right_index=True, how='outer', indicator='Exist')
+    df = df.loc[df['Exist'] == 'right_only']
+    
+    for i in df.index:
+        if i.strftime('%m-%Y') == datetime.now().strftime('%m-%Y'):
+            
+            return i
 
 
 class MGP():
@@ -81,20 +92,59 @@ class MGP():
         self.b_qty_model = None
         self.lag = 1
 
-    def createSet(self, start, operator):
+    def createSetPred(self, start, operator):
         mongo = DataProcessing(logger, self.user, self.passwd)
         
-        dataset = mongo.merge(
-            mongo.mgpAggregate(start),
-            mongo.operatorAggregate(operator, 'OffertePubbliche')
-        )
+        bid, off = mongo.operatorAggregate(start, operator)
+        mgp = mongo.mgpAggregate(start)
         
+        #bid.to_csv('bid.csv', index=True)
+        #mgp.to_csv('mgp.csv', index=True)
         
-        return dataset
+
+        #bid = pd.read_csv('bid.csv', index_col='Unnamed: 0')
+        #mgp = pd.read_csv('mgp.csv', index_col='Timestamp')
+        bid.index = pd.to_datetime(bid.index)
+        mgp.index = pd.to_datetime(mgp.index)
+
+        future = mgp[mgp.index>=getDifferences(bid, mgp)]
+
+        df_bid = mongo.merge(mgp, bid)
+        #df_off = mongo.merge(mgp, off)
+        
+        #df_bid.to_csv('futureBid.csv')
+        #df_off.to_csv('futureOff.csv')
+        
+        return df_bid, future
+
+    def createSetTrain(self, start, operator):
+        mongo = DataProcessing(logger, self.user, self.passwd)
+        
+        bid, off = mongo.operatorAggregate(start, operator)
+        mgp = mongo.mgpAggregate(start)
+        
+        #bid.to_csv('bid.csv', index=True)
+        #mgp.to_csv('mgp.csv', index=True)
+        
+
+        #bid = pd.read_csv('bid.csv', index_col='Unnamed: 0')
+        #mgp = pd.read_csv('mgp.csv', index_col='Timestamp')
+        bid.index = pd.to_datetime(bid.index)
+        mgp.index = pd.to_datetime(mgp.index)
+
+
+        df_bid = mongo.merge(mgp, bid)
+        #df_off = mongo.merge(mgp, off)
+        
+        #df_bid.to_csv('futureBid.csv')
+        #df_off.to_csv('futureOff.csv')
+        
+        return df_bid
 
     def prepareData(self, data, target=True):
-        data = data.drop(columns=['TYPE', 'Unnamed: 0'])
-        
+        #data = data.drop(columns=['TYPE', 'Unnamed: 0'])
+        #data = data.drop(columns=['TYPE'])
+        data = data.drop(columns=['DLY_AWD_QTY', 'TYPE', 'DLY_PRICE', 'DLY_AWD_PRICE'])
         if target:
             X = data.iloc[:len(data.index)-self.lag,].to_numpy(dtype=float)
             X = PCA(n_components=70).fit_transform(X)
@@ -102,9 +152,11 @@ class MGP():
             new_data = data.shift(periods=-self.lag, fill_value=0)
             y = new_data['DLY_QTY'].iloc[:len(new_data.index)-self.lag,] \
                                    .to_numpy(dtype=float)
+            """
             new_data = new_data.drop(
                 columns=['DLY_QTY','DLY_PRICE','DLY_AWD_QTY','DLY_AWD_PRICE']
             )
+            """
             y = y.reshape(len(y), 1)
 
             X, y = scaling(X, y)
@@ -113,6 +165,7 @@ class MGP():
         
         else:
             X = data.to_numpy(dtype=float)
+            print(X.shape)
             X = PCA(n_components=70).fit_transform(X)
             X = scaling(X)
 
@@ -162,6 +215,7 @@ class MGP():
         history = model.fit(
             x_train,
             y_train,
+            #epochs=50,
             epochs=50, 
             batch_size=50, 
             validation_data=(x_test,y_test), 

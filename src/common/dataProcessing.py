@@ -23,7 +23,8 @@ class DataProcessing():
                 ssh_username=self.user,
                 ssh_password=self.passwd,
                 remote_bind_address=('127.0.0.1', 27017),
-                local_bind_address=('127.0.0.1', 27017)
+                local_bind_address=('127.0.0.1', 27017),
+                logger=None
             )
 
             # start ssh tunnel
@@ -45,8 +46,8 @@ class DataProcessing():
     def mongoStop(self):
         self.server.stop()
     
-    def operatorAggregate(self, op, collection):
-        """
+    def operatorAggregate(self, start, op):
+        
         pipeline = [
             {
                 '$match': {
@@ -54,7 +55,7 @@ class DataProcessing():
                     'OPERATORE':op,
                     'STATUS_CD':'ACC',
                     'Timestamp_Flow':{
-                        '$gte':1543615200.0
+                        '$gte':start
                     }
                 }
             },{
@@ -110,11 +111,11 @@ class DataProcessing():
             }
         ]
 
-        cursor = self.db[collection].aggregate(pipeline)
+        cursor = self.db['OffertePubbliche'].aggregate(pipeline)
         temp = [x for x in cursor]
         df = pd.DataFrame(temp)
-        """
-        df = pd.read_csv('tempDate.csv')
+        
+        #df = pd.read_csv('tempDate.csv')
         h = df['HOUR'].astype(int).astype(str).copy()
         temp = df["DATE"].astype(str).str.cat(h, sep =":")
         df['DLY_PRICE'] = df['DLY_GAIN']/df['DLY_QTY']
@@ -130,13 +131,17 @@ class DataProcessing():
             date_l.append(dtime)
  
         df = df.set_index(pd.to_datetime(date_l))
-        df = df.drop(columns=['_id', 'DLY_GAIN', 'DLY_AWD_GAIN', 'DATE', 'HOUR', 'Unnamed: 0'])
+        #df = df.drop(columns=['_id', 'DLY_GAIN', 'DLY_AWD_GAIN', 'DATE', 'HOUR', 'Unnamed: 0'])
+        df = df.drop(columns=['_id', 'DLY_GAIN', 'DLY_AWD_GAIN', 'DATE', 'HOUR'])
 
-        df = df.loc[df['TYPE'] == 'BID']
         df = df.sort_index()
 
+        df_bid = df.loc[df['TYPE'] == 'BID']
+        df_off = df.loc[df['TYPE'] == 'OFF']
+
         bot('INFO','MONGO', 'Aggregation Finished.')
-        return df
+        
+        return df_bid, df_off
 
     def mgpAggregate(self, timestamp):
         pipeline = [
@@ -163,7 +168,7 @@ class DataProcessing():
                     drop.append(col)
         df = df.set_index(pd.to_datetime(df['Timestamp'], unit='s'))
         df = df.drop(columns=drop).fillna(0.0)
-        #df = df.resample('D').mean()
+
         df = df.sort_index()
 
         return df
