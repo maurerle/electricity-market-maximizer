@@ -14,4 +14,4 @@ install:
 	make runServer
 
 model:
-	@python3 -c 'from src import model;'
+	@python3 -c 'from src.machinelearning import temp;'
