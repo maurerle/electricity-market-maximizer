@@ -6,7 +6,7 @@ import time
 from keras.callbacks import TensorBoard as tb
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
-from src.common.mongo import MongoDB as Mongo
+#from src.common.mongo import MongoDB as Mongo
 
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.model_selection import train_test_split
@@ -180,65 +180,73 @@ class MGP():
         self.history = None
 
     def descaleData(self, y_hat):
-        with open('models/scaler.pkl', 'rb') as file:
-            scalers = pickle.load(file)
+        with open('scalery.pkl', 'rb') as file:
+            scaler_y = pickle.load(file)
 
-        y_hat = y_hat.reshape(y_hat.shape[0],y_hat.shape[1])
-        y_hat = scalers['y'].inverse_transform(y_hat)
+        y_hat_r = y_hat.reshape(y_hat.shape[0],y_hat.shape[1])
+        y_hat_d = scaler_y.inverse_transform(y_hat_r)
 
-        return y_hat
-
-    def scaleData(self, X, *y):
-        scalers = {
-            'x':[]
-        }
+        return y_hat_d
+    
+    def scaleData(self, X_toScale, *y):
+        split = .7
 
         if len(y)>0:
             y = y[0]
-            split = .3    
-            x_test = X[:int(X.shape[0]*split),:,:]
-            x_train = X[int(X.shape[0]*split):,:,:]
-            y_test = y[:int(y.shape[0]*split),:]
-            y_train = y[int(y.shape[0]*split):,:]
 
-            for i in range(X.shape[1]):
-                scaler_x = StandardScaler()
-                scaler_y = StandardScaler()
-                
+            # Initialize the training and test items
+            x_test = X_toScale[int(X_toScale.shape[0]*split):,:,:]
+            x_train = X_toScale[:int(X_toScale.shape[0]*split),:,:]
+            y_test = y[int(y.shape[0]*split):,:]
+            y_train = y[:int(y.shape[0]*split),:]
+
+            x_train_s = np.zeros((x_train.shape[0],x_train.shape[1],x_train.shape[2]))
+            x_test_s = np.zeros((x_test.shape[0],x_test.shape[1],x_test.shape[2]))
+            # Scale each feature of X
+            for i in range(X_toScale.shape[1]):
+                scaler_x = MinMaxScaler(feature_range=(0, 1))
+                scaler_y = MinMaxScaler(feature_range=(0, 1))
+
                 scaler_x.fit(x_train[:,i,:])
-                x_train[:,i,:] = scaler_x.transform(x_train[:,i,:])
-                x_test[:,i,:] = scaler_x.transform(x_test[:,i,:])
 
-                scalers['x'].append(scaler_x)
-            
+                x_train_s[:,i,:] = scaler_x.transform(x_train[:,i,:])
+                x_test_s[:,i,:] = scaler_x.transform(x_test[:,i,:])
+                # Save the scalers
+                with open(f'scaler{i}x.pkl', 'wb') as file:
+                    pickle.dump(scaler_x, file)
+                    print('Scaler saved')
+
+            # Scale each feature of y
             scaler_y.fit(y_train)
-            y_train = scaler_y.transform(y_train)
-            y_test = scaler_y.transform(y_test)
-            
-            scalers['y'] = scaler_y
 
-            y_test = y_test.reshape(y_test.shape[0],y_test.shape[1],1)
-            y_train = y_train.reshape(y_train.shape[0],y_train.shape[1],1)
+            y_train_s = np.zeros((y_train.shape))
+            y_test_s = np.zeros((y_test.shape))
 
-            with open('models/scaler.pkl', 'wb') as file:
-                pickle.dump(scalers, file)
+            y_train_s = scaler_y.transform(y_train)
+            y_test_s = scaler_y.transform(y_test)
+
+            y_test_s = y_test_s.reshape(y_test_s.shape[0],y_test_s.shape[1],1)
+            y_train_s = y_train_s.reshape(y_train_s.shape[0],y_train_s.shape[1],1)
+            # Save the scaler
+            with open('scalery.pkl', 'wb') as file:
+                pickle.dump(scaler_y, file)
             print('Scaler saved')
 
-            return x_train, y_train, x_test, y_test
+
+            return x_train_s, y_train_s, x_test_s, y_test_s
 
         else:
-            with open('models/scaler.pkl', 'rb') as file:
-                scalers = pickle.load(file)
-            print('Scaler Loaded')
+            # Load the scalers and scale the provided dataset
+            x_scaled = np.zeros((X_toScale.shape[0],X_toScale.shape[1],X_toScale.shape[2]))
+            for i in range(X_toScale.shape[1]):
+                with open(f'scaler{i}x.pkl', 'rb') as file:
+                    scaler_x = pickle.load(file)
+                    print('Scaler Loaded')
+                    x_scaled[:,i,:] = scaler_x.transform(X_toScale[:,i,:])
 
-            for i in range(X.shape[1]):
-                scaler_x = scalers['x'][i]
-                
-                X[:,i,:] = scaler_x.transform(X[:,i,:])
-            
-            return X
+            return x_scaled
     
-    def trainModel(self, x_train, y_train, x_test, y_test):
+    def trainModel(self, x_train, y_train, x_test, y_test, epc):
         model = Sequential()
 
         model.add(
@@ -274,19 +282,19 @@ class MGP():
         self.history = model.fit(
             x_train,
             y_train,
-            epochs=1, 
+            epochs=epc, 
             batch_size=50, 
             validation_data=(x_test,y_test), 
             shuffle=False,
         )
 
-        model.save('models/my_model.h5') 
+        model.save('my_model.h5') 
         print('Model Saved')
         return model
     
     def runModel(self, X):
         print('Predicting')
-        model = load_model('models/my_model.h5')
+        model = load_model('my_model.h5')
         results = model.predict(X)
         print('Descaling')
         #results = self.descaleData(results)
@@ -299,30 +307,57 @@ class MGP():
 # Train
 p = Preprocess()
 data = p.loadData()
+
+data
+
 X = p.prepareData(data)
+
+X.shape
+
 X, y =  p.rollByLags(X)
 
 mgp = MGP()
 a,b,c,d = mgp.scaleData(X, y)
+
 mgp.trainModel(
-    a,b,c,d
+    a,b,c,d,
+    20
 )
+
+plt.rcParams['figure.figsize'] = (10,7)
+plt.plot(mgp.history.history['loss'], label='Train', linewidth=3)
+plt.plot(mgp.history.history['val_loss'], label='Test', linewidth=3, linestyle='-.', color = 'r')
+plt.legend()
+plt.grid(linestyle = '--')
+plt.xlabel('Epochs')
+plt.ylabel('MSE')
+plt.xlim(0)
 
 # Validation
 p = Preprocess()
 data = p.loadData()
-X = p.prepareData(data)
-y = X[:,:,-1]
-
+X_val = p.prepareData(data)
+y_val = X_val[:,:,-1]
 mgp = MGP()
 y_hat = mgp.runModel(
-    mgp.scaleData(X)
+    mgp.scaleData(X_val)
 )
+
+y_hat_d = mgp.descaleData(y_hat)
+
+LIM = 400
+plt.rcParams['figure.figsize'] = (20,10)
+plt.plot(y_val[:LIM,0], label='Observation')
+plt.plot(y_hat_d[:LIM,0], label='Predictions', linestyle='-.', color = 'r')
+plt.legend()
+plt.grid(linestyle = '--')
+plt.xlabel('Timesteps')
+plt.ylabel('Daily Quantity')
+plt.xlim(0)
+
 # Evaluate Model
-plt.scatter(y, y_hat)
-plt.plot(y,y, color='r')
+plt.scatter(y_val, y_hat_d, s=.5)
+plt.plot(y_val,y_val, color='r')
 plt.show()
 
-plt.plot(y_hat[:,1])
-plt.plot(y[:,1])
-plt.show()
+
