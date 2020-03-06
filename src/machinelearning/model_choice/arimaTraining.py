@@ -69,23 +69,32 @@ def statTest(data):
         .std()
     )
     dickeyFuller(data.diff(), '1d')
-    
+
     # Plot the results
     plt.figure()
-    plt.plot(data, label='Original')
-    plt.plot(rolling_mean, label='Rolling mean')
-    plt.plot(rolling_std, label='Rolling std')
-    plt.plot(rolling_mean_diff, label='Rolling mean d1')
-    plt.plot(rolling_std_diff, label='Rolling std d1')
+    plt.plot(data, label='Original Timeseries')
+    plt.plot(rolling_mean, label='Rolling mean', color='r')
+    plt.plot(rolling_std, label='Rolling std', color='k')
     plt.xlabel('Date')
-    plt.ylabel('Average Daily Quantity')
+    plt.ylabel('Offered Daily Quantity')
+    plt.xticks(rotation=90)
+    plt.grid()
+    plt.legend(ncol=3, loc='upper center', bbox_to_anchor=(0.5, 1.30))
+    plt.savefig('fig/rollingD0.png', transparent=True)
+    plt.close()
+
+    # Plot the results
+    plt.figure()
+    plt.plot(data.diff(), label='Differenced Timeseries')
+    plt.plot(rolling_mean_diff, label='Rolling mean', color='r')
+    plt.plot(rolling_std_diff, label='Rolling std', color='k')
+    plt.xlabel('Date')
+    plt.ylabel('Offered Daily Quantity')
     plt.xticks(rotation=90)
     plt.grid()
     plt.legend(ncol=3, loc='upper center', bbox_to_anchor=(0.5, 1.30))
     plt.savefig('fig/rollingD1.png', transparent=True)
     plt.close()
-    rcParams.update({'figure.autolayout': False})
-
 
 # # Load Data, Grid Search and Test Best
 

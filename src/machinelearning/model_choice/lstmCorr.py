@@ -93,7 +93,7 @@ corr = corr.rename(
     {
         'DLY_QTY':'y(t)',
         'MGP_CNOR_Prezzo':'C-North Price',
-        'MGP_AUS_Prezzo':'AT Price',
+        'MGP_AUST_Prezzo':'AT Price',
         'MGP_BSP_Prezzo':'SVN Coupling Price',
         'MGP_FRAN_Prezzo':'FR Price',
         'MGP_NORD_Prezzo':'North Price',
