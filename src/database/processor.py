@@ -60,7 +60,7 @@ class FileProcessor(Thread):
         try:
             self.log.info("[PROCESS] Attempting to connect to the database...")
             # define ssh tunnel
-            server = SSHTunnelForwarder(
+            self.server = SSHTunnelForwarder(
                 MONGO_HOST,
                 ssh_username=self.user,
                 ssh_password=self.passwd,
@@ -69,11 +69,13 @@ class FileProcessor(Thread):
             )
 
             # start ssh tunnel
-            server.start()
+            self.server.start()
             client = pymongo.MongoClient('127.0.0.1', 27017)
             db = client[DB_NAME]
             self.log.info("[PROCESS] Connected to the database.")
+            
             return db
+
         except Exception as e:
             self.log.error(
                 f"[PROCESS] Exception while connecting to the db: {e}"
