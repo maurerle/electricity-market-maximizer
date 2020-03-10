@@ -5,6 +5,7 @@ from src.loggerbot.bot import bot
 import pandas as pd
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+import time
 
 class MongoDB():
     def __init__(self, log, user, passwd):
@@ -13,7 +14,7 @@ class MongoDB():
         self.passwd = passwd
         self.server = None 
         self.db = self.connect()
-
+        
     def connect(self):
         try:
             self.log.info("[MONGO] Attempting to connect to the database...")
@@ -40,8 +41,11 @@ class MongoDB():
             self.log.error(
                 f"[MONGO] Exception while connecting to the db: {e}"
             )
+            # TO REMOVE
+            time.sleep(60)
+            self.db = self.connect()
             # Bot Notification
-            bot('ERROR', 'MONGO', 'Connection failed.')
+            #bot('ERROR', 'MONGO', 'Connection failed.')
             
     def mongoStop(self):
         self.server.stop()

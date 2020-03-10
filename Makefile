@@ -13,5 +13,5 @@ install:
 	@src/common/addcrontab.sh
 	make runServer
 
-model:
-	@python3 -c 'from src.machinelearning import temp;'
+temp:
+	@python3 -c 'from src.machinelearning.marketSImulationSample import temp'
