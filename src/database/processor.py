@@ -115,13 +115,15 @@ class FileProcessor(Thread):
 
         if fname[11:-4] == 'OffertePubbliche':
             dem, sup = process_OffPub(fname)
-            done = False
-            while not done:
-                try:
-                    self.sendData(dem, sup)
-                    done = True
-                except:
-                    pass
+            if not isinstance(dem, int):
+                done = False
+                while not done:
+                    try:
+                        self.sendData(dem, sup)
+                        done = True
+                    except:
+                        sleep(1)   
+
     def sendData(self, dem, sup):
         """Updates the selected collection with the documents made of paresd
         data.

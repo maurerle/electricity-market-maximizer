@@ -28,7 +28,7 @@ GME_WEEK = {
 
 # Dynamic file history
 START =  datetime(2017, 2, 1)
-
+MI = {}
 QUEUE = Queue()
 
 

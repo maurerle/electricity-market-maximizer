@@ -1,10 +1,9 @@
 from src.common.config import DOWNLOAD
 import xmltodict
 from datetime import datetime
-from pprint import pprint
 import pandas as pd
 import numpy as np
-
+from src.common.config import MI
 
 def process_OffPub(fname):
 	"""Function to process XXXOffertePubblice.xml files (XXX = {MGP, MI1, MI2, ...})
@@ -48,7 +47,47 @@ def process_OffPub(fname):
 		except:
 			pass
 	
-	return dataPool(dic)
+	if 'MI' in i['MARKET_CD']:
+		idx = i['BID_OFFER_DATE_DT']
+		if idx not in MI:
+			MI[idx] = {
+				'dem':[],
+				'sup':[]
+			}
+
+		d, s = dataPool(dic)
+		MI[idx]['dem'].append(d)
+		MI[idx]['sup'].append(s)
+		
+		if len(MI[idx]['dem']) == 7:
+			dQ = pd.DataFrame()
+			dP = pd.DataFrame()
+			sQ = pd.DataFrame()
+			sP = pd.DataFrame()
+			for i in range(7):
+				dQ = pd.concat((dQ, MI[idx]['dem'][i].Q), axis=1, sort=False).sum(axis=1)
+				dP = pd.concat((dP, MI[idx]['dem'][i].P), axis=1, sort=False).mean(axis=1)
+				sQ = pd.concat((sQ, MI[idx]['sup'][i].Q), axis=1, sort=False).sum(axis=1)
+				sP = pd.concat((sP, MI[idx]['sup'][i].P), axis=1, sort=False).mean(axis=1)
+			MI.pop(idx)
+			dem = pd.DataFrame({
+				'P':dP,
+				'Q':dQ,
+			})
+			sup = pd.DataFrame({
+				'P':sP,
+				'Q':sQ,
+			})
+			dem['MARKET'] = 'MI'
+			sup['MARKET'] = 'MI'
+			dem['DATE'] = idx
+			sup['DATE'] = idx
+
+			return dem, sup		
+		else:
+			return -1, -1
+	else:	
+		return dataPool(dic)
 
 
 def getCurve(df):
