@@ -5,6 +5,5 @@ __pycache__/
 .idea/
 data/
 fig/
-models/
 bid.csv
 mgp.csv
