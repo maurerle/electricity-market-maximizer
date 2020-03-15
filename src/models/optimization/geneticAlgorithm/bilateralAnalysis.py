@@ -54,7 +54,7 @@ def demCurve(df):
 # +
 data = (
     pd
-    .read_csv('data/data.csv')
+    .read_csv('../data/data.csv')
     .drop(columns=[
         'MARKET_CD', 
         'UNIT_REFERENCE_NO', 
@@ -100,7 +100,7 @@ plt.grid(linestyle='-.')
 plt.legend()
 plt.xlabel('Quantity [MWh]')
 plt.ylabel('Price [\u20ac/MWh]')
-plt.savefig('fig/CurvesNoB.png', transparent=True)
+plt.savefig('../fig/CurvesNoB.png', transparent=True)
 
 # +
 obs_off = off['STATUS_CD'].replace('ACC', 1).replace('REJ',0)
@@ -118,7 +118,7 @@ fpr, tpr, thresholds = roc_curve(obs, pred)
 # +
 data = (
     pd
-    .read_csv('data/data.csv')
+    .read_csv('../data/data.csv')
     .drop(columns=[
         'MARKET_CD', 
         'UNIT_REFERENCE_NO', 
@@ -162,7 +162,7 @@ plt.grid(linestyle='-.')
 plt.legend()
 plt.xlabel('Quantity [MWh]')
 plt.ylabel('Price [\u20ac/MWh]')
-plt.savefig('fig/CurvesB.png', transparent=True)
+plt.savefig('../fig/CurvesB.png', transparent=True)
 
 # +
 obs_off = off['STATUS_CD'].replace('ACC', 1).replace('REJ',0)
@@ -181,7 +181,7 @@ plt.plot([0, 1], [0, 1], color='k', linestyle=':')
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.legend()
-plt.savefig('fig/roc.png', transparent=True)
+plt.savefig('../fig/roc.png', transparent=True)
 # -
 
 
