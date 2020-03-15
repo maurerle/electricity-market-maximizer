@@ -9,13 +9,14 @@ from influxdb import InfluxDBClient
 from sklearn.metrics import mean_squared_error
 import json
 
-WINDOW = 60
-TODAY = datetime.strptime('01/04/2017', '%d/%m/%Y')
+#WINDOW = 60
+WINDOW = 500
+TODAY = datetime.strptime('01/01/2018', '%d/%m/%Y')
 YDAY = TODAY + timedelta(days=-WINDOW)
-#p_val = np.arange(0,6)
-#q_val = np.arange(0,4)
-p_val = np.arange(0,2)
+p_val = np.arange(0,10)
 q_val = np.arange(0,2)
+#p_val = np.arange(0,2)
+#q_val = np.arange(0,2)
 
 H = 1
 
@@ -64,6 +65,7 @@ class Arima():
 
     def getDataTest(self, market):
         # Get the demand data from InfluxDB
+        print(self.op, market)
         res = (
             self.client
             .query(
@@ -71,7 +73,7 @@ class Arima():
             )
             .raw
         )
-
+        
         dem =(
             pd
             .DataFrame(
@@ -80,6 +82,7 @@ class Arima():
             )
         )
         dem = self.manageIndexTest(dem)
+
         # Get the supply data from InfluxDB
         res = (
             self.client
@@ -139,17 +142,22 @@ class Arima():
 
 
     def runTest(self, data, label):
+        """
         with open('config.json', 'r') as file:
             conf = json.loads(file.read())
-        #[p, q] = conf[target][label]
-        [p, q] = [0, 0]
-        X = data.values
-        model = ARIMA(
-            X, 
-            order=(p,1,q),
-        )
-        model_fit = model.fit(maxiter=200, disp=0, method='css')
-        y = model_fit.forecast(H)[0][-1]
+        """
+        #[p, q] = conf[self.op][label]
+        try:
+            [p, q] = [0, 0]
+            X = data.values
+            model = ARIMA(
+                X, 
+                order=(p,1,q),
+            )
+            model_fit = model.fit(maxiter=200, disp=0, method='css')
+            y = model_fit.forecast(H)[0][-1]
+        except:
+            y = -1
 
         return y 
 
@@ -162,6 +170,7 @@ class Arima():
             for q in q_val:
                 y = []
                 y_hat = []
+                print(self.op, label)
                 print(f'ARIMA({p},1,{q})')
                 for i in range(X.shape[0]):
                     try:
@@ -175,7 +184,7 @@ class Arima():
                         y.append(X[i+WINDOW-1])
                         y_hat.append(model_fit.forecast(H)[0][-1])
                     except:
-                        pass
+                        print('Error')
                 mse[p_val[p]][q_val[q]] = mean_squared_error(y, y_hat)
         
         self.saveBest(mse, label)
@@ -189,7 +198,7 @@ class Arima():
         with open('config.json', 'r') as file:
             conf = json.loads(file.read())
         try:
-            conf[target][label] = [int(loc[0][0]),int(loc[0][1])]
+            conf[self.op][label] = [int(loc[0][0]),int(loc[0][1])]
         except KeyError:
             obj = {
                 "MGPpD": [],
@@ -205,8 +214,8 @@ class Arima():
                 "MSDpO": [],
                 "MSDqO": []
             }
-            conf[target] = obj
-            conf[target][label] = [int(loc[0][0]),int(loc[0][1])]
+            conf[self.op] = obj
+            conf[self.op][label] = [int(loc[0][0]),int(loc[0][1])]
         with open('config.json', 'w') as file:
             file.write(json.dumps(conf))
 
@@ -214,7 +223,7 @@ class Arima():
     def predict(self):
         pred = []
         for m in ['MGP', 'MI', 'MSD']:
-            d, s = arima.getDataTest(m)
+            d, s = self.getDataTest(m)
             pred.append(self.runTest(s.P, f'{m}pO'))
             pred.append(self.runTest(s.Q, f'{m}qO'))
             pred.append(self.runTest(d.P, f'{m}pD'))
@@ -225,7 +234,7 @@ class Arima():
 
     def train(self):
         for m in ['MGP', 'MI', 'MSD']:
-            d, s = arima.getDataTrain(m)
+            d, s = self.getDataTrain(m)
             self.runTrain(s.P, f'{m}pO')
             self.runTrain(s.Q, f'{m}qO')
             self.runTrain(d.P, f'{m}pD')
@@ -240,4 +249,19 @@ arima.train()
 # Predict the demanded Quantity
 predictions = arima.predict()
 print(predictions)
+
+
+
+res = client.query(f"show TAG values with key = op").raw
+ops = pd.DataFrame(res['series'][0]['values']).drop(columns=0).values
+ops = ops[:,0]
+
+for i in ops:
+    # Initialize the instance
+    arima = Arima(target)
+    # Train the model
+    arima.train()
+    # Predict the demanded Quantity
+    predictions = arima.predict()
+    print(predictions)
 """
