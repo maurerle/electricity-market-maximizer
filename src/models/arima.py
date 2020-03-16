@@ -8,6 +8,12 @@ from statsmodels.tsa.arima_model import ARIMA
 from influxdb import InfluxDBClient
 from sklearn.metrics import mean_squared_error
 import json
+import warnings
+
+with warnings.catch_warnings():
+    warnings.filterwarnings("ignore")
+    # Line that is not converging
+    #likev = mdf.profile_re(0, dist_low=0.1, dist_high=0.1)
 
 #WINDOW = 60
 WINDOW = 500
@@ -65,7 +71,6 @@ class Arima():
 
     def getDataTest(self, market):
         # Get the demand data from InfluxDB
-        print(self.op, market)
         res = (
             self.client
             .query(
@@ -146,18 +151,14 @@ class Arima():
         with open('config.json', 'r') as file:
             conf = json.loads(file.read())
         """
-        #[p, q] = conf[self.op][label]
-        try:
-            [p, q] = [0, 0]
-            X = data.values
-            model = ARIMA(
-                X, 
-                order=(p,1,q),
-            )
-            model_fit = model.fit(maxiter=200, disp=0, method='css')
-            y = model_fit.forecast(H)[0][-1]
-        except:
-            y = -1
+        [p, q] = [0, 0]
+        X = data.values.astype('float32')
+        model = ARIMA(
+            X, 
+            order=(p,1,q),
+        )
+        model_fit = model.fit(maxiter=200, disp=0, method='css')
+        y = model_fit.forecast(H)[0][-1]
 
         return y 
 
@@ -174,7 +175,7 @@ class Arima():
                 print(f'ARIMA({p},1,{q})')
                 for i in range(X.shape[0]):
                     try:
-                        train = X[i:i+WINDOW]
+                        train = X[i:i+WINDOW].astype('float32')
 
                         model = ARIMA(
                             train, 
@@ -223,12 +224,20 @@ class Arima():
     def predict(self):
         pred = []
         for m in ['MGP', 'MI', 'MSD']:
-            d, s = self.getDataTest(m)
-            pred.append(self.runTest(s.P, f'{m}pO'))
-            pred.append(self.runTest(s.Q, f'{m}qO'))
-            pred.append(self.runTest(d.P, f'{m}pD'))
-            pred.append(self.runTest(d.Q, f'{m}qD'))
+            try:
+                d, s = self.getDataTest(m)
 
+                pred.append(self.runTest(s.P, f'{m}pO'))
+                pred.append(self.runTest(s.Q, f'{m}qO'))
+                pred.append(self.runTest(d.P, f'{m}pD'))
+                pred.append(self.runTest(d.Q, f'{m}qD'))
+
+            except:
+                pred.append(np.nan)
+                pred.append(np.nan)
+                pred.append(np.nan)
+                pred.append(np.nan)
+                
         return np.asarray(pred)
     
 

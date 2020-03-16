@@ -16,27 +16,9 @@ market = 'MGP'
 res = client.query(f"show TAG values with key = op").raw
 ops = pd.DataFrame(res['series'][0]['values']).drop(columns=0).values
 ops = ops[:,0]
-#ops = ops[3]
-
-temp = client.query(f"select * from demandMGP where time = '{TODAY}'").raw
-print(len(temp['series'][0]['values']))
 
 from arima import Arima
-discarded = []
-considered = []
 for op in ops:
-    try:
-        print(Arima(op).predict())
-        considered.append(op)
-    except KeyError:
-        print('Error')
-
-cnt = 0
-for i in discarded:
-    if i in op:
-        print(i)
-        cnt+=1
-
-print(cnt)
-
-print(len(considered))
+    print(op)
+    print(Arima(op).predict())
+    print()
