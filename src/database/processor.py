@@ -3,12 +3,12 @@ from threading import Thread, Event
 from pathlib import Path
 from src.common.config import DOWNLOAD, DB_NAME, QUEUE, MONGO_HOST
 from src.loggerbot.bot import bot
+from src.database.xmlprocessors import process_OffPub
 from src.database.csvParse import ParseCsv
-from src.database.xmlprocessors import process_file, process_transit_file, process_OffPub
-from sshtunnel import SSHTunnelForwarder
 from time import sleep
-import pymongo
+from influxdb import InfluxDBClient
 import os
+from datetime import datetime
 dont_write_bytecode = True
 
 
@@ -52,7 +52,7 @@ class FileProcessor(Thread):
 
         Returns
         -------
-        db : motor_asyncio.AsyncIOMotorDatabase
+        db : 
             the database to use
         
         """
@@ -60,18 +60,12 @@ class FileProcessor(Thread):
         try:
             self.log.info("[PROCESS] Attempting to connect to the database...")
             # define ssh tunnel
-            self.server = SSHTunnelForwarder(
-                MONGO_HOST,
-                ssh_username=self.user,
-                ssh_password=self.passwd,
-                remote_bind_address=('127.0.0.1', 27017),
-                local_bind_address=('127.0.0.1', 27017)
-            )
+            clientID = 'PublicBids'
 
-            # start ssh tunnel
-            self.server.start()
-            client = pymongo.MongoClient('127.0.0.1', 27017)
-            db = client[DB_NAME]
+            db = InfluxDBClient('localhost', 8086, 'root', 'root', clientID)
+            if {'name': clientID} not in db.get_list_database():
+                db.create_database(clientID)
+
             self.log.info("[PROCESS] Connected to the database.")
             
             return db
@@ -81,7 +75,7 @@ class FileProcessor(Thread):
                 f"[PROCESS] Exception while connecting to the db: {e}"
             )
             # Bot Notification
-            bot('ERROR', 'PROCESS', 'Connection failed.')
+            #bot('ERROR', 'PROCESS', 'Connection failed.')
 
     def run(self):
         """Method called when the thread starts.
@@ -92,18 +86,18 @@ class FileProcessor(Thread):
         self.log.info("[PROCESS] Processor Running")
         
         while not self.stop_event.is_set() or not QUEUE.empty():
-            fname = QUEUE.get()
+            fname = QUEUE.get()    
             try:
                 self.toDatabase(fname)
                 # Clean folder
                 Path(DOWNLOAD + '/' + fname).unlink()
             except ValueError:
                 bot('ERROR', 'PROCESSOR', f'{fname} skipped.')
+                print('Value Error')
             sleep(.5)
 
         self.log.info("[PROCESS] Processing Done")
         bot('INFO', 'PROCESSOR', 'Processing Done.')
-        self.server.stop()
 
     def stop(self):
         """Set the stop event"""
@@ -121,39 +115,32 @@ class FileProcessor(Thread):
         self.log.info(f"[PROCESS] Processing {fname}")
 
         if fname[11:-4] == 'OffertePubbliche':
-            collection = self.db['OffertePubbliche']
-        elif fname[8:11] == 'MGP':
-            collection = self.db['MGP']
-        elif fname[8:10] == 'MI':
-            collection = self.db['MI']
-        elif fname[8:11] == 'MSD' or fname[8:11] == 'MBP':
-            collection = self.db['MSD']
+            dem, sup = process_OffPub(fname)
+            if not isinstance(dem, int):
+                done = False
+                while not done:
+                    try:
+                        self.sendData(dem, sup)
+                        done = True
+                    except:
+                        sleep(1)   
         elif 'xls' in fname:
-            collection = self.db['Terna']
+            date, load = ParseCsv.excel_to_dic(f"{DOWNLOAD}/{fname}")
+            self.sendTerna(date, load)
 
-        if fname[11:-4] == 'LimitiTransito' or fname[11:-4] == 'Transiti':
-            parsed_data = process_transit_file(fname)
-            self.sendData(parsed_data, collection)
-        elif fname[11:-4] == 'OffertePubbliche':
-            parsed_data = process_OffPub(fname)
-            collection.insert_many(parsed_data)
-        elif 'xls' in fname:
-            df = ParseCsv.excel_to_dic(f"{DOWNLOAD}/{fname}")
-            if 'EnergyBal' in fname:
-                parsed_data = ParseCsv.to_list_dict(df, 'EnBal')
-            elif 'TotalLoad' in fname:
-                parsed_data = ParseCsv.to_list_dict(df, 'ToLo')
-            elif 'MarketLoad' in fname:
-                parsed_data = ParseCsv.to_list_dict(df, 'MaLo')
-            else:
-                parsed_data = ParseCsv.to_list_dict(df, 'RiSe')
-            if parsed_data:
-                self.sendData(parsed_data, collection)
-        else:
-            parsed_data = process_file(fname)
-            self.sendData(parsed_data, collection)
-        
-    def sendData(self, parsed_data, collection):
+
+    def sendTerna(self, date, load):
+        body = [{
+            'measurement':'STRes',
+            'time':date,
+            'fields':{
+                'threshold':load
+            }
+        }]
+        self.db.write_points(body, time_precision='h')
+
+
+    def sendData(self, dem, sup):
         """Updates the selected collection with the documents made of paresd
         data.
         
@@ -164,14 +151,36 @@ class FileProcessor(Thread):
         collection : motor_asyncio.AsyncIOMotorCollection
             collection to update
         """
-        for item in parsed_data:
-            try:
-                collection.update_one({'Data':item['Data'], 'Ora':item['Ora']},
-                                    {"$set": item},
-                                    upsert=True)
-            except Exception as e:
-                self.log.error(
-                    f"[PROCESS] Exception while updating the db: {e}"
-                )
-                # Bot Notification
-                bot('ERROR', 'PROCESSOR', 'Update failed.')
+        for op in dem.index:
+            body = [{
+                'tags':{
+                    'op':op
+                },
+                'measurement':f'demand{dem.loc[op].MARKET}',
+                'time':datetime.strptime(
+                    dem.loc[op].DATE,
+                    '%Y%m%d'
+                ),
+                'fields':{
+                    'Price':dem.loc[op].P,
+                    'Quantity':dem.loc[op].Q,
+                }
+            }]
+            self.db.write_points(body, time_precision='h')
+
+        for op in sup.index:
+            body = [{
+                'tags':{
+                    'op':op
+                },
+                'measurement':f'supply{sup.loc[op].MARKET}',
+                'time':datetime.strptime(
+                    sup.loc[op].DATE,
+                    '%Y%m%d'
+                ),
+                'fields':{
+                    'Price':sup.loc[op].P,
+                    'Quantity':sup.loc[op].Q,
+                }
+            }]
+            self.db.write_points(body, time_precision='h')
