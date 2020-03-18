@@ -25,7 +25,11 @@ GME_WEEK = {
 	'url':'https://www.mercatoelettrico.org/it/Download/DownloadDati.aspx?'\
 		  'val=OfferteFree_Pubbliche'
 }
+TERNA2 = 'https://www.terna.it/it/sistema-elettrico/dispacciamento/'\
+	     'stima-domanda-oraria-energia-riserva-secondaria-terziaria'
 
+# Dynamic file history
+TERNA_LIMIT = datetime(2017,1,31)
 # Dynamic file history
 START =  datetime(2017, 2, 1)
 MI = {}

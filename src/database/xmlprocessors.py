@@ -55,7 +55,7 @@ def process_OffPub(fname):
 				'sup':[]
 			}
 
-		d, s = dataPool(dic)
+		d, s = dataPool(dic, 'MI')
 		MI[idx]['dem'].append(d)
 		MI[idx]['sup'].append(s)
 		
@@ -86,8 +86,10 @@ def process_OffPub(fname):
 			return dem, sup		
 		else:
 			return -1, -1
-	else:	
-		return dataPool(dic)
+	elif 'MGP' in i['MARKET_CD']:	
+		return dataPool(dic, 'MI/MGP')
+	elif 'MSD' in i['MARKET_CD']:
+		return dataPool(dic, 'MSD')
 
 
 def getCurve(df):
@@ -123,7 +125,8 @@ def type_conv(path, key, value):
 		return key, value
 
 
-def dataPool(converted):
+def dataPool(converted, m):
+	
 	data = pd.DataFrame(converted)
 	data = (
 		data
@@ -131,6 +134,12 @@ def dataPool(converted):
 		.where(data['STATUS_CD'].isin(['ACC', 'REJ']))
 		.dropna()
 	)
+	if m == 'MSD':
+		data = (
+			data
+			.where(data['SCOPE'].isin(['GR1', 'RS']))
+			.dropna()
+		)
 
 	off = (
 		data

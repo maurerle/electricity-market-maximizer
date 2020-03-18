@@ -9,8 +9,6 @@ from matplotlib import rcParams
 
 
 class Genetic():
-    """[summary]
-    """
     def __init__(self, target):
         self.target = target
         self.limit = .0
@@ -32,18 +30,6 @@ class Genetic():
         self.best_out = []
 
     def getData(self, market):
-        """[summary]
-        
-        Parameters
-        ----------
-        market : [type]
-            [description]
-        
-        Returns
-        -------
-        [type]
-            [description]
-        """
         # Get the demand data from InfluxDB
         res = (
             self.client
@@ -84,13 +70,6 @@ class Genetic():
         return dem, sup
 
     def computeClearing(self, off, bid):
-        """[summary]
-        
-        Returns
-        -------
-        [type]
-            [description]
-        """
         sup = off.sort_values('P', ascending=True)
         dem = bid.sort_values('P', ascending=False)
         # Cumulative sums of quantity
@@ -107,18 +86,6 @@ class Genetic():
         return clearing
 
     def getFitness(self, pop):
-        """[summary]
-        
-        Parameters
-        ----------
-        pop : [type]
-            [description]
-        
-        Returns
-        -------
-        [type]
-            [description]
-        """
         fitness = np.zeros((CHROMOSOMES))
         cnt = 0
         profit = 0
@@ -157,20 +124,6 @@ class Genetic():
         return fitness
     
     def crossover(self, parents, off_size):
-        """[summary]
-        
-        Parameters
-        ----------
-        parents : [type]
-            [description]
-        off_size : [type]
-            [description]
-        
-        Returns
-        -------
-        [type]
-            [description]
-        """
         off = np.empty(off_size)
         # The point at which crossover takes place between two parents. 
         # Usually, it is at the center.
@@ -191,22 +144,6 @@ class Genetic():
         return off
 
     def select_mating_pool(self, pop, fitness, num_parents):
-        """[summary]
-        
-        Parameters
-        ----------
-        pop : [type]
-            [description]
-        fitness : [type]
-            [description]
-        num_parents : [type]
-            [description]
-        
-        Returns
-        -------
-        [type]
-            [description]
-        """
         # Selecting the best individuals in the current generation as parents 
         # to produce the offspring of the next generation.
         parents = np.empty((num_parents, pop.shape[1]))
@@ -219,18 +156,6 @@ class Genetic():
         return parents
     
     def mutation(self, off_xover):
-        """[summary]
-        
-        Parameters
-        ----------
-        off_xover : [type]
-            [description]
-        
-        Returns
-        -------
-        [type]
-            [description]
-        """
         mutations_counter = np.uint8(off_xover.shape[1] / MUTATIONS)
         # Mutation changes a number of genes as defined by the num_mutations 
         # argument. The changes are random.
@@ -261,15 +186,6 @@ class Genetic():
         return off_xover
 
     def generateObs(self, fitness, pop):
-        """[summary]
-        
-        Parameters
-        ----------
-        fitness : [type]
-            [description]
-        pop : [type]
-            [description]
-        """
         best_match = np.where(fitness == np.max(fitness))
         sol = pop[best_match,:]
         
@@ -297,22 +213,11 @@ class Genetic():
         self.client.write_points(body)
 
     def init_pop(self):
-        """[summary]
-        
-        Returns
-        -------
-        [type]
-            [description]
-        """
         for m in ['MGP', 'MI', 'MSD']:
             self.market.append(self.getData(m))
         """self.dem, self.sup = self.getData('MGP')"""
         # Define the production limit, where market[0][1] is MGP sup, 
         # market[0][0] is MGP dem.
-        """
-        for i in range(3):
-            self.limit += self.market[i][1].loc[self.target].Q - self.market[i][0].loc[self.target].Q
-        """
         self.limit=15000.0
         # Determine the forecasted/original profit to check
         # the optimization in the end.
@@ -345,8 +250,6 @@ class Genetic():
         return new_pop
 
     def run(self):
-        """[summary]
-        """
         new_pop = self.init_pop()
 
         fitness = self.getFitness(new_pop)

@@ -147,6 +147,7 @@ class FileProcessor(Thread):
                 parsed_data = ParseCsv.to_list_dict(df, 'MaLo')
             else:
                 parsed_data = ParseCsv.to_list_dict(df, 'RiSe')
+                
             if parsed_data:
                 self.sendData(parsed_data, collection)
         else:

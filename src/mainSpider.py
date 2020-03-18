@@ -5,6 +5,7 @@ from src.loggerbot.bot import bot
 from src.database.processor import FileProcessor
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
+from src.spiders.terna import TernaReserve
 from src.spiders.gme import GMESpider
 from src.common.config import GME_WEEK, START
 from sys import argv as args
@@ -26,7 +27,20 @@ def getDay():
 	
 	# Date creation
 	date_week = (datetime.now() + relativedelta(days=-7)).strftime('%d/%m/%Y')
-
+	
+	#=====================================
+	# Terna Secondary Reserve spider works
+	#=====================================
+	#logger.info('[TERNA2] getDay() started.')
+	
+	terna = TernaReserve()
+	terna.getDaily()
+	terna.driver.quit()
+	
+	# Logs 
+	#bot('INFO', 'TERNA2', 'getDaily ended.')
+	logger.info('[TERNA2] getDay() ended.')
+	
 	#=================
 	# GME spider works
 	#=================
@@ -45,7 +59,7 @@ def getDay():
 	
 	# Logs
 	logger.info('[GME] getDay() ended.')
-
+	
 def getHistory():
 	"""Visit the GME website and Terna one, call the spiders to retrieve 
 	the data from the 01/02/2017 up to the day before the current one and call 
@@ -57,6 +71,20 @@ def getHistory():
 	start = START
 	limit = datetime.now()
 	
+	#=======================================================================
+	# Terna Secondary Reserve spider works. From the starting day to the day
+	# before the current one
+	#=======================================================================
+	logger.info('[TERNA2] getHistory() started.')
+	
+	terna = TernaReserve()
+	terna.getHistory()
+	terna.driver.quit()
+	
+	# Logs 
+	bot('INFO', 'TERNA2', 'getHistory ended.')
+	logger.info('[TERNA2] getHistory() ended.')
+
 	#=================
 	# GME spider works
 	#=================

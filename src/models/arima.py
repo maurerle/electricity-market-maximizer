@@ -10,19 +10,20 @@ from sklearn.metrics import mean_squared_error
 import json
 import warnings
 
+
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore")
     # Line that is not converging
     #likev = mdf.profile_re(0, dist_low=0.1, dist_high=0.1)
 
 #WINDOW = 60
-WINDOW = 500
+WINDOW = 60
 TODAY = datetime.strptime('01/01/2018', '%d/%m/%Y')
 YDAY = TODAY + timedelta(days=-WINDOW)
-p_val = np.arange(0,10)
+#p_val = np.arange(0,6)
+#q_val = np.arange(0,4)
+p_val = np.arange(0,2)
 q_val = np.arange(0,2)
-#p_val = np.arange(0,2)
-#q_val = np.arange(0,2)
 
 H = 1
 
@@ -159,19 +160,18 @@ class Arima():
         )
         model_fit = model.fit(maxiter=200, disp=0, method='css')
         y = model_fit.forecast(H)[0][-1]
-
+        if y < 0:
+            y = 0
         return y 
 
 
     def runTrain(self, data, label):
         X = data.values
         mse = np.zeros((len(p_val), len(q_val)))
-        mape = np.zeros((len(p_val), len(q_val)))
         for p in p_val:
             for q in q_val:
                 y = []
                 y_hat = []
-                print(self.op, label)
                 print(f'ARIMA({p},1,{q})')
                 for i in range(X.shape[0]):
                     try:
@@ -185,7 +185,7 @@ class Arima():
                         y.append(X[i+WINDOW-1])
                         y_hat.append(model_fit.forecast(H)[0][-1])
                     except:
-                        print('Error')
+                        pass
                 mse[p_val[p]][q_val[q]] = mean_squared_error(y, y_hat)
         
         self.saveBest(mse, label)
@@ -233,16 +233,17 @@ class Arima():
                 pred.append(self.runTest(d.Q, f'{m}qD'))
 
             except:
-                pred.append(np.nan)
-                pred.append(np.nan)
-                pred.append(np.nan)
-                pred.append(np.nan)
+                pred.append(-1.0)
+                pred.append(-1.0)
+                pred.append(-1.0)
+                pred.append(-1.0)
                 
         return np.asarray(pred)
     
 
     def train(self):
         for m in ['MGP', 'MI', 'MSD']:
+            print(m)
             d, s = self.getDataTrain(m)
             self.runTrain(s.P, f'{m}pO')
             self.runTrain(s.Q, f'{m}qO')
@@ -258,19 +259,4 @@ arima.train()
 # Predict the demanded Quantity
 predictions = arima.predict()
 print(predictions)
-
-
-
-res = client.query(f"show TAG values with key = op").raw
-ops = pd.DataFrame(res['series'][0]['values']).drop(columns=0).values
-ops = ops[:,0]
-
-for i in ops:
-    # Initialize the instance
-    arima = Arima(target)
-    # Train the model
-    arima.train()
-    # Predict the demanded Quantity
-    predictions = arima.predict()
-    print(predictions)
 """

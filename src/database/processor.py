@@ -4,6 +4,7 @@ from pathlib import Path
 from src.common.config import DOWNLOAD, DB_NAME, QUEUE, MONGO_HOST
 from src.loggerbot.bot import bot
 from src.database.xmlprocessors import process_OffPub
+from src.database.csvParse import ParseCsv
 from time import sleep
 from influxdb import InfluxDBClient
 import os
@@ -85,13 +86,13 @@ class FileProcessor(Thread):
         self.log.info("[PROCESS] Processor Running")
         
         while not self.stop_event.is_set() or not QUEUE.empty():
-            fname = QUEUE.get()
+            fname = QUEUE.get()    
             try:
                 self.toDatabase(fname)
                 # Clean folder
                 Path(DOWNLOAD + '/' + fname).unlink()
             except ValueError:
-                #bot('ERROR', 'PROCESSOR', f'{fname} skipped.')
+                bot('ERROR', 'PROCESSOR', f'{fname} skipped.')
                 print('Value Error')
             sleep(.5)
 
@@ -123,6 +124,21 @@ class FileProcessor(Thread):
                         done = True
                     except:
                         sleep(1)   
+        elif 'xls' in fname:
+            date, load = ParseCsv.excel_to_dic(f"{DOWNLOAD}/{fname}")
+            self.sendTerna(date, load)
+
+
+    def sendTerna(self, date, load):
+        body = [{
+            'measurement':'STRes',
+            'time':date,
+            'fields':{
+                'threshold':load
+            }
+        }]
+        self.db.write_points(body, time_precision='h')
+
 
     def sendData(self, dem, sup):
         """Updates the selected collection with the documents made of paresd
