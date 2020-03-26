@@ -125,9 +125,11 @@ class FileProcessor(Thread):
                     except:
                         sleep(1)   
         elif 'xls' in fname:
-            date, load = ParseCsv.excel_to_dic(f"{DOWNLOAD}/{fname}")
-            self.sendTerna(date, load)
-
+            try:
+                date, load = ParseCsv.excel_to_dic(f"{DOWNLOAD}/{fname}")
+                self.sendTerna(date, load)
+            except:
+                print('Skipped')
 
     def sendTerna(self, date, load):
         body = [{

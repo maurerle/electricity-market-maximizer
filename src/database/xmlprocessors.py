@@ -157,5 +157,5 @@ def dataPool(converted, m):
 	
 	dem = getCurve(bid)
 	sup = getCurve(off)
-
+	
 	return dem, sup
