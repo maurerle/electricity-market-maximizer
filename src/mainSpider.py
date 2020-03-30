@@ -102,6 +102,7 @@ def getHistory():
 	
 	# Logs
 	logger.info('[GME] getHistory() ended.')
+	
 	processor.stop()
 	
 	bot('INFO', 'GME', 'getHistory ended.')
