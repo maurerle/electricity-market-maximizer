@@ -26,7 +26,6 @@ class Genetic():
 		self.client.query(
 			f"DELETE FROM optimization where op = '{self.target}'"
 		)
-
 		self.best_out = []
 
 
@@ -103,11 +102,21 @@ class Genetic():
 		#th = self.secRes()
 		th = 6400
 		# Create the th curve
-		x_th = [th, th]
-		y_th = [0, np.max(sup.P.values)]
+		x_th = np.array([th, th])
+		y_th = np.array([0, np.max(sup.P.values)])
+		
+		"""
+		plt.figure()
+		plt.plot(sup_cum.values, sup.P.values)
+		plt.plot(dem_cum.values, dem.P.values)
+		plt.plot(x_th, y_th)
+		plt.xlim(0,30000)
+		plt.ylim(0,500)
+		plt.show()
+		"""
 		clearingD = intersection( 
 			dem_cum.values, 
-			dem.P.values,
+			dem.P.values, 
 			x_th,
 			y_th
 		)[1][0]
@@ -117,15 +126,7 @@ class Genetic():
 			x_th,
 			y_th
 		)[1][0]
-		"""
-		plt.figure()
-		plt.plot(sup_cum.values, sup.P.values)
-		plt.plot(dem_cum.values, dem.P.values)
-		plt.plot(x_th, y_th)
-		plt.show()
-		exit()
-		"""
-
+		
 		return clearingD, clearingS
 
 	def getProfit1(self, sup, dem, pun):
@@ -181,15 +182,15 @@ class Genetic():
 			self.dem3.P = self.dem3.P.replace(0, 3000)
 			# Determine the clearing price for MGP and MI
 			pun1 = self.computeClearing1(self.sup1, self.dem1)
-			pun2 = self.computeClearing1(self.sup2, self.dem2)
-			#pun3d, pun3s = self.computeClearing2(self.sup3, self.dem3)
-			pun3 = self.computeClearing1(self.sup3, self.dem3)
-						
-			# Determine the profit
 			profit += self.getProfit1(self.sup1, self.dem1, pun1)
+
+			pun2 = self.computeClearing1(self.sup2, self.dem2)
 			profit += self.getProfit1(self.sup2, self.dem2, pun2)
-			#profit += self.getProfit2(self.sup3, self.dem3, pun3s, pun3d)
-			profit += self.getProfit1(self.sup3, self.dem3, pun3)
+			try:
+				pun3d, pun3s = self.computeClearing2(self.sup3, self.dem3)
+				profit += self.getProfit2(self.sup3, self.dem3, pun3s, pun3d)
+			except IndexError:
+				profit -= 1e8
 
 			# Define the fitness as the profit
 			fitness[cnt] = profit
@@ -355,11 +356,13 @@ class Genetic():
 				# value and the relative solution
 				best_match = np.where(fitness == np.max(fitness))
 				best_sol = new_pop[best_match,:][0][0]
+				
 				if generation >= 5:
 					plt.plot(self.best_out)
 					plt.ylim(self.best_out[5], self.best_out[-1])
 					plt.draw()
 					plt.pause(0.001)
+				
 		# Compute the final fitness value	
 		fitness = self.getFitness(new_pop)
 		best_match = np.where(fitness == np.max(fitness))
@@ -381,7 +384,7 @@ global N_GENERATIONS
 global MUTATIONS 
 global STOP
 
-STOP = 10000
+STOP = 500
 # Number of genes (4 variables * 3 markets)
 GENES = 12
 # Number of chromosome
@@ -400,5 +403,5 @@ plt.figure()
 target = 'IREN ENERGIA SPA'
 #target = '2V ENERGY SRL'
 ga = Genetic(target)
-targetDay = datetime.strptime('20170210','%Y%m%d')
+targetDay = datetime.strptime('20200210','%Y%m%d')
 ga.run()
