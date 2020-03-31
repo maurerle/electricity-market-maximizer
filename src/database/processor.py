@@ -4,7 +4,7 @@ from pathlib import Path
 from src.common.config import DOWNLOAD, DB_NAME, QUEUE, MONGO_HOST
 from src.loggerbot.bot import bot
 from src.database.xmlprocessors import process_OffPub
-from src.database.csvParse import ParseCsv
+from src.database.csvParse import *
 from time import sleep
 from influxdb import InfluxDBClient
 import os
@@ -125,9 +125,11 @@ class FileProcessor(Thread):
                     except:
                         sleep(1)   
         elif 'xls' in fname:
-            date, load = ParseCsv.excel_to_dic(f"{DOWNLOAD}/{fname}")
-            self.sendTerna(date, load)
-
+            try:
+                date, load = ParseCsv(f"{DOWNLOAD}/{fname}")
+                self.sendTerna(date, load)
+            except:
+                print('Skipped')
 
     def sendTerna(self, date, load):
         body = [{

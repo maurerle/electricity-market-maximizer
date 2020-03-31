@@ -84,7 +84,7 @@ def getHistory():
 	# Logs 
 	bot('INFO', 'TERNA2', 'getHistory ended.')
 	logger.info('[TERNA2] getHistory() ended.')
-
+	
 	#=================
 	# GME spider works
 	#=================
@@ -102,6 +102,7 @@ def getHistory():
 	
 	# Logs
 	logger.info('[GME] getHistory() ended.')
+	
 	processor.stop()
 	
 	bot('INFO', 'GME', 'getHistory ended.')

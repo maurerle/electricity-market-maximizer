@@ -18,7 +18,7 @@ with warnings.catch_warnings():
 
 #WINDOW = 60
 WINDOW = 60
-TODAY = datetime.strptime('01/01/2018', '%d/%m/%Y')
+TODAY = datetime.strptime('01/01/2020', '%d/%m/%Y')
 YDAY = TODAY + timedelta(days=-WINDOW)
 #p_val = np.arange(0,6)
 #q_val = np.arange(0,4)
@@ -79,16 +79,17 @@ class Arima():
             )
             .raw
         )
-        
-        dem =(
-            pd
-            .DataFrame(
-                res['series'][0]['values'], 
-                columns = ['time', 'P', 'Q', 'OPS']
+        try:
+            dem =(
+                pd
+                .DataFrame(
+                    res['series'][0]['values'], 
+                    columns = ['time', 'P', 'Q', 'OPS']
+                )
             )
-        )
-        dem = self.manageIndexTest(dem)
-
+            dem = self.manageIndexTest(dem)
+        except:
+            dem = -1
         # Get the supply data from InfluxDB
         res = (
             self.client
@@ -97,14 +98,17 @@ class Arima():
             )
             .raw
         )
-        sup =(
-            pd
-            .DataFrame(
-                res['series'][0]['values'], 
-                columns = ['time', 'P', 'Q', 'OPS']
+        try:
+            sup =(
+                pd
+                .DataFrame(
+                    res['series'][0]['values'], 
+                    columns = ['time', 'P', 'Q', 'OPS']
+                )
             )
-        )
-        sup = self.manageIndexTest(sup)
+            sup = self.manageIndexTest(sup)
+        except:
+            sup = -1
 
         return dem, sup
 
@@ -186,7 +190,10 @@ class Arima():
                         y_hat.append(model_fit.forecast(H)[0][-1])
                     except:
                         pass
-                mse[p_val[p]][q_val[q]] = mean_squared_error(y, y_hat)
+                try:
+                    mse[p_val[p]][q_val[q]] = mean_squared_error(y, y_hat)
+                except:
+                    mse[p_val[p]][q_val[q]] = 1e7
         
         self.saveBest(mse, label)
 
@@ -224,31 +231,40 @@ class Arima():
     def predict(self):
         pred = []
         for m in ['MGP', 'MI', 'MSD']:
-            try:
-                d, s = self.getDataTest(m)
-
+            
+            d, s = self.getDataTest(m)
+            
+            if isinstance(s, int):
+                pred.append(-1.0)
+                pred.append(-1.0)
+            else:
                 pred.append(self.runTest(s.P, f'{m}pO'))
                 pred.append(self.runTest(s.Q, f'{m}qO'))
+            
+            if isinstance(d, int):
+                pred.append(-1.0)
+                pred.append(-1.0)
+            else:
                 pred.append(self.runTest(d.P, f'{m}pD'))
                 pred.append(self.runTest(d.Q, f'{m}qD'))
-
-            except:
-                pred.append(-1.0)
-                pred.append(-1.0)
-                pred.append(-1.0)
-                pred.append(-1.0)
-                
+    
         return np.asarray(pred)
     
 
     def train(self):
         for m in ['MGP', 'MI', 'MSD']:
-            print(m)
-            d, s = self.getDataTrain(m)
-            self.runTrain(s.P, f'{m}pO')
-            self.runTrain(s.Q, f'{m}qO')
-            self.runTrain(d.P, f'{m}pD')
-            self.runTrain(d.Q, f'{m}qD')
+            try:
+                d, s = self.getDataTrain(m)
+                self.runTrain(s.P, f'{m}pO')
+                self.runTrain(s.Q, f'{m}qO')
+                self.runTrain(d.P, f'{m}pD')
+                self.runTrain(d.Q, f'{m}qD')
+            except:
+                mse = [[0, 0]]
+                self.saveBest(mse, f'{m}pO')
+                self.saveBest(mse, f'{m}qO')
+                self.saveBest(mse, f'{m}pD')
+                self.saveBest(mse, f'{m}qD')
 
 """
 target = 'IREN ENERGIA SPA'
