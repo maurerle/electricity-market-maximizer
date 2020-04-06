@@ -24,7 +24,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', vr.register, name='register'),
     path('', vi.index, name='index'),
-    path('about/', vi.about, name='about'),
     path('dashboard/mgp', vd.mgp, name='mgp'),
     path('dashboard/mi', vd.mi, name='mi'),
     path('dashboard/msd', vd.msd, name='mi'),
