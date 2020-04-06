@@ -18,10 +18,17 @@ from django.urls import path
 
 from register import views as vr
 from index import views as vi
+from dashboard import views as vd
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', vr.register, name='register'),
     path('', vi.index, name='index'),
-    path('about/', vi.about, name='about')
+    path('about/', vi.about, name='about'),
+    path('dashboard/mgp', vd.mgp, name='mgp'),
+    path('dashboard/mi', vd.mi, name='mi'),
+    path('dashboard/msd', vd.msd, name='mi'),
+    path('dashboard/optimize', vd.optimize, name='opt'),
+    path('dashboard/wait', vd.wait, name='wait'),
+    path('dashboard/results', vd.process, name='process')
 ]
