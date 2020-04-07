@@ -23,5 +23,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', vr.register, name='register'),
     path('', vi.index, name='index'),
-    path('about/', vi.about, name='about')
+    path('about/', vi.about, name='about'),
+    path('login/', vr.loginPage, name='login'),
+    path('logout/', vr.logoutUser, name='logout'),
+    #path('contacts/', )
+    
 ]
