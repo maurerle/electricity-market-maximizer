@@ -18,6 +18,7 @@ from django.urls import path
 
 from register import views as vr
 from index import views as vi
+from contacts import views as vc
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,6 +27,6 @@ urlpatterns = [
     path('about/', vi.about, name='about'),
     path('login/', vr.loginPage, name='login'),
     path('logout/', vr.logoutUser, name='logout'),
-    #path('contacts/', )
+    path('contacts/', vc.contacts, name='contacts'),
     
 ]
