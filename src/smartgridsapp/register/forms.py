@@ -64,4 +64,3 @@ class CreateUserForm(UserCreationForm):
             'placeholder':'Choose your company', 
             'class':'input100'
         }, choices=CHOICE))
-    

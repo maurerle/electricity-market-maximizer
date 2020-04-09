@@ -30,4 +30,6 @@ urlpatterns = [
     path('dashboard/optimize', vd.optimize, name='opt'),
     path('dashboard/wait', vd.wait, name='wait'),
     path('dashboard/results', vd.process, name='process')
+    path('login/', vr.loginPage, name='login'),
+    path('logout/', vr.logoutUser, name='logout'),
 ]

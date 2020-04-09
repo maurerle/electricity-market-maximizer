@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .forms import CreateUserForm
 from django.contrib.auth.models import User
 from .models import Profile
@@ -25,12 +25,9 @@ def register(request, reason=''):
 
             new_user = Profile(operator=operator, user=user)
             new_user.save()
+            messages.success(request, f'Account was created for {username}')
 
-            user = authenticate(username=username, password=password)
-            if user:
-                if user.is_active:
-                    login(request, user)
-                    return redirect('../dashboard/mgp')
+            return redirect('login')
     
     
     elif request.method == 'GET':
@@ -39,12 +36,30 @@ def register(request, reason=''):
     
     
     return render(request, "register/register.html", context)
+   
 
-"""
-def csrf_failure(request, reason=""):
-    if request.user.is_authenticated:
-        logout(request)
-        register(request)
-    #context = {'form': CreateUserForm(request.POST)}
-    #return render(request, 'register/register.html', context)
-"""
+def loginPage(request):
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        print (username)
+        print (password)
+
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('register')
+        else:
+            messages.info(request, 'Username OR Password is not correct')
+            
+    
+            
+    context={}
+    return render(request, 'register/login.html', context)
+
+def logoutUser(request):
+    logout(request)
+    return redirect('login')
