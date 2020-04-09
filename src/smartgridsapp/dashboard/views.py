@@ -13,7 +13,7 @@ import json
 
 LIMIT = {}
 
-@login_required(login_url='/register/')
+@login_required(login_url='/login/')
 def mgp(request):
     data = Profile.objects.filter(user = request.user)
     
@@ -25,7 +25,7 @@ def mgp(request):
     return render(request, 'dashboard/mgp.html', context)
 
 
-@login_required(login_url='/register/')
+@login_required(login_url='/login/')
 def mi(request):
     data = Profile.objects.filter(user = request.user)
     
@@ -36,7 +36,7 @@ def mi(request):
     
     return render(request, 'dashboard/mi.html', context)
 
-@login_required(login_url='/register/')
+@login_required(login_url='/login/')
 def msd(request):
     data = Profile.objects.filter(user = request.user)
     
@@ -48,7 +48,7 @@ def msd(request):
     return render(request, 'dashboard/msd.html', context)
 
 
-@login_required(login_url='/register/')
+@login_required(login_url='/login/')
 def optimize(request):
     print(request.method)
     if request.method == 'GET':
@@ -67,13 +67,13 @@ def optimize(request):
         return render(request, 'dashboard/wait.html')
 
 
-@login_required(login_url='/register/')
+@login_required(login_url='/login/')
 def wait(request):
     print(request.GET)
     return render(request, 'dashboard/wait.html')
 
 
-@login_required(login_url='/register/')
+@login_required(login_url='/login/')
 def process(request):
     data = Profile.objects.filter(user = request.user)
     

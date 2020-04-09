@@ -19,16 +19,6 @@ client = InfluxDBClient(
     'PublicBids'
 )
 
-"""
-res = client.query('show tag values with key = op').raw
-CHOICE = []
-for i in res['series']:
-    for j in i['values']:
-        obj = (j[1].upper(),j[1].upper())
-        if obj not in CHOICE:
-            CHOICE.append(obj)
-"""
-
 for market in ['MGP', 'MI', 'MSD']:
     res = client.query(f"SELECT * FROM demand{market} WHERE time >= {lastMonth}").raw
     for val in res['series'][0]['values']:

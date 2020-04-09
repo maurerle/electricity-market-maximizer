@@ -5,6 +5,7 @@ from .models import Profile
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.contrib import messages
 # Create your views here.
 def register(request, reason=''):
     if request.user.is_authenticated:
@@ -48,10 +49,10 @@ def loginPage(request):
 
 
         user = authenticate(request, username=username, password=password)
-
+        
         if user is not None:
             login(request, user)
-            return redirect('register')
+            return redirect('/dashboard/mgp')
         else:
             messages.info(request, 'Username OR Password is not correct')
             
