@@ -11,6 +11,87 @@ More specifically, the following tasks are expected from the group:
 4. Designing machine learning algorithms to understand the bidding strategies of each market participants in one or more markets;
 5. Implement a web-based supporting platform;
 
+## Project Simplified Structure
+```
+project
+|   README.md
+|   requirements.txt
+├── spiders
+|   ├── main_spider.py
+|   └── src
+|       ├── common
+|       |   ├── addcrontab.sh
+|       |   ├── config.py
+|       |   └── logging.conf
+|       ├── database
+|       |   ├── processor.py
+|       |   ├── csvParse.py
+|       |   └── xmlprocessors.py
+|       └── spiders
+|           ├── gme.py
+|           └── terna.py
+└── webapp 
+|   ├── db.sqlite3
+|   ├── manage.py
+|   ├── contacts
+|   │   └── 
+|   ├── dashboard
+|   │   ├── backend
+|   |   |   ├── arima.py
+|   |   |   ├── genetic.py
+|   |   |   ├── influxClient.py
+|   |   |   ├── intersection.py
+|   |   |   └── optimize.py
+|   │   └── templates
+|   │       └── dashboard
+|   |           ├── gme.html
+|   |           ├── mi.html
+|   |           ├── msd.html
+|   |           ├── optimzie.html
+|   |           ├── optimized.html
+|   |           └── wait.html
+|   ├── index
+|   │   |   ...
+|   │   └── templates
+|   │       └── index
+|   |           └── index.html
+|   ├── register
+|   |   |    ...
+|   │   └── templates
+|   │       └── register
+|   |           ├── register.html
+|   |           └── login.html
+|   ├── smartgridsapp
+|   |   |   ...
+|   |   ├── settings.py
+|   |   └── urls.py
+|   └── static
+|       └── ...
+└── analysis         
+    ├── data
+    │   └── ...
+    ├── fig
+    │   └── ...
+    ├── models
+    │   └── ...
+    ├── notebook
+    │   ├── arima_err.ipynb
+    │   ├── arima.ipynb
+    │   ├── arima_training.py
+    │   ├── bilateral.ipynb
+    │   ├── comparison.ipynb
+    │   ├── genetic.ipynb
+    │   ├── lstm_corr.ipynb
+    │   ├── lstm.ipynb
+    │   ├── svr.py
+    │   └── svr_training.py
+    └── src
+        ├── arima.py
+        ├── genetic.py
+        ├── intersection.py
+        └── lstm.py
+```
+
 ## Technical Details
 
 ## Setup

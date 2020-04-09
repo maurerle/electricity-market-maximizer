@@ -23,7 +23,7 @@ def getDay():
 	"""
 		
 	# Classes init
-	processor = FileProcessor(logger, user, passwd)
+	processor = FileProcessor(logger)
 	
 	# Date creation
 	date_week = (datetime.now() + relativedelta(days=-7)).strftime('%d/%m/%Y')
@@ -66,7 +66,7 @@ def getHistory():
 	the file processor to update the file to a MongoDB database.
 	"""
 	bot('INFO', 'GME', 'getHistory started.')
-	processor = FileProcessor(logger, user, passwd)
+	processor = FileProcessor(logger)
 	
 	start = START
 	limit = datetime.now()
@@ -107,9 +107,3 @@ def getHistory():
 	processor.stop()
 	
 	bot('INFO', 'GME', 'getHistory ended.')
-
-global user 
-global passwd 
-
-user = input('Insert SSH username:\n')
-passwd = getpass.getpass(prompt='Insert SSH passwd:\n')

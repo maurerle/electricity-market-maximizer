@@ -36,11 +36,9 @@ class FileProcessor(Thread):
     sendData(parsed_data, collection)
     """
 
-    def __init__(self, log, user, passwd):
+    def __init__(self, log):
         Thread.__init__(self)
         self.log = log
-        self.user = user
-        self.passwd = passwd
         self.db = self.databaseInit()
         self.stop_event = Event()
         self.start()
