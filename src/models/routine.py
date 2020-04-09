@@ -4,10 +4,13 @@ import numpy as np
 from influxdb import InfluxDBClient
 from arima import Arima
 from geneticModule import Genetic
+from datetime import datetime
+from dateutil import relativedelta
 
-#TODAY = datetime.strptime('01/01/2018', '%d/%m/%Y')
-target = 'IREN ENERGIA SPA'
-
+now = datetime.now()
+lastMonth = now - relativedelta.relativedelta(months=4)
+lastMonth = int(datetime.timestamp(lastMonth)*1e9)
+CHOICE = []
 def predict_strategies():
     # Get the operator list
     client = InfluxDBClient(
@@ -17,15 +20,24 @@ def predict_strategies():
         'root', 
         'PublicBids'
     )
+
     client.query(
         f"DELETE FROM predictions"
     )
-    res = client.query(f"show TAG values with key = op").raw
-    ops = pd.DataFrame(res['series'][0]['values']).drop(columns=0).values
-    ops = ops[:,0]
+    # Get the active Operator
+    for market in ['MGP', 'MI', 'MSD']:
+        res = client.query(f"SELECT * FROM demand{market} WHERE time >= {lastMonth}").raw
+        for val in res['series'][0]['values']:
+            if val[3] not in CHOICE:
+                CHOICE.append(val[3])
+
+        res = client.query(f"SELECT * FROM supply{market} WHERE time >= {lastMonth}").raw
+        for val in res['series'][0]['values']:
+            if val[3] not in CHOICE:
+                CHOICE.append(val[3])
 
     # Predict the strategy
-    for op in ops:
+    for op in CHOICE:
         print(op)
         if not "'" in op:
             prediction = Arima(op).predict()
@@ -73,12 +85,38 @@ def optimize(op):
         )
         .drop(columns='time')
         .set_index('op')
-        .replace(-1, 0.0)
     )
 
     Genetic(op, predictions).run()
 
-predict_strategies()
-optimize(target)
+#predict_strategies()
+#optimize('S.E.F. SRL')
+# Get the operator list
+client = InfluxDBClient(
+    'localhost', 
+    8086, 
+    'root', 
+    'root', 
+    'PublicBids'
+)
+
+# Get the active Operator
+for market in ['MGP', 'MI', 'MSD']:
+    res = client.query(f"SELECT * FROM demand{market} WHERE time >= {lastMonth}").raw
+    for val in res['series'][0]['values']:
+        if val[3] not in CHOICE:
+            CHOICE.append(val[3])
+
+    res = client.query(f"SELECT * FROM supply{market} WHERE time >= {lastMonth}").raw
+    for val in res['series'][0]['values']:
+        if val[3] not in CHOICE:
+            CHOICE.append(val[3])
+
+#predict_strategies()
+
+for op in CHOICE:
+    if not "'" in op:
+        print(op)
+        optimize(op)
 
 

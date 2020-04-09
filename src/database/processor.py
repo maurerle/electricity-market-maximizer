@@ -156,7 +156,7 @@ class FileProcessor(Thread):
         for op in dem.index:
             body = [{
                 'tags':{
-                    'op':op
+                    'op':op.upper()
                 },
                 'measurement':f'demand{dem.loc[op].MARKET}',
                 'time':datetime.strptime(
@@ -173,7 +173,7 @@ class FileProcessor(Thread):
         for op in sup.index:
             body = [{
                 'tags':{
-                    'op':op
+                    'op':op.upper()
                 },
                 'measurement':f'supply{sup.loc[op].MARKET}',
                 'time':datetime.strptime(

@@ -41,6 +41,8 @@ class Genetic():
 
 
 	def computeClearing1(self, off, bid):
+		sup = off[(off > 0).any(1)]
+		dem = bid[(bid > 0).any(1)]
 		# Sort the prices
 		sup = off.sort_values('P', ascending=True)
 		dem = bid.sort_values('P', ascending=False)
@@ -58,6 +60,8 @@ class Genetic():
 		return clearing
 
 	def computeClearing2(self, off, bid):
+		sup = off[(off > 0).any(1)]
+		dem = bid[(bid > 0).any(1)]
 		# Sort the prices
 		sup = off.sort_values('P', ascending=True)
 		dem = bid.sort_values('P', ascending=False)
@@ -274,8 +278,18 @@ class Genetic():
 				self.sup3.loc[self.target].P, self.sup3.loc[self.target].Q,
 				self.dem3.loc[self.target].P, self.dem3.loc[self.target].Q
 			]
-		)
-		print(zero_pop)
+		) 
+		# If the target operator has some -1 due to the prediction
+		# fail, replace it with random number
+		"""
+		repl = np.where(zero_pop==-1.0)
+		for i in repl[0]:
+			rand = np.random.uniform(low = 0.0, high=10.0)
+			zero_pop[i] = rand
+		"""
+		#zero_pop = np.random.rand(12)
+		zero_pop = np.zeros(12)
+		
 		zero_profit = self.getFitness([zero_pop])
 		self.best_out.append(zero_profit[0])
 		
@@ -379,7 +393,7 @@ global N_GENERATIONS
 global MUTATIONS 
 global STOP
 
-STOP = 100
+STOP = 1000
 # Number of genes (4 variables * 3 markets)
 GENES = 12
 # Number of chromosome

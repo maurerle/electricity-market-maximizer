@@ -25,10 +25,14 @@ def getData(market, op):
     
     d_prices = []
     d_quants = []
-    for val in res['series'][0]['values']:
-        d_prices.append({'x':val[0], 'y':round(val[1],2)})
-        d_quants.append({'x':val[0], 'y':round(val[2],2)})
     
+    try:
+        for val in res['series'][0]['values']:
+            d_prices.append({'x':val[0], 'y':round(val[1],2)})
+            d_quants.append({'x':val[0], 'y':round(val[2],2)})
+    except:
+        d_prices.append({'x':.0, 'y':.0})
+        d_quants.append({'x':.0, 'y':.0})        
     res = (
         client
         .query(f"SELECT * FROM supply{market} WHERE op = '{op}' AND time >= {lastMonth}")
@@ -37,10 +41,14 @@ def getData(market, op):
     
     o_prices = []
     o_quants = []
-    for val in res['series'][0]['values']:
-        o_prices.append({'x':val[0], 'y':round(val[1],2)})
-        o_quants.append({'x':val[0], 'y':round(val[2],2)})
 
+    try:
+        for val in res['series'][0]['values']:
+            o_prices.append({'x':val[0], 'y':round(val[1],2)})
+            o_quants.append({'x':val[0], 'y':round(val[2],2)})
+    except:
+        o_prices.append({'x':.0, 'y':.0})
+        o_quants.append({'x':.0, 'y':.0})
 
     return (
         json.dumps(d_prices),

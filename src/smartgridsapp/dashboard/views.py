@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from register.models import Profile
 from .backend import influxClient as influx
-from .backend import genetic as ga
+from .backend.optimize import optimize as opt
 from .forms import Production
 from threading import Thread
 from django.http import HttpResponseRedirect
@@ -63,7 +63,7 @@ def optimize(request):
         data = Profile.objects.filter(user = request.user)
         for d in data:
             LIMIT[d.operator] = float(request.POST['prod_limit'])
-            print(LIMIT)
+
         return render(request, 'dashboard/wait.html')
 
 
@@ -78,9 +78,7 @@ def process(request):
     data = Profile.objects.filter(user = request.user)
     
     for d in data:
-        genetic = ga.Genetic(d.operator, LIMIT[d.operator])
-        profit, sol = genetic.run()
-        profit = profit
+        profit, sol = opt(d.operator, LIMIT[d.operator])
         MGPdp = round(sol[0][0][2], 2)
         MGPdq = round(sol[0][0][3], 2)
         MGPop = round(sol[0][0][0], 2)
@@ -104,8 +102,7 @@ def process(request):
         'MIdp':MIdp, 
         'MIdq':MIdq, 
         'MIop':MIop, 
-        'MIoq':MIoq, 
-        'MIdp':MSDdp, 
+        'MIoq':MIoq,  
         'MSDdq':MSDdq, 
         'MSDop':MSDop, 
         'MSDoq':MSDoq,

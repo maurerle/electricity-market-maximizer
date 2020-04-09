@@ -75,6 +75,7 @@ def getHistory():
 	# Terna Secondary Reserve spider works. From the starting day to the day
 	# before the current one
 	#=======================================================================
+	"""
 	logger.info('[TERNA2] getHistory() started.')
 	
 	terna = TernaReserve()
@@ -84,7 +85,7 @@ def getHistory():
 	# Logs 
 	bot('INFO', 'TERNA2', 'getHistory ended.')
 	logger.info('[TERNA2] getHistory() ended.')
-	
+	"""
 	#=================
 	# GME spider works
 	#=================
