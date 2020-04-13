@@ -31,7 +31,8 @@ TERNA2 = 'https://www.terna.it/it/sistema-elettrico/dispacciamento/'\
 # Dynamic file history
 TERNA_LIMIT = datetime(2017,1,31)
 # Dynamic file history
-START =  datetime(2017, 2, 1)
+#START =  datetime(2017, 2, 1)
+START =  datetime(2020, 1, 1)
 MI = {}
 QUEUE = Queue()
 

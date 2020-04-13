@@ -235,6 +235,7 @@ class Arima():
             d, s = self.getDataTest(m)
             
             if isinstance(s, int):
+                print(f'ERROR: {m} SUPPLY')
                 pred.append(-1.0)
                 pred.append(-1.0)
             else:
@@ -242,6 +243,7 @@ class Arima():
                 pred.append(self.runTest(s.Q, f'{m}qO'))
             
             if isinstance(d, int):
+                print(f'ERROR: {m} DEMAND')
                 pred.append(-1.0)
                 pred.append(-1.0)
             else:

@@ -23,7 +23,7 @@ def getDay():
 	"""
 		
 	# Classes init
-	processor = FileProcessor(logger, user, passwd)
+	processor = FileProcessor(logger)
 	
 	# Date creation
 	date_week = (datetime.now() + relativedelta(days=-7)).strftime('%d/%m/%Y')
@@ -66,7 +66,7 @@ def getHistory():
 	the file processor to update the file to a MongoDB database.
 	"""
 	bot('INFO', 'GME', 'getHistory started.')
-	processor = FileProcessor(logger, user, passwd)
+	processor = FileProcessor(logger)
 	
 	start = START
 	limit = datetime.now()
@@ -75,6 +75,7 @@ def getHistory():
 	# Terna Secondary Reserve spider works. From the starting day to the day
 	# before the current one
 	#=======================================================================
+	"""
 	logger.info('[TERNA2] getHistory() started.')
 	
 	terna = TernaReserve()
@@ -84,7 +85,7 @@ def getHistory():
 	# Logs 
 	bot('INFO', 'TERNA2', 'getHistory ended.')
 	logger.info('[TERNA2] getHistory() ended.')
-	
+	"""
 	#=================
 	# GME spider works
 	#=================
@@ -106,9 +107,3 @@ def getHistory():
 	processor.stop()
 	
 	bot('INFO', 'GME', 'getHistory ended.')
-
-global user 
-global passwd 
-
-user = input('Insert SSH username:\n')
-passwd = getpass.getpass(prompt='Insert SSH passwd:\n')

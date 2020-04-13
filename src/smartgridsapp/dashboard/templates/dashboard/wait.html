@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="stylesheet" type="text/css" href="{% static 'loader/loader.css'%}">
+  <link rel="stylesheet" type="text/css" href="{% static 'login/fonts/font-awesome-4.7.0/css/font-awesome.min.css'%}">
+  <link rel="stylesheet" type="text/css" href="{% static 'login/fonts/Linearicons-Free-v1.0.0/icon-font.min.css'%}">
+</head>
+<body>
+  <a id='link' href="results"></a>
+  <section class="container2">
+    <div class="headtext" id="text1">
+      We are maximizing your profit
+    </div>
+    <div class="headtext" id="text2">
+      Take your time and relax, you are in good hands
+    </div>
+    <div class="headtext" id="text3">
+      We are making our choices accurately
+    </div>
+    <div class="headtext" id="text4">
+      It could take up to 10 minutes...It's an important decision
+    </div>
+    <div class="headtext" id="text5">
+      It will be worth the wait
+    </div>
+    <div class="square-container">
+      <div class="square" id="square1">&nbsp;</div>
+      <div class="square" id="square2">&nbsp;</div>
+      <div class="square" id="square3">&nbsp;</div>
+      <div class="square" id="square4">&nbsp;</div>
+      <div class="square" id="square5">&nbsp;</div>
+    </div>
+  </section> 
+  <script>
+    var link = document.getElementById('link').click();
+  
+    $(window).on("load",function(){
+      location.href = link;
+    })
+  </script>
+  
+</body>
+</html>

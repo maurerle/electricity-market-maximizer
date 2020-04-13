@@ -36,11 +36,9 @@ class FileProcessor(Thread):
     sendData(parsed_data, collection)
     """
 
-    def __init__(self, log, user, passwd):
+    def __init__(self, log):
         Thread.__init__(self)
         self.log = log
-        self.user = user
-        self.passwd = passwd
         self.db = self.databaseInit()
         self.stop_event = Event()
         self.start()
@@ -156,7 +154,7 @@ class FileProcessor(Thread):
         for op in dem.index:
             body = [{
                 'tags':{
-                    'op':op
+                    'op':op.upper()
                 },
                 'measurement':f'demand{dem.loc[op].MARKET}',
                 'time':datetime.strptime(
@@ -173,7 +171,7 @@ class FileProcessor(Thread):
         for op in sup.index:
             body = [{
                 'tags':{
-                    'op':op
+                    'op':op.upper()
                 },
                 'measurement':f'supply{sup.loc[op].MARKET}',
                 'time':datetime.strptime(
