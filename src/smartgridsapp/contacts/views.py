@@ -4,4 +4,4 @@ from django.shortcuts import render
 # Create your views here.
 def contacts(request):
 
-    return render(request, 'contacts/team.html')
+    return render(request, 'contacts/page.html')
