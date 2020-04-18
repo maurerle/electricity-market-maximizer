@@ -8,6 +8,9 @@
          <!--     Fonts and icons     -->
         <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+        <!-- Add icon library -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
         <!-- CSS file -->
         <link rel="stylesheet" href="{% static 'team/css/style.css' %}">
         <!-- CSS Files -->
@@ -48,89 +51,100 @@
         <div class="team-section" style="background-image:url('/static/team/img/bgturin.jpg'); background-size: cover; background-position: bottom center; min-height: 300px;">
             <h1>Our Team</h1>
                 <span class="border"></span>
+                <h2>Click on the pictures for more details</h2>
+                <span class="border"></span>
             <div class = "ps">
                 <a href="#p1"><img src="{% static 'team/img/ciccio2.JPG' %}"  alt=""></a>
                 <a href="#p2"><img src="{% static 'team/img/luca.jpg' %}"   alt=""></a>
                 <a href="#p3"><img src="{% static 'team/img/gianpio.jpeg' %}"  alt=""></a>
-                <a href="#p4"><img src="{% static 'team/img/ciccio.JPG' %}"  alt=""></a>
+                <a href="#p4"><img src="{% static 'team/img/bruno.jpeg' %}"  alt=""></a>
             </div>
             <div class=section-desc id="p1">
                 <span class=name>Francesco Guaiana</a></span>
                 <span class="border"></span>
-                <p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                <p> 
+                  "MsC student of ICT for Smart Societies at Polito, with a bachelor degree in Electronic Engineer.
+                   He is passionalty courious, good understanding of Python, VideoEditing, Power Point, Web Developing with Django. Proficient in team working and public speaking"
                 </p>
+                <a href="https://www.facebook.com/ciccio.guaiana/" target="_blank" class="fa fa-facebook" style="margin-left: 165px;"></a>  <!-- non riesco a impostare che siano centrati !IMPORTANT-->
+                <a href="https://www.instagram.com/ciccioguaiana/" target="_blank" class="fa fa-instagram"></a>
+                <a href="https://it.linkedin.com/in/francesco-guaiana-a7443b15a" target="_blank" class="fa fa-linkedin"></a>
             </div>
 
             <div class=section-desc id="p2">
                 <span class=name>Luca Gioacchini</span>
                 <span class="border"></span>
                 <p> 
-                    It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                  "MsC student of ICT for Smart Societies at Polito, with a bachelor degree in Electronic Engineer.
                 </p>
+                  <a href="https://www.facebook.com/luca.g.gioacchini" target="_blank" class="fa fa-facebook" style="margin-left: 185px;"></a>  <!-- non riesco a impostare che siano centrati !IMPORTANT-->
+                  <a href="https://www.linkedin.com/in/luca-gioacchini-42387615b" target="_blank" class="fa fa-linkedin"></a>
             </div>
 
             <div class=section-desc id="p3">
                 <span class=name>Gian Pio Domiziani</span>
                 <span class="border"></span>
-                <p> It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.
+                <p> 
+                  "MsC student of ICT for Smart Societies at Polito, with a bachelor degree in Physics.
                 </p>
+               <!-- non riesco a impostare che siano centrati !IMPORTANT-->
+                <a href="https://www.linkedin.com/in/gian-pio-domiziani-78958b148/" target="_blank" class="fa fa-linkedin" style="margin-left: 210px;"></a>
+                
+                
             </div>
 
             <div class=section-desc id="p4">
                 <span class=name>Bruno Valente</span>
                 <span class="border"></span>
-                <p> It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.
+                <p> 
+                  "MsC student of ICT for Smart Societies at Polito, with a bachelor degree in Computer Science.
                 </p>
-                
+                <a  class="fa fa-skype" style="margin-left: 25px;">-name:"bruno.valente94" </a>   <!-- non riesco a impostare che siano centrati !IMPORTANT-->
             </div>
             
         </div>
      
             <div class=form-section data-background-color="black"> 
-             <div class="container">
-              <form action="action_page.php">
+              {% if fname %}
+              <h1>Thank you {{fname}}!</h1>
+              <h2>We will answer you as soon as possible</h2>
+
+
+              {% else %}
+              <h1>Contact Us</h1>
+              <span class=border></span>
+              <h2 style="font-size: 20px;">Fill the form with requested information, we will replay to you as soon as possibile</h2>
+              <div class="container">
+              <form action="#" method="POST">
+                {% csrf_token %}
             
-                <label for="fname">First Name</label>
-                <input type="text" id="fname" name="firstname" placeholder="Your name..">
+                <label for="fname">Name</label>
+                <input type="text" id="fname" name="fname" placeholder="Your full name..">
             
-                <label for="lname">Last Name</label>
-                <input type="text" id="lname" name="lastname" placeholder="Your last name..">
+                <label for="mail">E-mail</label>
+                <input type="text" id="mail" name="mail" placeholder="Your email..">
             
-                <label for="country">Country</label>
-                <select id="country" name="country">
-                  <option value="australia">Italy - Nord</option>
-                  <option value="canada">Italy - Centre</option>
-                  <option value="usa">Italy - Sud</option>
+                <label for="recip">Recipient (select your choice)</label>
+                <select id="recip" name="recip">
+                  <option value="smartgridproject.to@gmail.com">Group I</option>
+                  <option value="francescoguaiana29@gmail.com">Francesco Guaiana</option>
+                  <option value="lucagioack@gmail.com">Luca Gioacchini</option>
+                  <option value="gpdomiziani@gmail.com">Gian Pio Domiziani</option>
+                  <option value="bruno94v@gmail.com">Bruno Valente</option>
                 </select>
+                <label for="object"> Object</label>
+                <input type="text" id="obj" name="obj" placeholder="Information - Help - Request - Partnership ... ">
             
                 <label for="subject">Subject</label>
                 <textarea id="subject" name="subject" placeholder="Write something.." style="height:200px"></textarea>
             
-                <input type="submit" value="Submit">
+                <input type="submit" name="submit" value="Submit">
             
               </form>
+              {% endif %}
             </div> 
         </div>
-            <footer class="footer" data-background-color="black">
-                <div class=" container ">
-                  <nav>
-                    <ul>
-                      <li>
-                        <a href="https://www.polito.it/">
-                          PoliTo
-                        </a>
-                      </li>
-                    </ul>
-                  </nav>
-                  <div class="copyright" id="copyright">
-                    &copy;
-                    <script>
-                      document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                    </script>, Designed by
-                    Team I 
-                  </div>
-                </div>
-              </footer>
+        
             
               <!--   Core JS Files   -->
               <script src="{%static 'index/js/core/jquery.min.js' %}" type="text/javascript"></script>

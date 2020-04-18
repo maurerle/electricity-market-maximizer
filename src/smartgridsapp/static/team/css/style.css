@@ -8,11 +8,16 @@
    background: black;
    padding: 60px;
  }
- .team-section h1{
+.team-section h1{
   text-transform: uppercase;
   margin-bottom: 60 px;
   color:white;
   font-size: 40px;
+}
+.team-section h2{
+  margin-bottom: 60 px;
+  color:white;
+  font-size: 22px;
 }
 .border{
   display: block;
@@ -53,6 +58,7 @@
   padding: 60px;
   opacity: 0.8;
   border-radius: 4px;
+  justify-content: center;
 }
 .section-desc:target{
   height: auto;
@@ -70,6 +76,22 @@
   background-color: black;
   opacity: 0.8;
 }
+ /* Style all font awesome icons */
+ .fa {
+  padding: 20px;
+  font-size: 30px;
+  width: 30px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 50%;
+  color:white;
+}
+
+/* Add a hover effect if you want */
+.fa:hover {
+  opacity: 0.8;
+}
+
 
 .form-section{
   overflow: hidden;
