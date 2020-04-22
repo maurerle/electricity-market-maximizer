@@ -1,0 +1,8 @@
+influxdb
+pandas
+numpy
+xmltodict
+selenium
+bs4
+requests
+xlrd

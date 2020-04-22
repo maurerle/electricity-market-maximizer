@@ -1,0 +1,5 @@
+django
+influxdb
+pandas
+numpy
+statsmodels

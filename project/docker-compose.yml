@@ -1,0 +1,49 @@
+version: "2"
+
+networks: 
+  sgnet:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.5.0/8
+          ip_range: 172.28.5.1/24  
+          gateway: 172.28.5.254
+
+services:
+  influx:
+    image: influxdb:latest
+    container_name: sg_database
+    ports:
+      - "8086"
+    volumes:
+      - ./database/influxdb:/var/lib/influxdb
+    networks: 
+      sgnet:
+        ipv4_address: 172.28.5.1
+  
+  webapp:
+    build: ./smartgridsapp
+    container_name: sg_webapp
+    ports:
+      - "8000"
+    stdin_open: true
+    tty: true
+    networks: 
+      sgnet:
+        ipv4_address: 172.28.5.2
+  
+  spiders:
+    build: ./spiders
+    container_name: sg_spiders
+    environment:
+      - PATH = /usr/local/bin
+    networks:
+      sgnet:
+        ipv4_address: 172.28.5.3
+  
+  prediction:
+    build: ./prediction
+    container_name: sg_prediction
+    networks:
+      sgnet:
+        ipv4_address: 172.28.5.4
