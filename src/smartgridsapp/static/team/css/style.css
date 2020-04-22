@@ -1,0 +1,128 @@
+ *{
+   margin: 0;
+   padding: 0;
+  }
+ .team-section{
+   overflow: hidden;
+   text-align: center;
+   background: black;
+   padding: 60px;
+ }
+.team-section h1{
+  text-transform: uppercase;
+  margin-bottom: 60 px;
+  color:white;
+  font-size: 40px;
+}
+.team-section h2{
+  margin-bottom: 60 px;
+  color:white;
+  font-size: 22px;
+}
+.border{
+  display: block;
+  margin: auto;
+  width: 180px;
+  height: 2px;
+  background: white;
+  margin-bottom: 40px;
+}
+.ps{
+  margin-bottom: 40px;
+}
+.ps a{
+  display: inline-block;
+  margin: 0 30px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+.ps a img{
+  width: 350px;
+  height: auto;/*to preserve the aspect ratio of the image*/
+  filter: grayscale(100%);
+  transition:0,4s all;
+
+}
+.ps a:hover > img{
+  filter: none;
+}
+.section-desc{
+  width: 600px;
+  margin: auto;
+  font-size: 20px;
+  color:white;
+  text-align: justify;
+  height: 0;
+  overflow: hidden;
+  background-color: black;
+  padding: 60px;
+  opacity: 0.8;
+  border-radius: 4px;
+  justify-content: center;
+}
+.section-desc:target{
+  height: auto;
+
+}
+.name{
+  display: block;
+  margin-bottom: 30px;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 22px;
+  color: ivory;
+}
+.bg-bar{
+  background-color: black;
+  opacity: 0.8;
+}
+ /* Style all font awesome icons */
+ .fa {
+  padding: 20px;
+  font-size: 30px;
+  width: 30px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 50%;
+  color:white;
+}
+
+/* Add a hover effect if you want */
+.fa:hover {
+  opacity: 0.8;
+}
+
+
+.form-section{
+  overflow: hidden;
+  text-align: center;
+  color: white;
+  padding: 60px;
+}
+/* Style inputs with type="text", select elements and textareas */
+input[type=text], select, textarea {
+  width: 100%; /* Full width */
+  padding: 12px; /* Some padding */ 
+  border: 1px solid #ccc; /* Gray border */
+  border-radius: 4px; /* Rounded borders */
+  box-sizing: border-box; /* Make sure that padding and width stays in place */
+  margin-top: 6px; /* Add a top margin */
+  margin-bottom: 16px; /* Bottom margin */
+  resize: vertical /* Allow the user to vertically resize the textarea (not horizontally) */
+}
+
+/* Style the submit button with a specific background color etc */
+input[type=submit] {
+  background-color: #1d7373;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* When moving the mouse over the submit button, add a darker green color */
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+
