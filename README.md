@@ -15,6 +15,8 @@ More specifically, the following tasks are expected from the group:
 If you don't have docker-compose installed on your machine type  
 ```
 $ sudo apt-get install docker-compose -y
+$ sudo apt-get update
+$ sudo apt-get upgrade -y
 ```  
 Once installed open a terminal in the project root folder and run  
 ```
@@ -35,6 +37,15 @@ $ sudo docker-compose up -d
 to execute the processes in background.  
 The web application should be reachable from a browser at ```http://172.28.5.2:8000/```.  
 
+In case of network bridge error:
+``` 
+ERROR: Service 'webapp' failed to build: failed to create endpoint stoic_wright on network bridge: network e6c...493 does not exist
+``` 
+Try to upgrade Docker. If the error persists try
+``` 
+$ sudo docker system prune
+``` 
+but pay attention. This instruction will remove all the previously built docker images.
 ## Examples
 The web crawlers and the prediction module are scheduled to run at 00:30 of each day. If you want to check their stand-alone functioning open a terminal in the project root folder and run  
 ```
