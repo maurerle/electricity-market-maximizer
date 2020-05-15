@@ -5613,7 +5613,7 @@ img {
 .index-page .page-header .category-absolute {
   position: absolute;
   top: 100vh;
-  margin-top: -60px;
+  margin-top: 70px;
   padding: 0 15px;
   width: 100%;
   color: rgba(255, 255, 255, 0.5);
