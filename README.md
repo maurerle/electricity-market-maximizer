@@ -59,7 +59,7 @@ $ cd project/example/
 ```./restore_original.sh```.
 
 ### Web Crawlers
-Two functions developed in the spiders module.  
+Two functions are developed in the spiders module.  
 1. The first one download and store the daily market data. To check it, from the ```example/``` folder type
 
 ```
