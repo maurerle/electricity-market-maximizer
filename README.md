@@ -47,7 +47,7 @@ $ sudo docker system prune
 ``` 
 but pay attention. This instruction will remove all the previously built docker images.
 
-**NOTE:** To save space, the local database natively stores data from the 01/03/2020. To add all the available data from the 01/02/2017 see the second paragraph of Web Crawlers in the Examples sections.  
+**NOTE:** To save space, the local database natively stores data from the 01/03/2020 up to 14/05/2020. To add all the available data from the 01/02/2017 see the second paragraph of Web Crawlers in the Examples sections.  
 Since the Italian regulation publish GME data up to one week before the current days, the platform current day is the one of a month before the current one for dimostrative purpose.
 
 ## Examples
