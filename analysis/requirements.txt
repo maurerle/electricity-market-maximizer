@@ -1,0 +1,10 @@
+pandas
+numpy
+matplotlib
+sklearn
+keras
+tensorflow
+statsmodels
+seaborn
+influxdb
+
