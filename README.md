@@ -1,4 +1,4 @@
-# GME Profit Maximizer
+# Italian Electricity Market Profit Maximizer
 A supporting system for strategic bidding in the Italian Electricity Markets through data analytics.  
 It is recommended to run the scripts on a Linux machine and to check the application from Firefox browser.
 
