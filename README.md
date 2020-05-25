@@ -1,5 +1,6 @@
 # GME Profit Maximizer
-A supporting system for strategic bidding in the Italian Electricity Markets through data analytics.
+A supporting system for strategic bidding in the Italian Electricity Markets through data analytics.  
+It is recommended to run the scripts on a Linux machine and to check the application from Firefox browser.
 
 ## Description
 In the Italian power systems, currently there are 3 most important spot markets, i.e. dayahead market (MGP), Intra-day market (MI) and ancillary service market - MSD.  
