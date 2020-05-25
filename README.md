@@ -79,6 +79,15 @@ To run the prediction module in stand-alone mode, from the ```example/``` folder
 $ ./predict.sh
 ```
 
+## Analysis
+In the ```analysis``` folder there are reported the codes used in the project analysis.
+Before running the codes in the ```analysis/notebook``` folder, please install
+the requirements by running
+```
+$ cd analysis/
+$ sudo pip3 install -r requirements.txt
+```
+
 ## 
 (c) 2020, Gian Pio Domiziani, Luca Gioacchini, Francesco Guaiana, Bruno Valente
 
