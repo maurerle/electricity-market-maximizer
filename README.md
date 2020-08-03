@@ -90,5 +90,4 @@ $ sudo pip3 install -r requirements.txt
 ```
 
 ## 
-(c) 2020, Gian Pio Domiziani, Luca Gioacchini, Francesco Guaiana, Bruno Valente
-
+(c) 2020, Luca Gioacchini, Francesco Guaiana, Bruno Valente, Gian Pio Domiziani
